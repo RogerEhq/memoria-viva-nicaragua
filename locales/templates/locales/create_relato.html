@@ -1,0 +1,11 @@
+{% extends 'locales/base.html' %}
+
+{% block content %}
+    <h1>Crear un Nuevo Relato</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.media }}
+        {{ form.as_p }}
+        <button type="submit">Publicar Relato</button>
+    </form>
+{% endblock %}

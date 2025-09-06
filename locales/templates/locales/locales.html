@@ -1,0 +1,10 @@
+{% extends 'locales/base.html' %}
+
+{% block content %}
+    <h1>Iniciar Sesión</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Iniciar Sesión</button>
+    </form>
+{% endblock %}
