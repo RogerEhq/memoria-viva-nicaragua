@@ -10,9 +10,11 @@ urlpatterns = [
     path('register/', locales_views.register_view, name='register_view'),
     path('login/', locales_views.login_view, name='login_view'),
     path('logout/', locales_views.logout_view, name='logout_view'),
-    # Nuevas URL para el contenido y el directorio
     path('relatos/crear/', locales_views.create_relato_view, name='create_relato_view'),
     path('directorio/sugerir/', locales_views.sugerir_negocio_view, name='sugerir_negocio_view'),
+
+    # 🗺️ Nueva ruta para mostrar el mapa con HTMX
+    path('mostrar_mapa/', locales_views.mostrar_mapa, name='mostrar_mapa'),
 ]
 
 if settings.DEBUG:

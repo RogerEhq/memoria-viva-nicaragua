@@ -1,9 +1,24 @@
 {% extends 'locales/base.html' %}
+
 {% block content %}
-    <h1>Sugerir un Nuevo Negocio</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Enviar Sugerencia</button>
-    </form>
+  <h1>Sugerir un Nuevo Negocio</h1>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <!-- Campo adicional para ingresar ubicación -->
+    <label for="ubicacion">Ubicación del negocio:</label>
+    <input type="text" id="ubicacion" name="ubicacion"
+           placeholder="Ej. Panadería La Tradición, Managua"
+           hx-get="/mostrar_mapa/"
+           hx-target="#mapa"
+           hx-trigger="change"
+           hx-params="ubicacion">
+
+    <button type="submit">Enviar Sugerencia</button>
+  </form>
+
+  <!-- Contenedor donde se cargará el mapa -->
+  <div id="mapa" style="margin-top: 20px;"></div>
 {% endblock %}

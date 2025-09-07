@@ -3,6 +3,9 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+
 from .forms import UserRegisterForm, UserLoginForm, RelatoForm, SugerenciaNegocioForm
 from .models import Relato, Negocio, SugerenciaNegocio
 
@@ -71,3 +74,9 @@ def sugerir_negocio_view(request):
     else:
         form = SugerenciaNegocioForm()
     return render(request, 'locales/sugerir_negocio.html', {'form': form})
+
+# 🗺️ Nueva vista para mostrar el mapa dinámicamente con HTMX
+def mostrar_mapa(request):
+    ubicacion = request.GET.get('ubicacion', '')
+    html = render_to_string('locales/mapa_fragmento.html', {'ubicacion': ubicacion})
+    return HttpResponse(html)

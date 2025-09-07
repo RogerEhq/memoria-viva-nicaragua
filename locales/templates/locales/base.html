@@ -18,17 +18,42 @@
         {% endif %}
     </nav>
     <hr>
+
     {% if messages %}
         <ul class="messages">
             {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
             {% endfor %}
         </ul>
     {% endif %}
+
     {% block content %}{% endblock %}
+
     <hr>
     <footer>
         <p>Derechos Reservados © 2025 Memoria Viva Nicaragua</p>
     </footer>
+
+    <!-- ✅ HTMX script para interactividad dinámica -->
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+
+    <!-- ✅ Script para toggle de mapa con htmx.ajax -->
+    <script>
+      function toggleMapa(id, direccion) {
+        const mapaDiv = document.getElementById(`mapa-${id}`);
+        const boton = document.getElementById(`btn-${id}`);
+
+        if (mapaDiv.innerHTML.trim() === "") {
+          htmx.ajax('GET', `/mostrar_mapa/?ubicacion=${direccion}`, {
+            target: mapaDiv,
+            swap: 'innerHTML'
+          });
+          boton.textContent = "Ocultar mapa";
+        } else {
+          mapaDiv.innerHTML = "";
+          boton.textContent = "Ver ubicación";
+        }
+      }
+    </script>
 </body>
 </html>
