@@ -1,10 +1,22 @@
 {% extends 'locales/base.html' %}
 
 {% block content %}
-    <h1>Iniciar Sesión</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Iniciar Sesión</button>
-    </form>
+  <h1>Iniciar Sesión</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <!-- Campo para ingresar dirección o coordenadas -->
+    <label for="ubicacion">Ubicación del local:</label>
+    <input type="text" id="ubicacion" name="ubicacion" placeholder="Ej. Panadería La Tradición, Managua"
+           hx-get="/mostrar_mapa/"
+           hx-target="#mapa"
+           hx-trigger="change"
+           hx-params="ubicacion">
+
+    <button type="submit">Iniciar Sesión</button>
+  </form>
+
+  <!-- Contenedor donde se mostrará el mapa -->
+  <div id="mapa" style="margin-top: 20px;"></div>
 {% endblock %}

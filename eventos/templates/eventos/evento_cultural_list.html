@@ -1,0 +1,35 @@
+{% extends 'locales/base.html' %}
+
+{% block content %}
+    <h1>Calendario Cultural</h1>
+
+    {% for evento in page_obj %}
+        <div>
+            <h3>{{ evento.nombre }}</h3>
+            <p>Fecha: {{ evento.fecha_inicio|date:"d M Y" }} - {{ evento.fecha_fin|date:"d M Y" }}</p>
+            <p>Ubicación: {{ evento.ubicacion_texto }}</p>
+            <p>{{ evento.descripcion|truncatewords:50 }}</p>
+        </div>
+        <hr>
+    {% empty %}
+        <p>No hay eventos culturales próximos.</p>
+    {% endfor %}
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; primera</a>
+                <a href="?page={{ page_obj.previous_page_number }}">anterior</a>
+            {% endif %}
+
+            <span class="current">
+                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">siguiente</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">última &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+{% endblock %}

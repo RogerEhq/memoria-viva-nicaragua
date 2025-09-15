@@ -1,0 +1,64 @@
+{% extends 'locales/base.html' %}
+
+{% block content %}
+    <h1>Biblioteca de Saberes y Recetas</h1>
+
+    <form method="get" action="{% url 'biblioteca_view' %}">
+        <input type="text" name="q" placeholder="Buscar recetas o saberes..." value="{{ query }}">
+        <button type="submit">Buscar</button>
+    </form>
+
+    <h2>Recetas Tradicionales</h2>
+    {% for receta in recetas %}
+        <div>
+            <h3>{{ receta.titulo }}</h3>
+            <p>{{ receta.descripcion_corta }}</p>
+            <p>Autor: {{ receta.autor.username }}</p>
+            {% if receta.imagen %}
+                <img src="{{ receta.imagen.url }}" alt="{{ receta.titulo }}" style="max-width:300px;">
+            {% endif %}
+        </div>
+        <hr>
+    {% empty %}
+        <p>No se encontraron recetas aprobadas.</p>
+    {% endfor %}
+
+    {% if recetas.has_other_pages %}
+        <div class="pagination">
+            {% if recetas.has_previous %}
+                <a href="?page_recetas={{ recetas.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">&laquo; Anterior</a>
+            {% endif %}
+            <span>Página {{ recetas.number }} de {{ recetas.paginator.num_pages }}.</span>
+            {% if recetas.has_next %}
+                <a href="?page_recetas={{ recetas.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Siguiente &raquo;</a>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <hr>
+
+    <h2>Saberes Populares</h2>
+    {% for saber in saberes %}
+        <div>
+            <h3>{{ saber.titulo }}</h3>
+            <p>Categoría: {{ saber.get_categoria_display }}</p>
+            <p>{{ saber.contenido|truncatewords:50 }}</p>
+            <p>Autor: {{ saber.autor.username }}</p>
+        </div>
+        <hr>
+    {% empty %}
+        <p>No se encontraron saberes populares aprobados.</p>
+    {% endfor %}
+
+    {% if saberes.has_other_pages %}
+        <div class="pagination">
+            {% if saberes.has_previous %}
+                <a href="?page_saberes={{ saberes.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">&laquo; Anterior</a>
+            {% endif %}
+            <span>Página {{ saberes.number }} de {{ saberes.paginator.num_pages }}.</span>
+            {% if saberes.has_next %}
+                <a href="?page_saberes={{ saberes.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Siguiente &raquo;</a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}

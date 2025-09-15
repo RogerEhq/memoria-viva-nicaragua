@@ -1,34 +1,41 @@
 {% extends 'locales/base.html' %}
 
 {% block content %}
-    <h1>Bienvenidos a Memoria Viva Nicaragua</h1>
-    
-    <h2>Relatos Culturales</h2>
-    {% for relato in relatos %}
-        <div>
-            <h3>{{ relato.title }}</h3>
-            <p>{{ relato.content|safe|truncatewords:50 }}</p>
-            {% if relato.image %}
-                <img src="{{ relato.image.url }}" alt="{{ relato.title }}" style="max-width:300px;">
-            {% endif %}
-            <p>Autor: {{ relato.author.username }}</p>
-        </div>
-        <hr>
-    {% empty %}
-        <p>No hay relatos aprobados aún.</p>
-    {% endfor %}
+  <h1>Bienvenidos a Memoria Viva Nicaragua</h1>
 
-    <h2>Directorio de Negocios</h2>
-    {% for negocio in negocios %}
-        <div>
-            <h3>{{ negocio.name }}</h3>
-            <p>Categoría: {{ negocio.get_category_display }}</p>
-            <p>Descripción: {{ negocio.description }}</p>
-            <p>Dirección: {{ negocio.address_text }}</p>
-        </div>
-        <hr>
-    {% empty %}
-        <p>No hay negocios en el directorio.</p>
-    {% endfor %}
+  <h2>Relatos Culturales</h2>
+  {% for relato in relatos %}
+    <div>
+      <h3>{{ relato.title }}</h3>
+      <p>{{ relato.content|safe|truncatewords:50 }}</p>
+      {% if relato.image %}
+        <img src="{{ relato.image.url }}" alt="{{ relato.title }}" style="max-width:300px;">
+      {% endif %}
+      <p>Autor: {{ relato.author.username }}</p>
+    </div>
+    <hr>
+  {% empty %}
+    <p>No hay relatos aprobados aún.</p>
+  {% endfor %}
 
+  <h2>Directorio de Negocios</h2>
+  {% for negocio in negocios %}
+    <div>
+      <h3>{{ negocio.name }}</h3>
+      <p>Categoría: {{ negocio.get_category_display }}</p>
+      <p>Descripción: {{ negocio.description }}</p>
+      <p>Dirección: {{ negocio.address_text }}</p>
+
+      <!-- Botón toggle con función JS -->
+      <button onclick="toggleMapa('{{ negocio.id }}', '{{ negocio.address_text|urlencode }}')" id="btn-{{ negocio.id }}">
+        Ver ubicación
+      </button>
+
+      <!-- Contenedor del mapa -->
+      <div id="mapa-{{ negocio.id }}" style="margin-top: 10px;"></div>
+    </div>
+    <hr>
+  {% empty %}
+    <p>No hay negocios en el directorio.</p>
+  {% endfor %}
 {% endblock %}

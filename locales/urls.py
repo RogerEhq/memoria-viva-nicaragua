@@ -10,9 +10,15 @@ urlpatterns = [
     path('register/', locales_views.register_view, name='register_view'),
     path('login/', locales_views.login_view, name='login_view'),
     path('logout/', locales_views.logout_view, name='logout_view'),
-    # Nuevas URL para el contenido y el directorio
     path('relatos/crear/', locales_views.create_relato_view, name='create_relato_view'),
     path('directorio/sugerir/', locales_views.sugerir_negocio_view, name='sugerir_negocio_view'),
+    path('mostrar_mapa/', locales_views.mostrar_mapa, name='mostrar_mapa'),
+
+    # 📚 Nuevas rutas para la Biblioteca
+    path('biblioteca/', locales_views.biblioteca_view, name='biblioteca_view'),
+
+    # 🗓️ Nuevas rutas para el Calendario Cultural
+    path('eventos/', include('eventos.urls')),
 ]
 
 if settings.DEBUG:
