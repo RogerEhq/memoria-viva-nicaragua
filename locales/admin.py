@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Local, Relato, Negocio, SugerenciaNegocio
+from .models import Local, Relato, Negocio, SugerenciaNegocio, Receta
 
 @admin.register(Local)
 class LocalAdmin(admin.ModelAdmin):
@@ -50,3 +50,20 @@ class SugerenciaNegocioAdmin(admin.ModelAdmin):
                 sugerencia.save()
         self.message_user(request, "Sugerencias seleccionadas aprobadas y negocios creados.")
     aprobar_sugerencia_y_crear_negocio.short_description = "Aprobar y crear negocio"
+
+@admin.register(Receta)
+class RecetaAdmin(admin.ModelAdmin):
+    list_display = ('titulo', 'autor', 'estado', 'fecha_creacion')
+    list_filter = ('estado', 'fecha_creacion')
+    search_fields = ('titulo', 'ingredientes', 'autor__username')
+    actions = ['aprobar_recetas', 'rechazar_recetas']
+
+    def aprobar_recetas(self, request, queryset):
+        queryset.update(estado='approved')
+        self.message_user(request, "Las recetas seleccionadas han sido aprobadas.")
+    aprobar_recetas.short_description = "Aprobar recetas seleccionadas"
+
+    def rechazar_recetas(self, request, queryset):
+        queryset.update(estado='rejected')
+        self.message_user(request, "Las recetas seleccionadas han sido rechazadas.")
+    rechazar_recetas.short_description = "Rechazar recetas seleccionadas"

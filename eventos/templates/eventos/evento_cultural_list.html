@@ -1,35 +1,62 @@
 {% extends 'locales/base.html' %}
 
 {% block content %}
-    <h1>Calendario Cultural</h1>
+<div class="container mt-4">
+  <h1 class="mb-4">📅 Calendario Cultural</h1>
 
-    {% for evento in page_obj %}
-        <div>
-            <h3>{{ evento.nombre }}</h3>
-            <p>Fecha: {{ evento.fecha_inicio|date:"d M Y" }} - {{ evento.fecha_fin|date:"d M Y" }}</p>
-            <p>Ubicación: {{ evento.ubicacion_texto }}</p>
-            <p>{{ evento.descripcion|truncatewords:50 }}</p>
-        </div>
-        <hr>
-    {% empty %}
-        <p>No hay eventos culturales próximos.</p>
-    {% endfor %}
+  {% for evento in page_obj %}
+    <div class="card mb-3 shadow-sm">
+      <div class="card-body">
+        <h4 class="card-title">{{ evento.nombre }}</h4>
+        <p class="card-subtitle text-muted">
+          <strong>📍 Ubicación:</strong> {{ evento.ubicacion_texto }}<br>
+          <strong>🗓️ Fecha:</strong>
+          {{ evento.fecha_inicio|date:"d M Y" }}
+          {% if evento.fecha_fin and evento.fecha_fin != evento.fecha_inicio %}
+            – {{ evento.fecha_fin|date:"d M Y" }}
+          {% endif %}
+        </p>
+        <p class="card-text mt-2">{{ evento.descripcion|truncatewords:50 }}</p>
 
-    <div class="pagination">
-        <span class="step-links">
-            {% if page_obj.has_previous %}
-                <a href="?page=1">&laquo; primera</a>
-                <a href="?page={{ page_obj.previous_page_number }}">anterior</a>
-            {% endif %}
-
-            <span class="current">
-                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
-            </span>
-
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">siguiente</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}">última &raquo;</a>
-            {% endif %}
-        </span>
+        {% if evento.publicado %}
+          <span class="badge bg-success">Publicado</span>
+        {% else %}
+          <span class="badge bg-warning text-dark">Pendiente</span>
+        {% endif %}
+      </div>
     </div>
+  {% empty %}
+    <div class="alert alert-info">
+      No hay eventos culturales próximos.
+    </div>
+  {% endfor %}
+
+  <nav aria-label="Paginación de eventos">
+    <ul class="pagination justify-content-center">
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page=1">&laquo; Primera</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+        </li>
+      {% endif %}
+
+      <li class="page-item disabled">
+        <span class="page-link">
+          Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+        </span>
+      </li>
+
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
+</div>
 {% endblock %}

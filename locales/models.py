@@ -61,17 +61,24 @@ class SugerenciaNegocio(models.Model):
 
 # 📚 Nuevo modelo para la "Biblioteca" de Recetas
 class Receta(models.Model):
+    STATUS_CHOICES = (
+        ('pending', 'Pendiente'),
+        ('approved', 'Aprobada'),
+        ('rejected', 'Rechazada'),
+    )
+
     titulo = models.CharField(max_length=200)
-    descripcion_corta = models.CharField(max_length=255)
+    descripcion = models.TextField()  # Combina descripcion_corta y descripcion
     ingredientes = models.TextField()
     pasos = models.TextField()
-    imagen = models.ImageField(upload_to='biblioteca/recetas/')
-    estado = models.CharField(max_length=10, choices=SugerenciaNegocio.STATUS_CHOICES, default='pending')
+    imagen = models.ImageField(upload_to='recetas/', blank=True, null=True)
+    estado = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     autor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recetas_creadas')
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.titulo
+
 
 # 📚 Nuevo modelo para la "Biblioteca" de Saberes Populares
 class SaberPopular(models.Model):
@@ -90,3 +97,4 @@ class SaberPopular(models.Model):
 
     def __str__(self):
         return self.titulo
+

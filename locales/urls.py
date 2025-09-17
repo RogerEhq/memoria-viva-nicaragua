@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from locales import views as locales_views
+from .views import create_receta_view
+
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -13,6 +15,7 @@ urlpatterns = [
     path('relatos/crear/', locales_views.create_relato_view, name='create_relato_view'),
     path('directorio/sugerir/', locales_views.sugerir_negocio_view, name='sugerir_negocio_view'),
     path('mostrar_mapa/', locales_views.mostrar_mapa, name='mostrar_mapa'),
+    path('create_receta/', create_receta_view, name='create_receta_view'),
 
     # 📚 Nuevas rutas para la Biblioteca
     path('biblioteca/', locales_views.biblioteca_view, name='biblioteca_view'),

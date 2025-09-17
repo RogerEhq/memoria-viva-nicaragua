@@ -7,9 +7,11 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.db.models import Q
 from django.core.paginator import Paginator
+from .forms import RecetaForm
+from .models import Receta
 
 from eventos.models import EventoCultural
-from .forms import UserRegisterForm, UserLoginForm, RelatoForm, SugerenciaNegocioForm
+from .forms import UserRegisterForm, UserLoginForm, RelatoForm, SugerenciaNegocioForm, RecetaForm
 from .models import Relato, Negocio, Receta, SaberPopular
 
 
@@ -91,6 +93,21 @@ def mostrar_mapa(request):
     ubicacion = request.GET.get('ubicacion', '')
     html = render_to_string('locales/mapa_fragmento.html', {'ubicacion': ubicacion})
     return HttpResponse(html)
+
+@login_required
+def create_receta_view(request):
+    if request.method == 'POST':
+        form = RecetaForm(request.POST, request.FILES)
+        if form.is_valid():
+            receta = form.save(commit=False)
+            receta.autor = request.user
+            receta.estado = 'pending'  # Se revisará antes de publicarse
+            receta.save()
+            messages.success(request, 'Receta enviada para revisión. ¡Gracias por compartir tu conocimiento!')
+            return redirect('biblioteca_view')
+    else:
+        form = RecetaForm()
+    return render(request, 'locales/create_receta.html', {'form': form})
 
 
 # 📚 Nueva vista para la Biblioteca de Saberes
