@@ -45,11 +45,17 @@
       gap: 1rem;
     }
 
-    .nav-logo img {
-      width: 120px;
-      height: auto;
-      border-radius: 8px;
-    }
+.nav-logo img {
+  width: 120px;
+  height: auto;
+  border-radius: 8px;
+  transition: transform 0.4s ease, box-shadow 0.4s ease, filter 0.4s ease;
+}
+
+.nav-logo img:hover {
+  transform: scale(1.05) rotate(-2deg);
+  filter: brightness(1.1) saturate(1.2);
+}
 
 
     .nav-links {
