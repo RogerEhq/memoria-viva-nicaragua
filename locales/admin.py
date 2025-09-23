@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Local, Relato, Negocio, SugerenciaNegocio, Receta
+from .models import Local, Relato, Negocio, SugerenciaNegocio, Receta, PerfilUsuario
 
 @admin.register(Local)
 class LocalAdmin(admin.ModelAdmin):
@@ -67,3 +67,11 @@ class RecetaAdmin(admin.ModelAdmin):
         queryset.update(estado='rejected')
         self.message_user(request, "Las recetas seleccionadas han sido rechazadas.")
     rechazar_recetas.short_description = "Rechazar recetas seleccionadas"
+
+@admin.register(PerfilUsuario)
+class PerfilUsuarioAdmin(admin.ModelAdmin):
+    list_display = ('usuario', 'rango', 'ubicacion', 'telefono')
+    list_filter = ('rango',)
+    search_fields = ('usuario__username', 'ubicacion', 'telefono')
+    readonly_fields = ('usuario',)
+    fields = ('usuario', 'rango', 'avatar', 'biografia', 'telefono', 'ubicacion')

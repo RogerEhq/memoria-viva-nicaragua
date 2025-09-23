@@ -100,10 +100,18 @@ class SaberPopular(models.Model):
 
 class PerfilUsuario(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
-    biografia = models.TextField(blank=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    biografia = models.TextField(blank=True)
     telefono = models.CharField(max_length=20, blank=True)
     ubicacion = models.CharField(max_length=100, blank=True)
 
+    # Nuevo campo
+    RANGOS = [
+        ('visitante', 'Visitante'),
+        ('colaborador', 'Colaborador'),
+        ('admin', 'Administrador'),
+    ]
+    rango = models.CharField(max_length=20, choices=RANGOS, default='visitante')
+
     def __str__(self):
-        return f'Perfil de {self.usuario.username}'
+        return f"{self.usuario.username} ({self.rango})"

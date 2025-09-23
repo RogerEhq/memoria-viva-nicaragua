@@ -18,11 +18,21 @@ urlpatterns = [
     path('create_receta/', create_receta_view, name='create_receta_view'),
 
     path('perfil/', locales_views.editar_perfil, name='perfil_view'),
+    path('perfil/eliminar-avatar/', locales_views.eliminar_avatar, name='eliminar_avatar'),
+
     # 📚 Nuevas rutas para la Biblioteca
     path('biblioteca/', locales_views.biblioteca_view, name='biblioteca_view'),
 
     # 🗓️ Nuevas rutas para el Calendario Cultural
     path('eventos/', include('eventos.urls')),
+
+    path('usuarios/', locales_views.lista_usuarios, name='lista_usuarios'),
+    path('usuarios/<str:username>/', locales_views.perfil_publico, name='perfil_publico'),
+
+
+
+
+
 ]
 
 if settings.DEBUG:

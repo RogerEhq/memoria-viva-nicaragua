@@ -3,7 +3,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit
-from .models import Relato, SugerenciaNegocio, Receta,PerfilUsuario
+from .models import Relato, SugerenciaNegocio, Receta, PerfilUsuario
+
 
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -20,8 +21,7 @@ class UserLoginForm(AuthenticationForm):
 class PerfilUsuarioForm(forms.ModelForm):
     class Meta:
         model = PerfilUsuario
-        fields = ['biografia', 'avatar', 'telefono', 'ubicacion']
-
+        fields = ['biografia', 'telefono', 'ubicacion', 'avatar', 'rango']  # incluye rango para edición por admin
 
 class RelatoForm(forms.ModelForm):
     class Meta:

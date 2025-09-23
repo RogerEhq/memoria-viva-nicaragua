@@ -1,0 +1,100 @@
+{% extends 'locales/base.html' %}
+
+{% block content %}
+<style>
+  .usuarios-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+
+  .usuario-card {
+    background-color: var(--color-light-beige);
+    border: 2px solid var(--color-secondary);
+    border-radius: 16px;
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 300px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    animation: fadeInUp 0.6s ease forwards;
+  }
+
+  .usuario-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .usuario-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--color-accent-2);
+    margin-bottom: 1rem;
+  }
+
+  .usuario-nombre {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--color-accent-2);
+    margin-bottom: 0.5rem;
+  }
+
+  .usuario-rango {
+    font-weight: bold;
+    color: var(--color-accent-1);
+    margin-bottom: 1rem;
+  }
+
+  .usuario-card a.perfil-link {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 8px 16px;
+    background-color: var(--color-secondary);
+    color: var(--color-light-beige);
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+
+  .usuario-card a.perfil-link:hover {
+    background-color: var(--color-accent-1);
+  }
+
+  .usuario-card a.rango-link {
+    display: block;
+    margin-top: 0.8rem;
+    font-size: 0.9rem;
+    color: var(--color-accent-3);
+    text-decoration: underline;
+  }
+</style>
+
+<h2 class="section-title">Usuarios Registrados</h2>
+
+<div class="usuarios-grid">
+  {% for perfil in usuarios %}
+    <div class="usuario-card">
+      {% if perfil.avatar %}
+        <img src="{{ perfil.avatar.url }}" alt="Avatar de {{ perfil.usuario.username }}" class="usuario-avatar">
+      {% else %}
+        <img src="https://ui-avatars.com/api/?name={{ perfil.usuario.username }}&background=DCC7A1&color=6B4226&size=80" alt="Avatar por defecto" class="usuario-avatar">
+      {% endif %}
+
+      <div class="usuario-nombre">{{ perfil.usuario.username }}</div>
+      <div class="usuario-rango">{{ perfil.get_rango_display }}</div>
+
+      <a href="{% url 'perfil_publico' perfil.usuario.username %}" class="perfil-link">Ver perfil</a>
+
+
+    </div>
+  {% empty %}
+    <p>No hay usuarios registrados.</p>
+  {% endfor %}
+</div>
+{% endblock %}

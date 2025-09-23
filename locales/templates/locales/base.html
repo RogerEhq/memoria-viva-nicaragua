@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Memoria Viva Nicaragua</title>
+  <link rel="icon" href="/media/Memorias de mi pueblo icon.png" type="image/png">
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
 
@@ -35,6 +37,18 @@
       align-items: center;
       flex-wrap: wrap;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-logo img {
+      width: 120px;
+      height: auto;
+      border-radius: 8px;
     }
 
     .nav-links {
@@ -145,6 +159,12 @@
         align-items: flex-start;
       }
 
+      .nav-left {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
       .nav-links {
         flex-direction: column;
         gap: 0.5rem;
@@ -158,15 +178,23 @@
 </head>
 <body>
   <nav>
-    <div class="nav-links">
-      <a href="{% url 'home_view' %}">Inicio</a>
-      <a href="{% url 'biblioteca_view' %}">Biblioteca</a>
-      <a href="{% url 'evento_cultural_list' %}">Calendario Cultural</a>
-      {% if user.is_authenticated %}
-        <a href="{% url 'create_relato_view' %}">Crear Relato</a>
-        <a href="{% url 'sugerir_negocio_view' %}">Sugerir Negocio</a>
-        <a href="{% url 'create_receta_view' %}">Crear Receta</a>
-      {% endif %}
+    <div class="nav-left">
+      <div class="nav-logo">
+
+          <img src="/media/Memorias de mi pueblo.png" alt="Memorias de mi Pueblo">
+
+      </div>
+      <div class="nav-links">
+        <a href="{% url 'home_view' %}">Inicio</a>
+        <a href="{% url 'biblioteca_view' %}">Biblioteca</a>
+        <a href="{% url 'evento_cultural_list' %}">Calendario Cultural</a>
+        <a href="{% url 'lista_usuarios' %}">Usuarios</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'create_relato_view' %}">Crear Relato</a>
+          <a href="{% url 'sugerir_negocio_view' %}">Sugerir Negocio</a>
+          <a href="{% url 'create_receta_view' %}">Crear Receta</a>
+        {% endif %}
+      </div>
     </div>
 
     {% if user.is_authenticated %}
