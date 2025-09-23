@@ -7,85 +7,20 @@
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
 
   :root {
-    --color-primary: #6B4226; /* Marrón cacao */
-    --color-secondary: #DCC7A1; /* Beige arena */
-    --color-contrast: #3F6B4C; /* Verde cafetal */
-    --color-light: #F9F6F2; /* Fondo claro */
+    --color-arena: #DCC7A1;
+    --color-cacao: #6B4226;
+    --color-cafetal: #3F6B4C;
+    --color-lago: #2F5C8F;
+    --color-terracota: #B85C38;
+    --color-turquesa: #2CBEC6;
+    --color-light: #F9F6F2;
     --color-white: #ffffff;
   }
 
   body {
     font-family: 'Lato', sans-serif;
-    background-color: var(--color-light);
-    color: var(--color-primary);
-  }
-
-  .receta-container {
-    max-width: 700px;
-    margin: 2rem auto;
-    background-color: var(--color-white);
-    padding: 2rem;
-    border-radius: 16px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    animation: fadeInUp 0.8s ease forwards;
-  }
-
-  h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.2rem;
-    color: var(--color-contrast);
-    margin-bottom: 1rem;
-    text-align: center;
-  }
-
-  p {
-    font-size: 1rem;
-    line-height: 1.6;
-    color: var(--color-primary);
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
-  .alert-danger {
-    background-color: #f8d7da;
-    border: 1px solid #f5c2c7;
-    color: #842029;
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
-  }
-
-  form {
-    font-family: 'Lato', sans-serif;
-  }
-
-  button[type="submit"] {
-    background-color: var(--color-primary);
-    color: var(--color-white);
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-    margin-top: 1rem;
-  }
-
-  button[type="submit"]:hover {
-    background-color: var(--color-contrast);
-  }
-
-  .btn-link {
-    display: block;
-    text-align: center;
-    margin-top: 2rem;
-    color: var(--color-contrast);
-    font-weight: bold;
-    text-decoration: none;
-  }
-
-  .btn-link:hover {
-    text-decoration: underline;
+    background-color: var(--color-arena);
+    color: var(--color-cacao);
   }
 
   @keyframes fadeInUp {
@@ -97,6 +32,137 @@
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  .receta-container {
+    max-width: 750px;
+    margin: 3rem auto;
+    background-color: var(--color-white);
+    padding: 3.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 0.8s ease forwards;
+    border: 1px solid var(--color-cafetal);
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: var(--color-terracota);
+    margin-bottom: 1rem;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-cacao);
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .alert-danger {
+    background-color: var(--color-terracota);
+    border: 1px solid var(--color-cacao);
+    color: var(--color-white);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    text-align: left;
+  }
+
+  .alert-danger strong {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+  }
+
+  .alert-danger ul {
+    margin-top: 1rem;
+    padding-left: 20px;
+  }
+
+  .alert-danger li {
+    font-size: 0.95rem;
+    margin-bottom: 5px;
+  }
+
+  form {
+    font-family: 'Lato', sans-serif;
+    /* Centra el formulario dentro del contenedor */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .form-group {
+    width: 100%;
+    max-width: 500px; /* Limita el ancho de los campos para que no sean demasiado largos */
+  }
+
+  .form-group label {
+    font-weight: bold;
+    color: var(--color-lago);
+    text-align: left;
+    display: block;
+    margin-top: 1.5rem;
+  }
+
+  .form-control {
+    border: 2px solid var(--color-arena);
+    border-radius: 12px;
+    padding: 12px;
+    background-color: var(--color-light);
+    color: var(--color-cacao);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    width: 100%; /* Asegura que los campos llenen el ancho del form-group */
+  }
+
+  .form-control:focus {
+    border-color: var(--color-turquesa);
+    box-shadow: 0 0 0 4px rgba(44, 190, 198, 0.2);
+    outline: none;
+  }
+
+  textarea.form-control {
+    min-height: 150px;
+  }
+
+  button[type="submit"] {
+    background-color: var(--color-cacao);
+    color: var(--color-white);
+    padding: 14px 28px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 2rem;
+    width: 100%;
+    max-width: 500px; /* Alinear con los campos de arriba */
+    letter-spacing: 0.5px;
+  }
+
+  button[type="submit"]:hover {
+    background-color: var(--color-cafetal);
+    transform: translateY(-2px);
+  }
+
+  .btn-link {
+    display: block;
+    text-align: center;
+    margin-top: 2.5rem;
+    color: var(--color-terracota);
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+  }
+
+  .btn-link:hover {
+    color: var(--color-lago);
+    text-decoration: underline;
   }
 </style>
 
@@ -126,6 +192,6 @@
     <button type="submit">Enviar receta</button>
   </form>
 
-  <a href="{% url 'biblioteca_view' %}" class="btn btn-link">← Volver a la biblioteca</a>
+  <a href="{% url 'biblioteca_view' %}" class="btn-link">← Volver a la biblioteca</a>
 </div>
 {% endblock %}

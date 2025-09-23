@@ -5,56 +5,54 @@
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
 
   :root {
-    --color-primary: #6B4226;
-    --color-secondary: #DCC7A1;
-    --color-contrast: #3F6B4C;
+    --color-arena: #DCC7A1;
+    --color-cacao: #6B4226;
+    --color-cafetal: #3F6B4C;
+    --color-lago: #2F5C8F;
+    --color-terracota: #B85C38;
+    --color-turquesa: #2CBEC6;
     --color-light: #F9F6F2;
     --color-white: #ffffff;
   }
 
   body {
     font-family: 'Lato', sans-serif;
-    background-color: var(--color-light);
-    color: var(--color-primary);
+    color: var(--color-cacao);
+    background-color: var(--color-arena);
   }
 
   @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   .relato-container {
-    max-width: 720px;
+    max-width: 750px;
     margin: 3rem auto;
     background-color: var(--color-white);
-    padding: 2.5rem;
+    padding: 3.5rem;
     border-radius: 20px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     animation: fadeInUp 0.8s ease forwards;
   }
 
   h1 {
     font-family: 'Playfair Display', serif;
     font-size: 2.5rem;
-    color: var(--color-contrast);
+    color: var(--color-terracota);
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
     position: relative;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   h1::after {
     content: '';
     display: block;
-    width: 60px;
+    width: 80px;
     height: 4px;
-    background-color: var(--color-secondary);
-    margin: 1rem auto 0;
+    background-color: var(--color-cafetal);
+    margin: 1.5rem auto 0;
     border-radius: 2px;
   }
 
@@ -64,6 +62,9 @@
 
   form p {
     margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    color: var(--color-lago);
+    font-weight: bold;
   }
 
   input[type="text"],
@@ -71,38 +72,48 @@
   textarea,
   select {
     width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
+    padding: 14px;
+    margin-top: 8px;
+    border: 2px solid var(--color-arena);
+    border-radius: 12px;
     font-size: 1rem;
     font-family: 'Lato', sans-serif;
-    background-color: #fff;
-    transition: border-color 0.3s ease;
+    background-color: var(--color-light);
+    color: var(--color-cacao);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
 
   input:focus,
   textarea:focus,
   select:focus {
-    border-color: var(--color-contrast);
+    border-color: var(--color-turquesa);
+    box-shadow: 0 0 0 4px rgba(44, 190, 198, 0.2);
     outline: none;
   }
 
+  textarea {
+    min-height: 200px;
+    resize: vertical;
+  }
+
   button[type="submit"] {
-    background-color: var(--color-primary);
+    background-color: var(--color-cacao);
     color: var(--color-white);
-    padding: 12px 24px;
+    padding: 14px 28px;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
     font-weight: bold;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
     display: block;
-    margin: 2rem auto 0;
+    margin: 3rem auto 0;
+    letter-spacing: 0.5px;
   }
 
   button[type="submit"]:hover {
-    background-color: var(--color-contrast);
+    background-color: var(--color-cafetal);
+    transform: translateY(-2px);
   }
 </style>
 

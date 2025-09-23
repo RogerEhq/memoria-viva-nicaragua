@@ -5,17 +5,20 @@
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
 
   :root {
-    --color-primary: #6B4226;
-    --color-secondary: #DCC7A1;
-    --color-contrast: #3F6B4C;
+    --color-arena: #DCC7A1;
+    --color-cacao: #6B4226;
+    --color-cafetal: #3F6B4C;
+    --color-lago: #2F5C8F;
+    --color-terracota: #B85C38;
+    --color-turquesa: #2CBEC6;
     --color-light: #F9F6F2;
     --color-white: #ffffff;
   }
 
   body {
     font-family: 'Lato', sans-serif;
-    background-color: var(--color-light);
-    color: var(--color-primary);
+    background-color: var(--color-arena);
+    color: var(--color-cacao);
   }
 
   @keyframes fadeInUp {
@@ -31,92 +34,109 @@
 
   .container {
     max-width: 900px;
-    margin: 2rem auto;
+    margin: 2.5rem auto;
     animation: fadeInUp 0.8s ease forwards;
   }
 
   h1 {
     font-family: 'Playfair Display', serif;
     font-size: 2.5rem;
-    color: var(--color-contrast);
+    color: var(--color-terracota);
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .card {
     background-color: var(--color-white);
-    border: none;
-    border-radius: 16px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--color-cafetal);
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     animation: fadeInUp 0.6s ease forwards;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
   }
 
   .card-body {
-    padding: 1.5rem;
+    padding: 2rem;
   }
 
   .card-title {
     font-family: 'Playfair Display', serif;
-    font-size: 1.5rem;
-    color: var(--color-contrast);
+    font-size: 1.75rem;
+    color: var(--color-lago);
     margin-bottom: 0.5rem;
   }
 
   .card-subtitle {
-    font-size: 0.95rem;
-    color: var(--color-primary);
-    line-height: 1.6;
+    font-size: 1rem;
+    color: var(--color-cacao);
+    line-height: 1.7;
   }
 
   .card-text {
     font-size: 1rem;
-    color: var(--color-primary);
-    margin-top: 1rem;
+    color: var(--color-cacao);
+    margin-top: 1.5rem;
+    line-height: 1.6;
   }
 
   .badge {
-    font-size: 0.9rem;
-    padding: 0.4em 0.8em;
-    border-radius: 6px;
+    font-size: 0.95rem;
+    padding: 0.5em 1em;
+    border-radius: 8px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
   }
 
   .bg-success {
-    background-color: var(--color-contrast);
+    background-color: var(--color-cafetal);
     color: var(--color-white);
   }
 
   .bg-warning {
-    background-color: var(--color-secondary);
-    color: var(--color-primary);
+    background-color: var(--color-turquesa);
+    color: var(--color-white);
   }
 
   .alert-info {
-    background-color: var(--color-secondary);
-    color: var(--color-primary);
-    border-radius: 8px;
-    padding: 1rem;
+    background-color: var(--color-light);
+    color: var(--color-cacao);
+    border: 2px solid var(--color-cafetal);
+    border-radius: 12px;
+    padding: 2rem;
     text-align: center;
     font-weight: bold;
   }
 
   .pagination {
-    margin-top: 2rem;
+    margin-top: 3rem;
     font-family: 'Lato', sans-serif;
   }
 
   .pagination .page-link {
-    color: var(--color-contrast);
+    color: var(--color-lago);
     font-weight: bold;
     border: none;
     background-color: transparent;
+    font-size: 1.1rem;
+    transition: color 0.3s ease, transform 0.2s ease;
   }
 
   .pagination .page-link:hover {
+    color: var(--color-turquesa);
     text-decoration: underline;
+    transform: translateY(-2px);
   }
 
   .pagination .page-item.disabled .page-link {
-    color: var(--color-primary);
+    color: var(--color-terracota);
+    opacity: 0.6;
+    pointer-events: none;
   }
 </style>
 
@@ -124,7 +144,7 @@
   <h1>📅 Calendario Cultural</h1>
 
   {% for evento in page_obj %}
-    <div class="card mb-3 shadow-sm">
+    <div class="card mb-4 shadow-sm">
       <div class="card-body">
         <h4 class="card-title">{{ evento.nombre }}</h4>
         <p class="card-subtitle">
