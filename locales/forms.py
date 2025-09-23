@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit
-from .models import Relato, SugerenciaNegocio, Receta
+from .models import Relato, SugerenciaNegocio, Receta,PerfilUsuario
 
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -16,6 +16,12 @@ class UserLoginForm(AuthenticationForm):
     class Meta:
         model = User
         fields = ['username']
+
+class PerfilUsuarioForm(forms.ModelForm):
+    class Meta:
+        model = PerfilUsuario
+        fields = ['biografia', 'avatar', 'telefono', 'ubicacion']
+
 
 class RelatoForm(forms.ModelForm):
     class Meta:

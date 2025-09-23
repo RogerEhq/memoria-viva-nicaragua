@@ -1,189 +1,227 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memoria Viva Nicaragua</title>
-    <style>
-        /* Importación de fuentes Playfair Display y Lato desde Google Fonts */
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memoria Viva Nicaragua</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
 
-        /* Definición de variables de colores con la paleta especificada */
-        :root {
-            --color-primary: #DCC7A1; /* Beige arena */
-            --color-secondary: #6B4226; /* Marrón cacao */
-            --color-accent-1: #3F6B4C; /* Verde cafetal */
-            --color-accent-2: #2F5C8F; /* Azul lago */
-            --color-accent-3: #B85C38; /* Terracota */
-            --color-highlight: #2CBEC6; /* Turquesa */
-            --color-light-beige: #F0EBE7; /* Beige muy claro */
-        }
+    :root {
+      --color-primary: #DCC7A1;
+      --color-secondary: #6B4226;
+      --color-accent-1: #3F6B4C;
+      --color-accent-2: #2F5C8F;
+      --color-accent-3: #B85C38;
+      --color-highlight: #2CBEC6;
+      --color-light-beige: #F0EBE7;
+    }
 
-        body {
-            font-family: 'Lato', sans-serif;
-            background-color: var(--color-primary);
-            color: var(--color-secondary);
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+    body {
+      font-family: 'Lato', sans-serif;
+      background-color: var(--color-primary);
+      color: var(--color-secondary);
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
 
-        /* Estilos del encabezado y navegación */
-        nav {
-            background-color: var(--color-light-beige);
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
+    nav {
+      background-color: var(--color-light-beige);
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
 
-        nav a {
-            font-family: 'Lato', sans-serif;
-            color: var(--color-secondary);
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1rem;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
 
-        nav a:hover {
-            background-color: var(--color-accent-1);
-            color: white;
-        }
+    nav a {
+      font-family: 'Lato', sans-serif;
+      color: var(--color-secondary);
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
 
-        /* Estilos para los títulos principales */
-        h1, h2 {
-            font-family: 'Playfair Display', serif;
-            color: var(--color-accent-2);
-            text-align: center;
-            position: relative;
-        }
+    nav a:hover {
+      background-color: var(--color-accent-1);
+      color: white;
+    }
 
-        h1::after {
-            content: '';
-            display: block;
-            width: 80px;
-            height: 4px;
-            background-color: var(--color-highlight);
-            margin: 1.5rem auto 0;
-        }
+    .perfil-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
 
-        /* Estilos para el contenido principal */
-        main {
-            flex: 1;
-            padding: 2rem;
-        }
+    .perfil-nav img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--color-accent-2);
+    }
 
-        /* Estilos de la barra de mensajes */
-        .messages {
-            list-style: none;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 8px;
-            text-align: center;
-        }
-        .messages li {
-            padding: 0.8rem 1.5rem;
-            margin-bottom: 0.5rem;
-            border-radius: 8px;
-            font-weight: bold;
-        }
+    .perfil-nav span {
+      font-weight: bold;
+      color: var(--color-secondary);
+    }
 
-        .messages .success {
-            background-color: rgba(63, 107, 76, 0.8);
-            color: white;
-        }
+    h1, h2 {
+      font-family: 'Playfair Display', serif;
+      color: var(--color-accent-2);
+      text-align: center;
+      position: relative;
+    }
 
-        .messages .error {
-            background-color: rgba(184, 92, 56, 0.8);
-            color: white;
-        }
+    h1::after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 4px;
+      background-color: var(--color-highlight);
+      margin: 1.5rem auto 0;
+    }
 
-        /* Estilos del pie de página */
-        hr {
-            border: none;
-            border-top: 2px solid var(--color-highlight);
-            width: 80%;
-            margin: 2rem auto;
-        }
+    main {
+      flex: 1;
+      padding: 2rem;
+    }
 
-        footer {
-            background-color: var(--color-secondary);
-            color: var(--color-light-beige);
-            text-align: center;
-            padding: 1rem;
-        }
+    .messages {
+      list-style: none;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 8px;
+      text-align: center;
+    }
 
-        /* Estilos responsivos */
-        @media (max-width: 600px) {
-            nav {
-                flex-direction: column;
-                padding: 1rem;
-            }
-            nav a {
-                padding: 0.5rem;
-                font-size: 0.9rem;
-            }
-        }
-    </style>
+    .messages li {
+      padding: 0.8rem 1.5rem;
+      margin-bottom: 0.5rem;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .messages .success {
+      background-color: rgba(63, 107, 76, 0.8);
+      color: white;
+    }
+
+    .messages .error {
+      background-color: rgba(184, 92, 56, 0.8);
+      color: white;
+    }
+
+    hr {
+      border: none;
+      border-top: 2px solid var(--color-highlight);
+      width: 80%;
+      margin: 2rem auto;
+    }
+
+    footer {
+      background-color: var(--color-secondary);
+      color: var(--color-light-beige);
+      text-align: center;
+      padding: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .perfil-nav {
+        margin-top: 1rem;
+      }
+    }
+  </style>
 </head>
 <body>
-    <nav>
-        <a href="{% url 'home_view' %}">Inicio</a>
-        <a href="{% url 'biblioteca_view' %}">Biblioteca</a>
-        <a href="{% url 'evento_cultural_list' %}">Calendario Cultural</a>
-        {% if user.is_authenticated %}
-            <a href="{% url 'create_relato_view' %}">Crear Relato</a>
-            <a href="{% url 'sugerir_negocio_view' %}">Sugerir Negocio</a>
-            <a href="{% url 'create_receta_view' %}">Crear Receta</a> <!-- ✅ Enlace añadido -->
-            <a href="{% url 'logout_view' %}">Cerrar Sesión</a>
-        {% else %}
-            <a href="{% url 'login_view' %}">Iniciar Sesión</a>
-            <a href="{% url 'register_view' %}">Registrarse</a>
+  <nav>
+    <div class="nav-links">
+      <a href="{% url 'home_view' %}">Inicio</a>
+      <a href="{% url 'biblioteca_view' %}">Biblioteca</a>
+      <a href="{% url 'evento_cultural_list' %}">Calendario Cultural</a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'create_relato_view' %}">Crear Relato</a>
+        <a href="{% url 'sugerir_negocio_view' %}">Sugerir Negocio</a>
+        <a href="{% url 'create_receta_view' %}">Crear Receta</a>
+      {% endif %}
+    </div>
+
+    {% if user.is_authenticated %}
+      <div class="perfil-nav">
+        {% if user.perfilusuario.avatar %}
+          <img src="{{ user.perfilusuario.avatar.url }}" alt="Avatar">
         {% endif %}
-    </nav>
-    <hr>
+        <span>{{ user.username }}</span>
+        <a href="{% url 'perfil_view' %}">Perfil</a>
+        <a href="{% url 'logout_view' %}">Cerrar Sesión</a>
+      </div>
+    {% else %}
+      <div class="nav-links">
+        <a href="{% url 'login_view' %}">Iniciar Sesión</a>
+        <a href="{% url 'register_view' %}">Registrarse</a>
+      </div>
+    {% endif %}
+  </nav>
 
-    <main>
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+  <hr>
 
-        {% block content %}{% endblock %}
-    </main>
+  <main>
+    {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
 
-    <hr>
-    <footer>
-        <p>Derechos Reservados © 2025 Memoria Viva Nicaragua</p>
-    </footer>
+    {% block content %}{% endblock %}
+  </main>
 
-    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
-    <script>
-      function toggleMapa(id, direccion) {
-        const mapaDiv = document.getElementById(`mapa-${id}`);
-        const boton = document.getElementById(`btn-${id}`);
+  <hr>
+  <footer>
+    <p>Derechos Reservados © 2025 Memoria Viva Nicaragua</p>
+  </footer>
 
-        if (mapaDiv.innerHTML.trim() === "") {
-          htmx.ajax('GET', `/mostrar_mapa/?ubicacion=${direccion}`, {
-            target: mapaDiv,
-            swap: 'innerHTML'
-          });
-          boton.textContent = "Ocultar mapa";
-        } else {
-          mapaDiv.innerHTML = "";
-          boton.textContent = "Ver ubicación";
-        }
+  <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+  <script>
+    function toggleMapa(id, direccion) {
+      const mapaDiv = document.getElementById(`mapa-${id}`);
+      const boton = document.getElementById(`btn-${id}`);
+
+      if (mapaDiv.innerHTML.trim() === "") {
+        htmx.ajax('GET', `/mostrar_mapa/?ubicacion=${direccion}`, {
+          target: mapaDiv,
+          swap: 'innerHTML'
+        });
+        boton.textContent = "Ocultar mapa";
+      } else {
+        mapaDiv.innerHTML = "";
+        boton.textContent = "Ver ubicación";
       }
-    </script>
+    }
+  </script>
 </body>
 </html>

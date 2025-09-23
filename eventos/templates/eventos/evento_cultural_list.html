@@ -1,14 +1,133 @@
 {% extends 'locales/base.html' %}
 
 {% block content %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
+
+  :root {
+    --color-primary: #6B4226;
+    --color-secondary: #DCC7A1;
+    --color-contrast: #3F6B4C;
+    --color-light: #F9F6F2;
+    --color-white: #ffffff;
+  }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background-color: var(--color-light);
+    color: var(--color-primary);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 2rem auto;
+    animation: fadeInUp 0.8s ease forwards;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: var(--color-contrast);
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .card {
+    background-color: var(--color-white);
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 0.6s ease forwards;
+  }
+
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--color-contrast);
+    margin-bottom: 0.5rem;
+  }
+
+  .card-subtitle {
+    font-size: 0.95rem;
+    color: var(--color-primary);
+    line-height: 1.6;
+  }
+
+  .card-text {
+    font-size: 1rem;
+    color: var(--color-primary);
+    margin-top: 1rem;
+  }
+
+  .badge {
+    font-size: 0.9rem;
+    padding: 0.4em 0.8em;
+    border-radius: 6px;
+  }
+
+  .bg-success {
+    background-color: var(--color-contrast);
+    color: var(--color-white);
+  }
+
+  .bg-warning {
+    background-color: var(--color-secondary);
+    color: var(--color-primary);
+  }
+
+  .alert-info {
+    background-color: var(--color-secondary);
+    color: var(--color-primary);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .pagination {
+    margin-top: 2rem;
+    font-family: 'Lato', sans-serif;
+  }
+
+  .pagination .page-link {
+    color: var(--color-contrast);
+    font-weight: bold;
+    border: none;
+    background-color: transparent;
+  }
+
+  .pagination .page-link:hover {
+    text-decoration: underline;
+  }
+
+  .pagination .page-item.disabled .page-link {
+    color: var(--color-primary);
+  }
+</style>
+
 <div class="container mt-4">
-  <h1 class="mb-4">📅 Calendario Cultural</h1>
+  <h1>📅 Calendario Cultural</h1>
 
   {% for evento in page_obj %}
     <div class="card mb-3 shadow-sm">
       <div class="card-body">
         <h4 class="card-title">{{ evento.nombre }}</h4>
-        <p class="card-subtitle text-muted">
+        <p class="card-subtitle">
           <strong>📍 Ubicación:</strong> {{ evento.ubicacion_texto }}<br>
           <strong>🗓️ Fecha:</strong>
           {{ evento.fecha_inicio|date:"d M Y" }}
@@ -16,7 +135,7 @@
             – {{ evento.fecha_fin|date:"d M Y" }}
           {% endif %}
         </p>
-        <p class="card-text mt-2">{{ evento.descripcion|truncatewords:50 }}</p>
+        <p class="card-text">{{ evento.descripcion|truncatewords:50 }}</p>
 
         {% if evento.publicado %}
           <span class="badge bg-success">Publicado</span>

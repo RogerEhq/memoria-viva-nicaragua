@@ -7,8 +7,8 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.db.models import Q
 from django.core.paginator import Paginator
-from .forms import RecetaForm
-from .models import Receta
+from .forms import RecetaForm, PerfilUsuarioForm
+from .models import Receta, PerfilUsuario
 
 from eventos.models import EventoCultural
 from .forms import UserRegisterForm, UserLoginForm, RelatoForm, SugerenciaNegocioForm, RecetaForm
@@ -31,6 +31,8 @@ def register_view(request):
 
 
 def login_view(request):
+    from locales.models import PerfilUsuario
+
     if request.method == 'POST':
         form = UserLoginForm(request, data=request.POST)
         if form.is_valid():
@@ -39,6 +41,10 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
+
+                # ✅ Verifica o crea el perfil
+                PerfilUsuario.objects.get_or_create(usuario=user)
+
                 messages.success(request, f'¡Bienvenido, {username}!')
                 return redirect('home_view')
             else:
@@ -57,7 +63,21 @@ def logout_view(request):
 def home_view(request):
     relatos = Relato.objects.filter(status='approved')
     negocios = Negocio.objects.all()
-    return render(request, 'locales/home.html', {'relatos': relatos, 'negocios': negocios})
+
+    perfil = None
+    if request.user.is_authenticated:
+        try:
+            perfil = request.user.perfilusuario
+        except PerfilUsuario.DoesNotExist:
+            perfil = PerfilUsuario.objects.create(usuario=request.user)
+
+    context = {
+        'relatos': relatos,
+        'negocios': negocios,
+        'perfil': perfil,
+    }
+    return render(request, 'locales/home.html', context)
+
 
 
 @login_required
@@ -165,3 +185,23 @@ def evento_cultural_list(request):
     page_obj = paginator.get_page(page_number)
 
     return render(request, 'eventos/evento_cultural_list.html', {'page_obj': page_obj})
+
+
+@login_required
+def editar_perfil(request):
+    from locales.models import PerfilUsuario
+
+    try:
+        perfil = request.user.perfilusuario
+    except PerfilUsuario.DoesNotExist:
+        perfil = PerfilUsuario.objects.create(usuario=request.user)
+
+    if request.method == 'POST':
+        form = PerfilUsuarioForm(request.POST, request.FILES, instance=perfil)
+        if form.is_valid():
+            form.save()
+            return redirect('perfil_view')  # Asegúrate de tener esta vista y URL
+    else:
+        form = PerfilUsuarioForm(instance=perfil)
+
+    return render(request, 'usuarios/editar_perfil.html', {'form': form})

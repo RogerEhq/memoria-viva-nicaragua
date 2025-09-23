@@ -2,34 +2,36 @@
 
 {% block content %}
 <style>
-    /* Importación de fuentes Playfair Display y Lato desde Google Fonts */
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
 
-    /* Definición de variables de colores con la paleta especificada */
     :root {
-        --color-primary: #DCC7A1; /* Beige arena */
-        --color-secondary: #6B4226; /* Marrón cacao */
-        --color-accent-1: #3F6B4C; /* Verde cafetal */
-        --color-accent-2: #2F5C8F; /* Azul lago */
-        --color-accent-3: #B85C38; /* Terracota */
-        --color-highlight: #2CBEC6; /* Turquesa */
-        --color-light-beige: #F0EBE7; /* Beige muy claro */
+        --color-primary: #6B4226;
+        --color-secondary: #DCC7A1;
+        --color-contrast: #3F6B4C;
+        --color-light: #F9F6F2;
+        --color-white: #ffffff;
     }
 
     body {
         font-family: 'Lato', sans-serif;
-        color: var(--color-secondary);
-        background-color: var(--color-light-beige);
+        color: var(--color-primary);
+        background-color: var(--color-light);
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     .section-title {
         font-family: 'Playfair Display', serif;
-        color: var(--color-accent-2);
+        color: var(--color-contrast);
         font-size: 2.5rem;
         margin-top: 2rem;
         margin-bottom: 2.5rem;
-        position: relative;
         text-align: center;
+        animation: fadeInUp 0.8s ease forwards;
+        position: relative;
     }
 
     .section-title::after {
@@ -37,8 +39,9 @@
         display: block;
         width: 80px;
         height: 4px;
-        background-color: var(--color-highlight);
+        background-color: var(--color-secondary);
         margin: 1.5rem auto 0;
+        border-radius: 2px;
     }
 
     .card-container {
@@ -47,16 +50,19 @@
         gap: 2rem;
         justify-content: center;
         padding: 0 1rem;
+        animation: fadeInUp 1s ease forwards;
     }
 
     .card {
-        background-color: white;
+        background-color: var(--color-white);
         padding: 2rem;
         border-radius: 16px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         width: 100%;
         max-width: 400px;
+        font-family: 'Lato', sans-serif;
+        animation: fadeInUp 0.6s ease forwards;
     }
 
     .card:hover {
@@ -66,7 +72,7 @@
 
     .card h3 {
         font-family: 'Playfair Display', serif;
-        color: var(--color-accent-1);
+        color: var(--color-contrast);
         margin-top: 0;
         margin-bottom: 0.5rem;
     }
@@ -74,7 +80,7 @@
     .card p {
         font-size: 1rem;
         line-height: 1.6;
-        color: #4A4A4A;
+        color: var(--color-primary);
     }
 
     .card img {
@@ -85,66 +91,66 @@
     }
 
     .card button {
-        background-color: var(--color-accent-3);
-        color: white;
+        background-color: var(--color-primary);
+        color: var(--color-white);
         padding: 10px 20px;
         border: none;
         border-radius: 8px;
         cursor: pointer;
         font-weight: bold;
         transition: background-color 0.3s ease;
+        font-family: 'Lato', sans-serif;
     }
 
     .card button:hover {
-        background-color: var(--color-accent-2);
+        background-color: var(--color-contrast);
     }
 
     hr {
         border: none;
-        border-top: 2px solid var(--color-primary);
+        border-top: 2px solid var(--color-secondary);
         width: 80%;
         margin: 2rem auto;
     }
 </style>
-  <h1 class="section-title">Bienvenidos a Memoria Viva Nicaragua</h1>
 
-  <h2 class="section-title">Relatos Culturales</h2>
-  <div class="card-container">
-    {% for relato in relatos %}
-      <div class="card">
-        <h3>{{ relato.title }}</h3>
-        <p>{{ relato.content|safe|truncatewords:50 }}</p>
-        {% if relato.image %}
-          <img src="{{ relato.image.url }}" alt="{{ relato.title }}">
-        {% endif %}
-        <p>Autor: {{ relato.author.username }}</p>
-      </div>
-    {% empty %}
-      <p>No hay relatos aprobados aún.</p>
-    {% endfor %}
-  </div>
+<h1 class="section-title">Bienvenidos a Memoria Viva Nicaragua</h1>
 
-  <hr>
+<h2 class="section-title">Relatos Culturales</h2>
+<div class="card-container">
+  {% for relato in relatos %}
+    <div class="card">
+      <h3>{{ relato.title }}</h3>
+      <p>{{ relato.content|safe|truncatewords:50 }}</p>
+      {% if relato.image %}
+        <img src="{{ relato.image.url }}" alt="{{ relato.title }}">
+      {% endif %}
+      <p>Autor: {{ relato.author.username }}</p>
+    </div>
+  {% empty %}
+    <p>No hay relatos aprobados aún.</p>
+  {% endfor %}
+</div>
 
-  <h2 class="section-title">Directorio de Negocios</h2>
-  <div class="card-container">
-    {% for negocio in negocios %}
-      <div class="card">
-        <h3>{{ negocio.name }}</h3>
-        <p>Categoría: {{ negocio.get_category_display }}</p>
-        <p>Descripción: {{ negocio.description }}</p>
-        <p>Dirección: {{ negocio.address_text }}</p>
+<hr>
 
-        <!-- Botón toggle con función JS -->
-        <button onclick="toggleMapa('{{ negocio.id }}', '{{ negocio.address_text|urlencode }}')" id="btn-{{ negocio.id }}">
-          Ver ubicación
-        </button>
+<h2 class="section-title">Directorio de Negocios</h2>
+<div class="card-container">
+  {% for negocio in negocios %}
+    <div class="card">
+      <h3>{{ negocio.name }}</h3>
+      <p>Categoría: {{ negocio.get_category_display }}</p>
+      <p>Descripción: {{ negocio.description }}</p>
+      <p>Dirección: {{ negocio.address_text }}</p>
 
-        <!-- Contenedor del mapa -->
-        <div id="mapa-{{ negocio.id }}" style="margin-top: 10px;"></div>
-      </div>
-    {% empty %}
-      <p>No hay negocios en el directorio.</p>
-    {% endfor %}
-  </div>
+      <button onclick="toggleMapa('{{ negocio.id }}', '{{ negocio.address_text|urlencode }}')" id="btn-{{ negocio.id }}">
+        Ver ubicación
+      </button>
+
+      <div id="mapa-{{ negocio.id }}" style="margin-top: 10px;"></div>
+    </div>
+  {% empty %}
+    <p>No hay negocios en el directorio.</p>
+  {% endfor %}
+</div>
 {% endblock %}

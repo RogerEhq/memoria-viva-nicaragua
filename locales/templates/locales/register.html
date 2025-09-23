@@ -1,129 +1,136 @@
 {% extends 'locales/base.html' %}
 
 {% block content %}
-    <style>
-        /* Importación de fuentes Playfair Display y Lato desde Google Fonts */
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
 
-        /* Definición de variables de colores con la paleta especificada */
-        :root {
-            --color-primary: #DCC7A1; /* Beige arena */
-            --color-secondary: #6B4226; /* Marrón cacao */
-            --color-accent-1: #3F6B4C; /* Verde cafetal */
-            --color-accent-2: #2F5C8F; /* Azul lago */
-            --color-accent-3: #B85C38; /* Terracota */
-            --color-highlight: #2CBEC6; /* Turquesa */
-            --color-light-beige: #F0EBE7; /* Beige muy claro */
-        }
+  :root {
+    --color-primary: #6B4226; /* Marrón cacao */
+    --color-secondary: #DCC7A1; /* Beige arena */
+    --color-contrast: #3F6B4C; /* Verde cafetal */
+    --color-accent-2: #2F5C8F; /* Azul lago */
+    --color-accent-3: #B85C38; /* Terracota */
+    --color-highlight: #2CBEC6; /* Turquesa */
+    --color-light: #F9F6F2; /* Fondo claro */
+    --color-white: #ffffff;
+  }
 
-        body {
-            font-family: 'Lato', sans-serif;
-            background-color: var(--color-primary); /* Fondo del cuerpo en beige arena */
-            color: var(--color-secondary);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            text-align: center;
-        }
+  body {
+    font-family: 'Lato', sans-serif;
+    background-color: var(--color-light);
+    color: var(--color-primary);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    text-align: center;
+  }
 
-        .container {
-            background-color: var(--color-light-beige); /* Contenedor en beige muy claro */
-            padding: 3rem 2rem;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            max-width: 450px;
-            width: 90%;
-            animation: fadeIn 1s ease-in-out;
-        }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+  .container {
+    background-color: var(--color-white);
+    padding: 3rem 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    max-width: 480px;
+    width: 90%;
+    animation: fadeInUp 1s ease-in-out;
+  }
 
-        h1, h2 {
-            font-family: 'Playfair Display', serif;
-            color: var(--color-accent-2); /* Título en azul lago */
-            font-size: 2.5rem;
-            margin-bottom: 2.5rem;
-            position: relative;
-        }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    color: var(--color-accent-2);
+    font-size: 2.5rem;
+    margin-bottom: 2.5rem;
+    position: relative;
+  }
 
-        h1::after, h2::after {
-            content: '';
-            width: 80px;
-            height: 4px;
-            background-color: var(--color-highlight); /* Subrayado en turquesa */
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
+  h1::after {
+    content: '';
+    width: 80px;
+    height: 4px;
+    background-color: var(--color-highlight);
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+  }
 
-        .form-group {
-            margin-bottom: 1.5rem;
-            text-align: left;
-        }
+  .form-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+  }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-            color: var(--color-secondary); /* Etiquetas en marrón cacao para mejor contraste */
-        }
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: var(--color-contrast);
+    font-size: 1rem;
+  }
 
-        /* Estilo para los campos de entrada generados por Django */
-        input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid var(--color-accent-3); /* Borde de entrada en terracota */
-            border-radius: 8px;
-            box-sizing: border-box;
-            background-color: var(--color-primary); /* Fondo de entrada en beige arena */
-            color: var(--color-secondary);
-            transition: border-color 0.3s ease;
-        }
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--color-accent-3);
+    border-radius: 10px;
+    box-sizing: border-box;
+    background-color: var(--color-secondary);
+    color: var(--color-primary);
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
 
-        input:focus {
-            outline: none;
-            border-color: var(--color-highlight); /* Borde de enfoque en turquesa */
-        }
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--color-highlight);
+  }
 
-        .btn-submit {
-            background-color: var(--color-accent-1); /* Botón en verde cafetal */
-            color: white;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 1.5rem;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
+  .btn-submit {
+    background-color: var(--color-contrast);
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 2rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
+  }
 
-        .btn-submit:hover {
-            background-color: var(--color-accent-2); /* Hover en azul lago */
-            transform: translateY(-3px);
-        }
-    </style>
-    <div class="container">
-        <h1>Registro de Colaborador</h1>
-        <form method="post">
-            {% csrf_token %}
-            <!-- Usamos un bucle para aplicar los estilos a cada campo del formulario -->
-            {% for field in form %}
-                <div class="form-group">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
-                </div>
-            {% endfor %}
-            <button type="submit" class="btn-submit">Registrarse</button>
-        </form>
-    </div>
+  .btn-submit:hover {
+    background-color: var(--color-accent-2);
+    transform: translateY(-3px);
+  }
+</style>
+
+<div class="container">
+  <h1>Registro de Colaborador</h1>
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn-submit">Registrarse</button>
+  </form>
+</div>
 {% endblock %}

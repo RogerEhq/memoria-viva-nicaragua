@@ -1,11 +1,115 @@
 {% extends 'locales/base.html' %}
 
 {% block content %}
-    <h1>Iniciar Sesion</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Iniciar Sesion</button>
-    </form>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
 
+  :root {
+    --color-primary: #6B4226; /* Marrón cacao */
+    --color-secondary: #DCC7A1; /* Beige arena */
+    --color-contrast: #3F6B4C; /* Verde cafetal */
+    --color-accent-2: #2F5C8F; /* Azul lago */
+    --color-accent-3: #B85C38; /* Terracota */
+    --color-light: #F9F6F2; /* Fondo claro */
+    --color-white: #ffffff;
+  }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background-color: var(--color-light);
+    color: var(--color-primary);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .login-container {
+    max-width: 480px;
+    margin: 3rem auto;
+    background-color: var(--color-white);
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    animation: fadeInUp 0.8s ease forwards;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    color: var(--color-accent-2);
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+  }
+
+  h1::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background-color: var(--color-secondary);
+    margin: 1rem auto 0;
+    border-radius: 2px;
+  }
+
+  form {
+    font-family: 'Lato', sans-serif;
+  }
+
+  form p {
+    margin-bottom: 1.5rem;
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 1rem;
+    background-color: #fff;
+    transition: border-color 0.3s ease;
+  }
+
+  input:focus {
+    border-color: var(--color-accent-2);
+    outline: none;
+  }
+
+  button[type="submit"] {
+    background-color: var(--color-accent-3);
+    color: var(--color-white);
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+    display: block;
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  button[type="submit"]:hover {
+    background-color: var(--color-accent-2);
+  }
+</style>
+
+<div class="login-container">
+  <h1>Iniciar Sesión</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Iniciar Sesión</button>
+  </form>
+</div>
 {% endblock %}

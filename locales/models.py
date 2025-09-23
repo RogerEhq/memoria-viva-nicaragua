@@ -98,3 +98,12 @@ class SaberPopular(models.Model):
     def __str__(self):
         return self.titulo
 
+class PerfilUsuario(models.Model):
+    usuario = models.OneToOneField(User, on_delete=models.CASCADE)
+    biografia = models.TextField(blank=True)
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    telefono = models.CharField(max_length=20, blank=True)
+    ubicacion = models.CharField(max_length=100, blank=True)
+
+    def __str__(self):
+        return f'Perfil de {self.usuario.username}'

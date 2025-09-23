@@ -17,6 +17,7 @@ urlpatterns = [
     path('mostrar_mapa/', locales_views.mostrar_mapa, name='mostrar_mapa'),
     path('create_receta/', create_receta_view, name='create_receta_view'),
 
+    path('perfil/', locales_views.editar_perfil, name='perfil_view'),
     # 📚 Nuevas rutas para la Biblioteca
     path('biblioteca/', locales_views.biblioteca_view, name='biblioteca_view'),
 

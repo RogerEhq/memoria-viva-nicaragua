@@ -3,7 +3,104 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container mt-4">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
+
+  :root {
+    --color-primary: #6B4226; /* Marrón cacao */
+    --color-secondary: #DCC7A1; /* Beige arena */
+    --color-contrast: #3F6B4C; /* Verde cafetal */
+    --color-light: #F9F6F2; /* Fondo claro */
+    --color-white: #ffffff;
+  }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background-color: var(--color-light);
+    color: var(--color-primary);
+  }
+
+  .receta-container {
+    max-width: 700px;
+    margin: 2rem auto;
+    background-color: var(--color-white);
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 0.8s ease forwards;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    color: var(--color-contrast);
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-primary);
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .alert-danger {
+    background-color: #f8d7da;
+    border: 1px solid #f5c2c7;
+    color: #842029;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+  }
+
+  form {
+    font-family: 'Lato', sans-serif;
+  }
+
+  button[type="submit"] {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    margin-top: 1rem;
+  }
+
+  button[type="submit"]:hover {
+    background-color: var(--color-contrast);
+  }
+
+  .btn-link {
+    display: block;
+    text-align: center;
+    margin-top: 2rem;
+    color: var(--color-contrast);
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .btn-link:hover {
+    text-decoration: underline;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<div class="receta-container">
   <h2>📖 Compartir una receta</h2>
   <p>Llena los campos para enviar tu receta. Será revisada por el equipo antes de publicarse.</p>
 
@@ -26,9 +123,9 @@
   <form method="post" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
     {{ form|crispy }}
-    <button type="submit" class="btn btn-primary mt-3">Enviar receta</button>
+    <button type="submit">Enviar receta</button>
   </form>
 
-  <a href="{% url 'biblioteca_view' %}" class="btn btn-link mt-4">← Volver a la biblioteca</a>
+  <a href="{% url 'biblioteca_view' %}" class="btn btn-link">← Volver a la biblioteca</a>
 </div>
 {% endblock %}
