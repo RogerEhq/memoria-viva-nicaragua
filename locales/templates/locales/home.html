@@ -1,41 +1,150 @@
 {% extends 'locales/base.html' %}
 
 {% block content %}
-  <h1>Bienvenidos a Memoria Viva Nicaragua</h1>
+<style>
+    /* Importación de fuentes Playfair Display y Lato desde Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
 
-  <h2>Relatos Culturales</h2>
-  {% for relato in relatos %}
-    <div>
-      <h3>{{ relato.title }}</h3>
-      <p>{{ relato.content|safe|truncatewords:50 }}</p>
-      {% if relato.image %}
-        <img src="{{ relato.image.url }}" alt="{{ relato.title }}" style="max-width:300px;">
-      {% endif %}
-      <p>Autor: {{ relato.author.username }}</p>
-    </div>
-    <hr>
-  {% empty %}
-    <p>No hay relatos aprobados aún.</p>
-  {% endfor %}
+    /* Definición de variables de colores con la paleta especificada */
+    :root {
+        --color-primary: #DCC7A1; /* Beige arena */
+        --color-secondary: #6B4226; /* Marrón cacao */
+        --color-accent-1: #3F6B4C; /* Verde cafetal */
+        --color-accent-2: #2F5C8F; /* Azul lago */
+        --color-accent-3: #B85C38; /* Terracota */
+        --color-highlight: #2CBEC6; /* Turquesa */
+        --color-light-beige: #F0EBE7; /* Beige muy claro */
+    }
 
-  <h2>Directorio de Negocios</h2>
-  {% for negocio in negocios %}
-    <div>
-      <h3>{{ negocio.name }}</h3>
-      <p>Categoría: {{ negocio.get_category_display }}</p>
-      <p>Descripción: {{ negocio.description }}</p>
-      <p>Dirección: {{ negocio.address_text }}</p>
+    body {
+        font-family: 'Lato', sans-serif;
+        color: var(--color-secondary);
+        background-color: var(--color-light-beige);
+    }
 
-      <!-- Botón toggle con función JS -->
-      <button onclick="toggleMapa('{{ negocio.id }}', '{{ negocio.address_text|urlencode }}')" id="btn-{{ negocio.id }}">
-        Ver ubicación
-      </button>
+    .section-title {
+        font-family: 'Playfair Display', serif;
+        color: var(--color-accent-2);
+        font-size: 2.5rem;
+        margin-top: 2rem;
+        margin-bottom: 2.5rem;
+        position: relative;
+        text-align: center;
+    }
 
-      <!-- Contenedor del mapa -->
-      <div id="mapa-{{ negocio.id }}" style="margin-top: 10px;"></div>
-    </div>
-    <hr>
-  {% empty %}
-    <p>No hay negocios en el directorio.</p>
-  {% endfor %}
+    .section-title::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        background-color: var(--color-highlight);
+        margin: 1.5rem auto 0;
+    }
+
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        justify-content: center;
+        padding: 0 1rem;
+    }
+
+    .card {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .card h3 {
+        font-family: 'Playfair Display', serif;
+        color: var(--color-accent-1);
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    .card p {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #4A4A4A;
+    }
+
+    .card img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .card button {
+        background-color: var(--color-accent-3);
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+    }
+
+    .card button:hover {
+        background-color: var(--color-accent-2);
+    }
+
+    hr {
+        border: none;
+        border-top: 2px solid var(--color-primary);
+        width: 80%;
+        margin: 2rem auto;
+    }
+</style>
+  <h1 class="section-title">Bienvenidos a Memoria Viva Nicaragua</h1>
+
+  <h2 class="section-title">Relatos Culturales</h2>
+  <div class="card-container">
+    {% for relato in relatos %}
+      <div class="card">
+        <h3>{{ relato.title }}</h3>
+        <p>{{ relato.content|safe|truncatewords:50 }}</p>
+        {% if relato.image %}
+          <img src="{{ relato.image.url }}" alt="{{ relato.title }}">
+        {% endif %}
+        <p>Autor: {{ relato.author.username }}</p>
+      </div>
+    {% empty %}
+      <p>No hay relatos aprobados aún.</p>
+    {% endfor %}
+  </div>
+
+  <hr>
+
+  <h2 class="section-title">Directorio de Negocios</h2>
+  <div class="card-container">
+    {% for negocio in negocios %}
+      <div class="card">
+        <h3>{{ negocio.name }}</h3>
+        <p>Categoría: {{ negocio.get_category_display }}</p>
+        <p>Descripción: {{ negocio.description }}</p>
+        <p>Dirección: {{ negocio.address_text }}</p>
+
+        <!-- Botón toggle con función JS -->
+        <button onclick="toggleMapa('{{ negocio.id }}', '{{ negocio.address_text|urlencode }}')" id="btn-{{ negocio.id }}">
+          Ver ubicación
+        </button>
+
+        <!-- Contenedor del mapa -->
+        <div id="mapa-{{ negocio.id }}" style="margin-top: 10px;"></div>
+      </div>
+    {% empty %}
+      <p>No hay negocios en el directorio.</p>
+    {% endfor %}
+  </div>
 {% endblock %}

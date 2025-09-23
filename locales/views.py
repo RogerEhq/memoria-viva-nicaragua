@@ -13,6 +13,7 @@ from .models import Receta
 from eventos.models import EventoCultural
 from .forms import UserRegisterForm, UserLoginForm, RelatoForm, SugerenciaNegocioForm, RecetaForm
 from .models import Relato, Negocio, Receta, SaberPopular
+from django.utils.http import urlencode # Importa esta función
 
 
 # Vistas existentes...
@@ -90,8 +91,18 @@ def sugerir_negocio_view(request):
 
 
 def mostrar_mapa(request):
+    """
+    Renderiza un fragmento de HTML con un mapa de Google Maps integrado.
+    La URL del mapa se construye dinámicamente con la ubicación.
+    """
     ubicacion = request.GET.get('ubicacion', '')
-    html = render_to_string('locales/mapa_fragmento.html', {'ubicacion': ubicacion})
+
+    # Construye la URL base de Google Maps con la consulta de ubicación.
+    # El parámetro 'q' es para la dirección de búsqueda.
+    # El parámetro 'output=embed' es clave para incrustar el mapa correctamente en un iframe.
+    map_url = f"https://maps.google.com/maps?q=?q={ubicacion}&output=embed"
+
+    html = render_to_string('locales/mapa_fragmento.html', {'map_url': map_url})
     return HttpResponse(html)
 
 @login_required
