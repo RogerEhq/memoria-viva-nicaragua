@@ -406,7 +406,7 @@
     <h1 class="hangman-title">El Ahorcado Histórico</h1>
 
     <div id="start-screen-hangman">
-        <p class="start-message">¡Bienvenido al juego del Ahorcado! Adivina el nombre de un personaje histórico de Nicaragua. Tienes 10 intentos para no ser "ahorcado".</p>
+        <p class="start-message">¡Bienvenido al juego del Ahorcado! Adivina el nombre de un personaje histórico de Nicaragua. Tienes 5 intentos para no ser "ahorcado".</p>
         <button id="start-hangman-btn" class="start-btn">Comenzar</button>
     </div>
 
@@ -424,7 +424,7 @@
             <div id="leg1" class="hangman-part hidden"></div>
             <div id="leg2" class="hangman-part hidden"></div>
         </div>
-        <p id="guesses">Intentos restantes: <span id="remaining-guesses">10</span></p>
+        <p id="guesses">Intentos restantes: <span id="remaining-guesses">5</span></p>
         <p id="hint-text"></p>
         <button id="hint-btn" class="btn hidden">Pedir Pista</button>
         <div id="hangman-display"></div>
@@ -659,7 +659,7 @@
         score = 0;
         currentQuestionIndex = 0;
         shuffleArray(allQuestions);
-        currentQuestions = allQuestions;
+        currentQuestions = allQuestions.slice(0, 10);
         totalQuestions = currentQuestions.length;
         livesCountElement.textContent = lives;
         nextButton.innerHTML = "Siguiente";
@@ -835,14 +835,15 @@
 
         wordToGuess = historicalFigures[Math.floor(Math.random() * historicalFigures.length)];
         guessedWord = "_".repeat(wordToGuess.replace(/ /g, "").length);
-        remainingGuesses = 10;
+        remainingGuesses = 5;
         failedGuesses = 0;
-        hintUsed = false;
+        hintUsed = false; // ✅ Reinicia la bandera de la pista al inicio de cada juego
 
         messageHangman.textContent = "";
         remainingGuessesSpan.textContent = remainingGuesses;
         playAgainBtn.style.display = "none";
-        hintBtn.style.display = "none";
+        hintBtn.style.display = "none"; // ✅ Oculta el botón al inicio
+        hintBtn.disabled = false; // ✅ Habilita el botón para el nuevo juego
         hintText.textContent = "";
 
         updateDisplayHangman();
@@ -854,11 +855,10 @@
         let displayString = "";
         for (let i = 0; i < wordToGuess.length; i++) {
             if (wordToGuess[i] === " ") {
-                displayString += "  "; // Doble espacio para separar palabras
+                displayString += "  ";
             } else {
                 let foundIndex = -1;
                 let guessedIndex = 0;
-                // Buscar la posición de la letra en el guessedWord sin espacios
                 for (let j = 0; j <= i; j++) {
                     if (wordToGuess[j] !== ' ') {
                         if (j === i) {
@@ -873,10 +873,9 @@
         hangmanDisplay.textContent = displayString.trim();
     }
 
-
     function createKeyboardHangman() {
         keyboard.innerHTML = "";
-        const alphabet = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ"; // Agregué la Ñ
+        const alphabet = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
         for (const letter of alphabet) {
             const button = document.createElement("button");
             button.textContent = letter;
@@ -919,7 +918,9 @@
             remainingGuesses--;
             failedGuesses++;
             remainingGuessesSpan.textContent = remainingGuesses;
-            document.getElementById(hangmanParts[failedGuesses - 1]).classList.remove("hidden");
+            if (failedGuesses <= 5) {
+                document.getElementById(hangmanParts[failedGuesses - 1]).classList.remove("hidden");
+            }
 
             if (failedGuesses >= 2 && !hintUsed) {
                 hintBtn.style.display = "block";
@@ -954,7 +955,7 @@
     function showHint() {
         hintText.textContent = `Pista: ${hangmanHints[wordToGuess]}`;
         hintUsed = true;
-        hintBtn.disabled = true;
+        hintBtn.disabled = true; // ✅ Deshabilita el botón de pista después de usarla
     }
 
     startButtonHangman.addEventListener("click", startGameHangman);

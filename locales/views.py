@@ -8,12 +8,12 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.db.models import Q
 from django.core.paginator import Paginator
-<<<<<<< HEAD
+
 from django.forms import ModelForm  # ✅ Importación correcta
 from django.db.models import Avg
-=======
+
 from django.forms import ModelForm
->>>>>>> b6775cbd93cb0536cf694a786638a2e195f9f614
+
 
 from .forms import (
     RecetaForm,
@@ -231,7 +231,7 @@ class RangoForm(ModelForm):
         fields = ['rango']
 
 @login_required
-<<<<<<< HEAD
+
 def reclamar_negocio(request):
     negocio_id = request.GET.get('negocio_id')
     negocio = get_object_or_404(Negocio, id=negocio_id) if negocio_id else None
@@ -290,7 +290,7 @@ def reportar_comentario(request, comentario_id):
             )
         return redirect('detalle_negocio', negocio_id=comentario.negocio.id)
     return render(request, 'locales/reportar_comentario.html', {'comentario': comentario})
-=======
+
 def juego_view(request):
     return render(request, 'locales/juego.html')
->>>>>>> b6775cbd93cb0536cf694a786638a2e195f9f614
+
