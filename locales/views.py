@@ -301,6 +301,7 @@ def reportar_comentario(request, comentario_id):
                 usuario=request.user,
                 motivo=motivo
             )
+            messages.success(request, "Tu reporte llego a nuestros moderadores.")
         return redirect('detalle_negocio', negocio_id=comentario.negocio.id)
     return render(request, 'locales/reportar_comentario.html', {'comentario': comentario})
 
