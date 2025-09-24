@@ -143,7 +143,8 @@
       {% endif %}
 
       <div class="usuario-nombre">{{ perfil.usuario.username }}</div>
-      <div class="usuario-rango">{{ perfil.get_rango_display }}</div>
+      {% if user.is_superuser %} <div class="usuario-rango">{{ perfil.get_rango_display }}</div>
+      {% endif %}
 
       <a href="{% url 'perfil_publico' perfil.usuario.username %}" class="perfil-link">Ver perfil</a>
 

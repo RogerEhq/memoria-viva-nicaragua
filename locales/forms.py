@@ -18,10 +18,17 @@ class UserLoginForm(AuthenticationForm):
         model = User
         fields = ['username']
 
+# Este es el formulario original, lo mantendremos para uso exclusivo del admin
 class PerfilUsuarioForm(forms.ModelForm):
     class Meta:
         model = PerfilUsuario
-        fields = ['biografia', 'telefono', 'ubicacion', 'avatar', 'rango']  # incluye rango para edición por admin
+        fields = ['biografia', 'telefono', 'ubicacion', 'avatar', 'rango']
+
+# Este es el nuevo formulario para los usuarios normales
+class PerfilUsuarioUpdateForm(forms.ModelForm):
+    class Meta:
+        model = PerfilUsuario
+        fields = ['biografia', 'telefono', 'ubicacion', 'avatar']
 
 class RelatoForm(forms.ModelForm):
     class Meta:
@@ -58,6 +65,7 @@ class RecetaForm(forms.ModelForm):
             'pasos',
             'imagen',
             Submit('submit', 'Enviar Receta')
+<<<<<<< HEAD
         )
 
 
@@ -68,3 +76,6 @@ class ReclamoNegocioForm(forms.ModelForm):
         widgets = {
             'mensaje': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Describe tu relación con el negocio...'}),
         }
+=======
+        )
+>>>>>>> b6775cbd93cb0536cf694a786638a2e195f9f614

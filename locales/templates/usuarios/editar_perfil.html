@@ -67,6 +67,22 @@
     animation: fadeInUp 0.6s ease forwards;
   }
 
+  .perfil-avatar-edit {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid var(--color-turquesa);
+    margin: 0 auto 2rem;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .perfil-avatar-edit:hover {
+    transform: scale(1.05);
+  }
+
+
   form label {
     display: block;
     margin-top: 1.75rem;
@@ -136,13 +152,14 @@
 <h1 class="section-title">Editar Perfil</h1>
 
 <div class="form-container">
+  {% if perfil.avatar %}
+    <img src="{{ perfil.avatar.url }}" alt="Avatar de {{ user.username }}" class="perfil-avatar-edit">
+  {% else %}
+    <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=B85C38&color=ffffff&size=150" alt="Avatar por defecto" class="perfil-avatar-edit">
+  {% endif %}
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.biografia.label_tag }} {{ form.biografia }}
-    {{ form.telefono.label_tag }} {{ form.telefono }}
-    {{ form.ubicacion.label_tag }} {{ form.ubicacion }}
-    {{ form.avatar.label_tag }} {{ form.avatar }}
-
+    {{ form.as_p }}
     <button type="submit">Guardar cambios</button>
   </form>
 

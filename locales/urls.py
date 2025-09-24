@@ -5,6 +5,7 @@ from .views import create_receta_view
 
 from django.conf import settings
 from django.conf.urls.static import static
+from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,6 +29,7 @@ urlpatterns = [
 
     path('usuarios/', locales_views.lista_usuarios, name='lista_usuarios'),
     path('usuarios/<str:username>/', locales_views.perfil_publico, name='perfil_publico'),
+    path('juego/', views.juego_view, name='juego_view'),
 
     path('local/<int:negocio_id>/', locales_views.detalle_negocio, name='detalle_negocio'),
 
