@@ -138,11 +138,7 @@
 <div class="form-container">
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.biografia.label_tag }} {{ form.biografia }}
-    {{ form.telefono.label_tag }} {{ form.telefono }}
-    {{ form.ubicacion.label_tag }} {{ form.ubicacion }}
-    {{ form.avatar.label_tag }} {{ form.avatar }}
-
+    {{ form.as_p }}
     <button type="submit">Guardar cambios</button>
   </form>
 

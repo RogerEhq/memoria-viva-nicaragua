@@ -1,0 +1,149 @@
+{% extends 'locales/base.html' %}
+
+{% block content %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
+
+    :root {
+        --color-arena: #DCC7A1;
+        --color-cacao: #6B4226;
+        --color-cafetal: #3F6B4C;
+        --color-lago: #2F5C8F;
+        --color-terracota: #B85C38;
+        --color-turquesa: #2CBEC6;
+        --color-light: #F9F6F2;
+        --color-white: #ffffff;
+    }
+
+    body {
+        font-family: 'Lato', sans-serif;
+        color: var(--color-cacao);
+        background-color: var(--color-arena);
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .perfil-container {
+        max-width: 650px;
+        margin: 3rem auto;
+        background-color: var(--color-white);
+        border: 1px solid var(--color-cafetal);
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        animation: fadeInUp 0.8s ease forwards;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .perfil-container:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .perfil-avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid var(--color-turquesa);
+        margin-bottom: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+    .perfil-container:hover .perfil-avatar {
+        transform: scale(1.05);
+    }
+
+    .perfil-nombre {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.5rem;
+        color: var(--color-lago);
+        margin-bottom: 0.5rem;
+    }
+
+    .perfil-rango {
+        font-weight: bold;
+        color: var(--color-terracota);
+        margin-bottom: 2rem;
+        font-size: 1.2rem;
+        letter-spacing: 0.5px;
+    }
+
+    .perfil-info {
+        text-align: left;
+        font-size: 1rem;
+        line-height: 1.8;
+        color: var(--color-cacao);
+        margin-top: 1.5rem;
+    }
+
+    .perfil-info p {
+        margin-bottom: 1.25rem;
+    }
+
+    .perfil-info strong {
+        color: var(--color-cafetal);
+        font-weight: bold;
+        font-size: 1.1rem;
+        display: inline-block;
+        min-width: 110px;
+    }
+
+    .perfil-actions {
+        margin-top: 2rem;
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .perfil-actions a, .perfil-actions button {
+        padding: 12px 24px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+        text-align: center;
+    }
+
+    .editar-btn {
+        background-color: var(--color-terracota);
+        color: var(--color-white);
+    }
+
+    .editar-btn:hover {
+        background-color: var(--color-cafetal);
+    }
+</style>
+
+<div class="perfil-container">
+    {% if perfil.avatar %}
+        <img src="{{ perfil.avatar.url }}" alt="Avatar de {{ perfil.usuario.username }}" class="perfil-avatar">
+    {% else %}
+        <img src="https://ui-avatars.com/api/?name={{ perfil.usuario.username }}&background=B85C38&color=ffffff&size=150"
+             alt="Avatar por defecto" class="perfil-avatar">
+    {% endif %}
+
+    <div class="perfil-nombre">{{ perfil.usuario.username }}</div>
+    <div class="perfil-rango">{{ perfil.get_rango_display }}</div>
+
+    <div class="perfil-info">
+        {% if perfil.ubicacion %}
+            <p><strong>Ubicación:</strong> {{ perfil.ubicacion }}</p>
+        {% endif %}
+        {% if perfil.telefono %}
+            <p><strong>Teléfono:</strong> {{ perfil.telefono }}</p>
+        {% endif %}
+        {% if perfil.biografia %}
+            <p><strong>Biografía:</strong> {{ perfil.biografia }}</p>
+        {% endif %}
+    </div>
+
+    <div class="perfil-actions">
+        <a href="{% url 'editar_perfil' %}" class="editar-btn">Editar Perfil</a>
+    </div>
+</div>
+{% endblock %}

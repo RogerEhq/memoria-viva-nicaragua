@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Memoria Viva Nicaragua</title>
+  <title>Memorias de mi pueblo</title>
   <link rel="icon" href="/media/Memorias de mi pueblo icon.png" type="image/png">
 
   <style>
@@ -206,9 +206,11 @@
 
     {% if user.is_authenticated %}
       <div class="perfil-nav">
-        {% if user.perfilusuario.avatar %}
-          <img src="{{ user.perfilusuario.avatar.url }}" alt="Avatar">
-        {% endif %}
+       {% if user.perfilusuario.avatar %}
+    <img src="{{ user.perfilusuario.avatar.url }}" alt="Avatar de {{ user.username }}">
+{% else %}
+    <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=DCC7A1&color=6B4226&size=80" alt="Avatar por defecto">
+{% endif %}
         <span>{{ user.username }}</span>
         <a href="{% url 'perfil_view' %}">Perfil</a>
         <a href="{% url 'logout_view' %}">Cerrar Sesión</a>

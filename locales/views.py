@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.db.models import Q
 from django.core.paginator import Paginator
-from django.forms import ModelForm  # ✅ Importación correcta
+from django.forms import ModelForm
 
 from .forms import (
     RecetaForm,
@@ -33,7 +33,9 @@ def register_view(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()
+            # 💡 Creamos el PerfilUsuario al registrarse para evitar errores
+            PerfilUsuario.objects.get_or_create(usuario=user)
             messages.success(request, '¡Registro exitoso! Ya puedes iniciar sesión.')
             return redirect('login_view')
     else:
@@ -50,6 +52,7 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
+                # 💡 Aseguramos que el perfil existe al iniciar sesión
                 PerfilUsuario.objects.get_or_create(usuario=user)
                 messages.success(request, f'¡Bienvenido, {username}!')
                 return redirect('home_view')
@@ -170,6 +173,13 @@ def evento_cultural_list(request):
 
 
 @login_required
+def perfil_view(request):
+    # 💡 Perfil del usuario autenticado
+    perfil, _ = PerfilUsuario.objects.get_or_create(usuario=request.user)
+    return render(request, 'usuarios/perfil_view.html', {'perfil': perfil})
+
+
+@login_required
 def editar_perfil(request):
     perfil, _ = PerfilUsuario.objects.get_or_create(usuario=request.user)
 
@@ -177,17 +187,19 @@ def editar_perfil(request):
         form = PerfilUsuarioForm(request.POST, request.FILES, instance=perfil)
         if form.is_valid():
             form.save()
+            messages.success(request, '¡Tu perfil ha sido actualizado exitosamente!')
             return redirect('perfil_view')
     else:
         form = PerfilUsuarioForm(instance=perfil)
 
-    return render(request, 'usuarios/editar_perfil.html', {'form': form})
+    return render(request, 'usuarios/editar_perfil.html', {'form': form, 'perfil': perfil})
 
 
 @login_required
 def eliminar_avatar(request):
     perfil = request.user.perfilusuario
-    perfil.avatar.delete(save=True)
+    if perfil.avatar:
+        perfil.avatar.delete(save=True)
     messages.success(request, 'Tu imagen de perfil ha sido eliminada.')
     return redirect('perfil_view')
 
@@ -203,9 +215,7 @@ def perfil_publico(request, username):
     return render(request, 'usuarios/perfil_publico.html', {'perfil': perfil})
 
 
-class RangoForm(ModelForm):  # ✅ Usamos ModelForm directamente
+class RangoForm(ModelForm):
     class Meta:
         model = PerfilUsuario
         fields = ['rango']
-
-

@@ -21,11 +21,16 @@
     color: var(--color-cacao);
     margin: 0;
     padding: 0;
+    text-align: center;
+  }
+
+  .registro-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    text-align: center;
+    min-height: calc(100vh - 80px); /* Ajusta según el alto del nav */
+    padding-top: 40px;
+    padding-bottom: 40px;
   }
 
   @keyframes fadeInUp {
@@ -122,17 +127,19 @@
   }
 </style>
 
-<div class="registro-container">
-  <h1>Registro de Colaborador</h1>
-  <form method="post">
-    {% csrf_token %}
-    {% for field in form %}
-      <div class="form-group">
-        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-        {{ field }}
-      </div>
-    {% endfor %}
-    <button type="submit" class="btn-submit">Registrarse</button>
-  </form>
+<div class="registro-wrapper">
+  <div class="registro-container">
+    <h1>Registro de Colaborador</h1>
+    <form method="post">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="form-group">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+        </div>
+      {% endfor %}
+      <button type="submit" class="btn-submit">Registrarse</button>
+    </form>
+  </div>
 </div>
 {% endblock %}
