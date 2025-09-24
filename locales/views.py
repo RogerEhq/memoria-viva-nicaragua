@@ -12,7 +12,8 @@ from django.forms import ModelForm
 
 from .forms import (
     RecetaForm,
-    PerfilUsuarioForm,
+    # 💡 Importa el nuevo formulario
+    PerfilUsuarioUpdateForm,
     UserRegisterForm,
     UserLoginForm,
     RelatoForm,
@@ -184,13 +185,15 @@ def editar_perfil(request):
     perfil, _ = PerfilUsuario.objects.get_or_create(usuario=request.user)
 
     if request.method == 'POST':
-        form = PerfilUsuarioForm(request.POST, request.FILES, instance=perfil)
+        # 💡 Usamos el nuevo formulario sin el campo 'rango'
+        form = PerfilUsuarioUpdateForm(request.POST, request.FILES, instance=perfil)
         if form.is_valid():
             form.save()
             messages.success(request, '¡Tu perfil ha sido actualizado exitosamente!')
             return redirect('perfil_view')
     else:
-        form = PerfilUsuarioForm(instance=perfil)
+        # 💡 Usamos el nuevo formulario sin el campo 'rango'
+        form = PerfilUsuarioUpdateForm(instance=perfil)
 
     return render(request, 'usuarios/editar_perfil.html', {'form': form, 'perfil': perfil})
 

@@ -93,6 +93,7 @@
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid var(--color-accent-2);
+      cursor: pointer; /* Añadido para indicar que es un enlace */
     }
 
     .perfil-nav span {
@@ -206,13 +207,14 @@
 
     {% if user.is_authenticated %}
       <div class="perfil-nav">
-       {% if user.perfilusuario.avatar %}
-    <img src="{{ user.perfilusuario.avatar.url }}" alt="Avatar de {{ user.username }}">
-{% else %}
-    <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=DCC7A1&color=6B4226&size=80" alt="Avatar por defecto">
-{% endif %}
+        <a href="{% url 'perfil_view' %}">
+          {% if user.perfilusuario.avatar %}
+            <img src="{{ user.perfilusuario.avatar.url }}" alt="Avatar de {{ user.username }}">
+          {% else %}
+            <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=DCC7A1&color=6B4226&size=80" alt="Avatar por defecto">
+          {% endif %}
+        </a>
         <span>{{ user.username }}</span>
-        <a href="{% url 'perfil_view' %}">Perfil</a>
         <a href="{% url 'logout_view' %}">Cerrar Sesión</a>
       </div>
     {% else %}

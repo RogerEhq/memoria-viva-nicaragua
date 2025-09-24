@@ -102,7 +102,8 @@
   {% endif %}
 
   <div class="perfil-nombre">{{ perfil.usuario.username }}</div>
-  <div class="perfil-rango">{{ perfil.get_rango_display }}</div>
+  {% if user.is_superuser %} <div class="perfil-rango">{{ perfil.get_rango_display }}</div>
+  {% endif %}
 
   <div class="perfil-info">
     {% if perfil.ubicacion %}
