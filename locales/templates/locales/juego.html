@@ -522,7 +522,6 @@
             answers: [
                 { text: "Pablo Antonio Cuadra", correct: false },
                 { text: "Ernesto Cardenal", correct: false },
-                { text: "Gioconda Belli", correct: false },
                 { text: "Rubén Darío", correct: true },
             ],
         },
@@ -853,17 +852,27 @@
 
     function updateDisplayHangman() {
         let displayString = "";
-        let guessedIndex = 0;
         for (let i = 0; i < wordToGuess.length; i++) {
             if (wordToGuess[i] === " ") {
-                displayString += "  ";
+                displayString += "  "; // Doble espacio para separar palabras
             } else {
-                displayString += guessedWord[guessedIndex] + " ";
-                guessedIndex++;
+                let foundIndex = -1;
+                let guessedIndex = 0;
+                // Buscar la posición de la letra en el guessedWord sin espacios
+                for (let j = 0; j <= i; j++) {
+                    if (wordToGuess[j] !== ' ') {
+                        if (j === i) {
+                            foundIndex = guessedIndex;
+                        }
+                        guessedIndex++;
+                    }
+                }
+                displayString += (guessedWord[foundIndex] || '_') + " ";
             }
         }
         hangmanDisplay.textContent = displayString.trim();
     }
+
 
     function createKeyboardHangman() {
         keyboard.innerHTML = "";
