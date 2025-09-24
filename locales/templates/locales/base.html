@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Memoria Viva Nicaragua</title>
+  <title>Memorias de mi pueblo</title>
   <link rel="icon" href="/media/Memorias de mi pueblo icon.png" type="image/png">
 
   <style>
@@ -11,6 +11,7 @@
 
     :root {
       --color-primary: #DCC7A1;
+      --color-nav-light: #F3E9D3; /* ✅ Nuevo tono más claro para el nav */
       --color-secondary: #6B4226;
       --color-accent-1: #3F6B4C;
       --color-accent-2: #2F5C8F;
@@ -30,7 +31,7 @@
     }
 
     nav {
-      background-color: var(--color-light-beige);
+      background-color: var(--color-nav-light); /* ✅ Color actualizado */
       padding: 1.5rem 2rem;
       display: flex;
       justify-content: space-between;
@@ -45,18 +46,17 @@
       gap: 1rem;
     }
 
-.nav-logo img {
-  width: 120px;
-  height: auto;
-  border-radius: 8px;
-  transition: transform 0.4s ease, box-shadow 0.4s ease, filter 0.4s ease;
-}
+    .nav-logo img {
+      width: 120px;
+      height: auto;
+      border-radius: 8px;
+      transition: transform 0.4s ease, box-shadow 0.4s ease, filter 0.4s ease;
+    }
 
-.nav-logo img:hover {
-  transform: scale(1.05) rotate(-2deg);
-  filter: brightness(1.1) saturate(1.2);
-}
-
+    .nav-logo img:hover {
+      transform: scale(1.05) rotate(-2deg);
+      filter: brightness(1.1) saturate(1.2);
+    }
 
     .nav-links {
       display: flex;
@@ -187,15 +187,14 @@
   <nav>
     <div class="nav-left">
       <div class="nav-logo">
-
-          <img src="/media/Memorias de mi pueblo.png" alt="Memorias de mi Pueblo">
-
+        <img src="/media/Memorias de mi pueblo.png" alt="Memorias de mi Pueblo">
       </div>
       <div class="nav-links">
         <a href="{% url 'home_view' %}">Inicio</a>
         <a href="{% url 'biblioteca_view' %}">Biblioteca</a>
         <a href="{% url 'evento_cultural_list' %}">Calendario Cultural</a>
         <a href="{% url 'lista_usuarios' %}">Usuarios</a>
+        <a href="{% url 'lista_negocios' %}">Negocios</a>
         {% if user.is_authenticated %}
           <a href="{% url 'create_relato_view' %}">Crear Relato</a>
           <a href="{% url 'sugerir_negocio_view' %}">Sugerir Negocio</a>

@@ -1,0 +1,37 @@
+{% extends 'locales/base.html' %}
+{% block content %}
+  <h2>Reclamar negocio</h2>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Campo oculto para negocio -->
+    {{ form.negocio.as_hidden }}
+
+    <fieldset style="margin-bottom: 2rem;">
+      <legend><strong>Datos del negocio</strong></legend>
+      <p><strong>Negocio:</strong> {{ negocio.name }}</p>
+    </fieldset>
+
+    <fieldset style="margin-bottom: 2rem;">
+      <legend><strong>Datos del usuario</strong></legend>
+      <p><strong>Usuario:</strong> {{ user.username }}</p>
+      <p><strong>Email:</strong> {{ user.email }}</p>
+    </fieldset>
+
+    <fieldset style="margin-bottom: 2rem;">
+      <legend><strong>Documentación</strong></legend>
+      <label for="id_contrato_pdf">Sube el contrato o escritura en PDF:</label><br>
+      {{ form.contrato_pdf }}<br><br>
+
+      <label for="id_mensaje">Mensaje adicional:</label><br>
+      {{ form.mensaje }}<br>
+    </fieldset>
+
+    <button type="submit">Enviar solicitud de reclamo</button>
+  </form>
+
+  <p style="margin-top: 2rem; font-size: 0.9em; color: gray;">
+    Tu solicitud será revisada por el equipo administrativo. Recibirás una notificación cuando sea aprobada o rechazada.
+  </p>
+{% endblock %}

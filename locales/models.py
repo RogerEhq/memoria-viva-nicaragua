@@ -3,13 +3,6 @@ from django.contrib.auth.models import User
 
 # Modelos existentes...
 
-class Local(models.Model):
-    nombre = models.CharField(max_length=200)
-    departamento = models.CharField(max_length=100)
-    propietario = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.nombre
 
 class Relato(models.Model):
     STATUS_CHOICES = (
@@ -39,6 +32,12 @@ class Negocio(models.Model):
     address_text = models.CharField(max_length=255)
     hours = models.CharField(max_length=255)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='negocios_creados')
+    propietario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='negocios_propios')
+    foto_principal = models.ImageField(upload_to='negocios/', blank=True, null=True)
+    calificacion_promedio = models.FloatField(default=0)
+
+    def __str__(self):
+        return self.name
 
     def __str__(self):
         return self.name
@@ -109,9 +108,38 @@ class PerfilUsuario(models.Model):
     RANGOS = [
         ('visitante', 'Visitante'),
         ('colaborador', 'Colaborador'),
+        ('propietario', 'Propietario'),
         ('admin', 'Administrador'),
     ]
     rango = models.CharField(max_length=20, choices=RANGOS, default='visitante')
 
     def __str__(self):
         return f"{self.usuario.username} ({self.rango})"
+
+class Comentario(models.Model):
+    negocio = models.ForeignKey(Negocio, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    texto = models.TextField()
+    fecha = models.DateTimeField(auto_now_add=True)
+
+class Calificacion(models.Model):
+    negocio = models.ForeignKey(Negocio, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    puntuacion = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
+
+class ReclamoNegocio(models.Model):
+    negocio = models.ForeignKey(Negocio, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    contrato_pdf = models.FileField(upload_to='contratos/')
+    mensaje = models.TextField()
+    aprobado = models.BooleanField(default=False)
+    fecha_envio = models.DateTimeField(auto_now_add=True)
+
+class ReporteComentario(models.Model):
+    comentario = models.ForeignKey('Comentario', on_delete=models.CASCADE)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    motivo = models.TextField()
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Reporte de {self.comentario} por {self.usuario.username}"

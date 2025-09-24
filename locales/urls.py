@@ -29,8 +29,17 @@ urlpatterns = [
     path('usuarios/', locales_views.lista_usuarios, name='lista_usuarios'),
     path('usuarios/<str:username>/', locales_views.perfil_publico, name='perfil_publico'),
 
+    path('local/<int:negocio_id>/', locales_views.detalle_negocio, name='detalle_negocio'),
+
+    path('reclamar-negocio/', locales_views.reclamar_negocio, name='reclamar_negocio'),
+
+    path('negocios/', locales_views.lista_negocios, name='lista_negocios'),
 
 
+    path('local/<int:negocio_id>/comentario/', locales_views.detalle_negocio, name='agregar_comentario'),
+    path('local/<int:negocio_id>/calificacion/', locales_views.detalle_negocio, name='agregar_calificacion'),
+
+    path('comentario/<int:comentario_id>/reportar/', locales_views.reportar_comentario, name='reportar_comentario'),
 
 
 ]

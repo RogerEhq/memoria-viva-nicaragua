@@ -1,0 +1,48 @@
+{% extends 'locales/base.html' %}
+{% block content %}
+  <h1 style="margin-bottom: 2rem; font-size: 2.8rem; color: #2c3e50; text-align: center; font-weight: 700;">
+    🏪 Negocios
+  </h1>
+
+  <form method="get" style="margin-bottom: 3rem; padding: 1.5rem; background-color: #f9f9f9; border-radius: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); max-width: 700px; margin-left: auto; margin-right: auto;">
+    <label for="departamento" style="font-weight: 600; font-size: 1.2rem; color: #2c3e50;">Filtrar por departamento:</label>
+    <div style="margin-top: 0.8rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+      <select name="departamento" style="flex: 1; padding: 0.6rem; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem; min-width: 200px;">
+        <option value="">Todos</option>
+        {% for dept in departamentos %}
+          <option value="{{ dept }}" {% if request.GET.departamento == dept %}selected{% endif %}>{{ dept }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" style="padding: 0.6rem 1.2rem; background-color: #3498db; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background-color 0.3s;">
+        🔍 Filtrar
+      </button>
+    </div>
+  </form>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+    {% for negocio in negocios %}
+      <div style="background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: transform 0.3s ease; display: flex; flex-direction: column;">
+        {% if negocio.foto_principal %}
+          <div style="height: 180px; background-image: url('{{ negocio.foto_principal.url }}'); background-size: cover; background-position: center;"></div>
+        {% else %}
+          <div style="height: 180px; background-color: #dfe6e9; display: flex; align-items: center; justify-content: center; color: #7f8c8d; font-size: 1.2rem;">
+            📷 Sin imagen
+          </div>
+        {% endif %}
+        <div style="padding: 1.2rem;">
+          <a href="{% url 'detalle_negocio' negocio.id %}" style="font-size: 1.4rem; font-weight: bold; color: #2c3e50; text-decoration: none;">
+            {{ negocio.name }}
+          </a>
+          <p style="margin-top: 0.5rem; color: #555; font-size: 0.95rem;">
+            🗂️ {{ negocio.category|title }}<br>
+            📍 {{ negocio.address_text }}
+          </p>
+        </div>
+      </div>
+    {% empty %}
+      <div style="grid-column: 1 / -1; background-color: #ffecec; border-radius: 12px; padding: 2rem; text-align: center; color: #c0392b; font-weight: bold; font-size: 1.2rem;">
+        🚫 No se encontraron negocios en este departamento.
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

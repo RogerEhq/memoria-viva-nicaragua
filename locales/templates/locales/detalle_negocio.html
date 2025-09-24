@@ -1,0 +1,72 @@
+{% extends 'locales/base.html' %}
+{% block content %}
+  <div style="max-width: 900px; margin: auto; padding: 2rem;">
+    <h1 style="font-size: 2.5rem; color: #2c3e50; margin-bottom: 1rem;">{{ negocio.name }}</h1>
+
+    <div style="background-color: #f9f9f9; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 2rem;">
+      <p><strong>Categoría:</strong> 🗂️ {{ negocio.get_category_display }}</p>
+      <p><strong>Departamento:</strong> 📍 {{ negocio.address_text }}</p>
+      <p><strong>Horario:</strong> 🕒 {{ negocio.hours }}</p>
+      <p><strong>Descripción:</strong> {{ negocio.description }}</p>
+
+      {% if negocio.foto_principal %}
+        <div style="margin-top: 1.5rem;">
+          <img src="{{ negocio.foto_principal.url }}" alt="Foto del negocio" style="width: 100%; max-width: 600px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+        </div>
+      {% endif %}
+    </div>
+
+    <div style="margin-bottom: 2rem;">
+      <h2 style="font-size: 1.8rem; color: #34495e;">⭐ Calificación promedio: {{ promedio }} / 5</h2>
+    </div>
+
+    <div style="margin-bottom: 2rem;">
+      <h3 style="font-size: 1.5rem; color: #2c3e50;">💬 Comentarios</h3>
+      {% for comentario in comentarios %}
+        <div style="margin-top: 1rem; padding: 1rem; background-color: #eef2f7; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
+          <strong style="color: #2c3e50;">{{ comentario.usuario.username }}</strong> dijo:
+          <p style="margin: 0.5rem 0;">{{ comentario.texto }}</p>
+          <small style="color: #7f8c8d;">🗓️ {{ comentario.fecha|date:"d M Y H:i" }}</small><br>
+          {% if user.is_authenticated %}
+            <a href="{% url 'reportar_comentario' comentario.id %}" style="color: #e74c3c; font-size: 0.9rem;">🚩 Reportar</a>
+          {% endif %}
+        </div>
+      {% empty %}
+        <p style="color: #c0392b; font-weight: bold;">No hay comentarios aún.</p>
+      {% endfor %}
+    </div>
+
+    {% if user.is_authenticated %}
+      <div style="margin-bottom: 2rem;">
+        <h3 style="font-size: 1.5rem; color: #2c3e50;">📝 Agregar comentario</h3>
+        <form method="post" action="{% url 'agregar_comentario' negocio.id %}" style="margin-top: 1rem;">
+          {% csrf_token %}
+          <textarea name="texto" rows="4" cols="60" required style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid #ccc;"></textarea><br><br>
+          <button type="submit" style="padding: 0.6rem 1.2rem; background-color: #3498db; color: white; border: none; border-radius: 6px; font-weight: bold;">💬 Enviar comentario</button>
+        </form>
+      </div>
+
+      <div style="margin-bottom: 2rem;">
+        <h3 style="font-size: 1.5rem; color: #2c3e50;">📊 Calificar</h3>
+        <form method="post" action="{% url 'agregar_calificacion' negocio.id %}" style="margin-top: 1rem;">
+          {% csrf_token %}
+          <label for="puntuacion" style="font-weight: bold;">Puntuación (1-5):</label>
+          <select name="puntuacion" required style="margin-left: 1rem; padding: 0.4rem; border-radius: 6px; border: 1px solid #ccc;">
+            {% for i in "12345" %}
+              <option value="{{ i }}">{{ i }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit" style="margin-left: 1rem; padding: 0.6rem 1.2rem; background-color: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold;">✅ Enviar calificación</button>
+        </form>
+      </div>
+
+      <div style="text-align: center; margin-top: 2rem;">
+        <a href="{% url 'reclamar_negocio' %}?negocio_id={{ negocio.id }}" style="padding: 0.8rem 1.5rem; background-color: #f39c12; color: white; border-radius: 8px; text-decoration: none; font-weight: bold;">📄 Reclamar este negocio</a>
+      </div>
+    {% else %}
+      <p style="text-align: center; margin-top: 2rem;">
+        <a href="{% url 'login_view' %}" style="color: #3498db; font-weight: bold;">🔐 Inicia sesión</a> para comentar, calificar o reclamar este negocio.
+      </p>
+    {% endif %}
+  </div>
+{% endblock %}

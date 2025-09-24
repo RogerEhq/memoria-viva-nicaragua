@@ -9,6 +9,7 @@ from django.template.loader import render_to_string
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.forms import ModelForm  # ✅ Importación correcta
+from django.db.models import Avg
 
 from .forms import (
     RecetaForm,
@@ -16,14 +17,16 @@ from .forms import (
     UserRegisterForm,
     UserLoginForm,
     RelatoForm,
-    SugerenciaNegocioForm
+    SugerenciaNegocioForm,
+    ReclamoNegocioForm
+
 )
 from .models import (
     Receta,
     PerfilUsuario,
     Relato,
     Negocio,
-    SaberPopular
+    SaberPopular, Comentario, Calificacion, ReporteComentario,ReclamoNegocio
 )
 from eventos.models import EventoCultural
 from django.utils.http import urlencode
@@ -208,4 +211,62 @@ class RangoForm(ModelForm):  # ✅ Usamos ModelForm directamente
         model = PerfilUsuario
         fields = ['rango']
 
+@login_required
+def reclamar_negocio(request):
+    negocio_id = request.GET.get('negocio_id')
+    negocio = get_object_or_404(Negocio, id=negocio_id) if negocio_id else None
 
+    if request.method == 'POST':
+        form = ReclamoNegocioForm(request.POST, request.FILES)
+        if form.is_valid():
+            reclamo = form.save(commit=False)
+            reclamo.usuario = request.user
+            reclamo.save()
+            messages.success(request, "Su solicitud de reclamo será examinada.")
+            return redirect('home_view')
+    else:
+        form = ReclamoNegocioForm(initial={'negocio': negocio})
+
+    return render(request, 'locales/reclamar_negocio.html', {
+        'form': form,
+        'negocio': negocio
+    })
+
+def detalle_negocio(request, negocio_id):
+    negocio = get_object_or_404(Negocio, id=negocio_id)
+    comentarios = Comentario.objects.filter(negocio=negocio)
+    calificaciones = Calificacion.objects.filter(negocio=negocio)
+    promedio = calificaciones.aggregate(promedio=Avg('puntuacion'))['promedio'] or 0
+    return render(request, 'locales/detalle_negocio.html', {
+        'negocio': negocio,
+        'comentarios': comentarios,
+        'calificaciones': calificaciones,
+        'promedio': round(promedio, 1),
+    })
+
+def lista_negocios(request):
+    departamento = request.GET.get('departamento')
+    if departamento:
+        negocios = Negocio.objects.filter(address_text__icontains=departamento)
+    else:
+        negocios = Negocio.objects.all()
+
+    departamentos = Negocio.objects.values_list('address_text', flat=True).distinct()
+    return render(request, 'locales/lista_negocios.html', {
+        'negocios': negocios,
+        'departamentos': departamentos
+    })
+
+@login_required
+def reportar_comentario(request, comentario_id):
+    comentario = get_object_or_404(Comentario, id=comentario_id)
+    if request.method == 'POST':
+        motivo = request.POST.get('motivo')
+        if motivo:
+            ReporteComentario.objects.create(
+                comentario=comentario,
+                usuario=request.user,
+                motivo=motivo
+            )
+        return redirect('detalle_negocio', negocio_id=comentario.negocio.id)
+    return render(request, 'locales/reportar_comentario.html', {'comentario': comentario})

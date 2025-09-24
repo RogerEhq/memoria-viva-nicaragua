@@ -1,0 +1,13 @@
+{% extends 'locales/base.html' %}
+{% block content %}
+  <h2>Reportar comentario</h2>
+  <p><strong>{{ comentario.usuario.username }}</strong> dijo:</p>
+  <p>{{ comentario.texto }}</p>
+
+  <form method="post">
+    {% csrf_token %}
+    <label for="motivo">Motivo del reporte:</label><br>
+    <textarea name="motivo" rows="4" cols="50" required></textarea><br>
+    <button type="submit">Enviar reporte</button>
+  </form>
+{% endblock %}

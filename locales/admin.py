@@ -1,10 +1,7 @@
 from django.contrib import admin
-from .models import Local, Relato, Negocio, SugerenciaNegocio, Receta, PerfilUsuario
+from .models import Relato, Negocio, SugerenciaNegocio, Receta, PerfilUsuario, Comentario, Calificacion, ReclamoNegocio, \
+    ReporteComentario
 
-@admin.register(Local)
-class LocalAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'departamento', 'propietario')
-    search_fields = ('nombre', 'departamento')
 
 @admin.register(Relato)
 class RelatoAdmin(admin.ModelAdmin):
@@ -75,3 +72,33 @@ class PerfilUsuarioAdmin(admin.ModelAdmin):
     search_fields = ('usuario__username', 'ubicacion', 'telefono')
     readonly_fields = ('usuario',)
     fields = ('usuario', 'rango', 'avatar', 'biografia', 'telefono', 'ubicacion')
+
+
+@admin.register(ReclamoNegocio)
+class ReclamoAdmin(admin.ModelAdmin):
+    list_display = ('negocio', 'usuario', 'aprobado', 'fecha_envio')
+    list_filter = ('aprobado',)
+    actions = ['aprobar_reclamos']
+
+    def aprobar_reclamos(self, request, queryset):
+        queryset.update(aprobado=True)
+
+@admin.register(Comentario)
+class ComentarioAdmin(admin.ModelAdmin):
+    list_display = ('negocio', 'usuario', 'texto', 'fecha')
+    readonly_fields = ('negocio', 'usuario', 'texto', 'fecha')
+    def has_add_permission(self, request):
+        return False  # evita que el admin cree comentarios manualmente
+
+@admin.register(Calificacion)
+class CalificacionAdmin(admin.ModelAdmin):
+    list_display = ('negocio', 'usuario', 'puntuacion')
+    readonly_fields = ('negocio', 'usuario', 'puntuacion')
+    def has_add_permission(self, request):
+        return False  # evita que el admin cree calificaciones manualmente
+
+@admin.register(ReporteComentario)
+class ReporteComentarioAdmin(admin.ModelAdmin):
+    list_display = ('comentario', 'usuario', 'motivo', 'fecha')
+    search_fields = ('comentario__texto', 'usuario__username', 'motivo')
+    list_filter = ('fecha',)

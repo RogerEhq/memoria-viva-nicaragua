@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit
-from .models import Relato, SugerenciaNegocio, Receta, PerfilUsuario
+from .models import Relato, SugerenciaNegocio, Receta, PerfilUsuario, ReclamoNegocio
 
 
 class UserRegisterForm(UserCreationForm):
@@ -59,3 +59,12 @@ class RecetaForm(forms.ModelForm):
             'imagen',
             Submit('submit', 'Enviar Receta')
         )
+
+
+class ReclamoNegocioForm(forms.ModelForm):
+    class Meta:
+        model = ReclamoNegocio
+        fields = ['negocio', 'contrato_pdf', 'mensaje']
+        widgets = {
+            'mensaje': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Describe tu relación con el negocio...'}),
+        }
