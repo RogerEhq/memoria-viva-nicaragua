@@ -222,3 +222,7 @@ class RangoForm(ModelForm):
     class Meta:
         model = PerfilUsuario
         fields = ['rango']
+
+@login_required
+def juego_view(request):
+    return render(request, 'locales/juego.html')

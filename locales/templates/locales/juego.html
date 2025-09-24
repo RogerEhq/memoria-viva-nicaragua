@@ -1,0 +1,955 @@
+{% extends 'locales/base.html' %}
+
+{% block content %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
+
+    :root {
+        --color-arena: #DCC7A1;
+        --color-cacao: #6B4226;
+        --color-cafetal: #3F6B4C;
+        --color-lago: #2F5C8F;
+        --color-terracota: #B85C38;
+        --color-turquesa: #2CBEC6;
+        --color-light: #F9F6F2;
+        --color-white: #ffffff;
+    }
+
+    body {
+        font-family: 'Lato', sans-serif;
+        color: var(--color-cacao);
+        background-color: var(--color-arena);
+    }
+
+    .game-selector-container {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 2rem;
+    }
+
+    .game-selector-btn {
+        background-color: var(--color-cafetal);
+        color: var(--color-white);
+        border: none;
+        padding: 15px 30px;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .game-selector-btn:hover {
+        background-color: var(--color-lago);
+        transform: translateY(-2px);
+    }
+
+    .game-container {
+        max-width: 650px;
+        margin: 3rem auto;
+        background-color: var(--color-white);
+        padding: 3.5rem;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .section-title {
+        font-family: 'Playfair Display', serif;
+        color: var(--color-terracota);
+        font-size: 2.5rem;
+        margin-top: 0;
+        margin-bottom: 1rem;
+        position: relative;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-title::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        background-color: var(--color-cafetal);
+        margin: 1.5rem auto 0;
+        border-radius: 2px;
+    }
+
+    .lives-container {
+        margin-bottom: 2rem;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--color-lago);
+    }
+
+    .lives-container span {
+        color: var(--color-terracota);
+    }
+
+    #question-text {
+        color: var(--color-lago);
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    #welcome-message {
+        color: var(--color-cacao);
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+    }
+
+    #final-score {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--color-cafetal);
+        margin-top: 2rem;
+    }
+
+    #answer-buttons {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-bottom: 2rem;
+    }
+
+    .btn {
+        background-color: var(--color-light);
+        color: var(--color-cacao);
+        border: 2px solid var(--color-arena);
+        padding: 15px;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s, color 0.3s;
+    }
+
+    .btn:hover:not([disabled]) {
+        background-color: var(--color-arena);
+        transform: translateY(-2px);
+    }
+
+    .btn.correct {
+        background-color: var(--color-cafetal);
+        color: var(--color-white);
+    }
+
+    .btn.incorrect {
+        background-color: var(--color-terracota);
+        color: var(--color-white);
+    }
+
+    .btn:disabled {
+        cursor: no-drop;
+    }
+
+    #next-btn {
+        background-color: var(--color-lago);
+        color: var(--color-white);
+        border: none;
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    #next-btn:hover {
+        background-color: var(--color-cafetal);
+        transform: translateY(-2px);
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    /* Ahorcado specific styles */
+    .hangman-container {
+        max-width: 700px;
+        margin: 3rem auto;
+        background-color: var(--color-white);
+        padding: 3.5rem;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .hangman-title {
+        font-family: 'Playfair Display', serif;
+        color: var(--color-lago);
+        font-size: 2.5rem;
+        margin-top: 0;
+        margin-bottom: 1rem;
+        position: relative;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .hangman-title::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        background-color: var(--color-turquesa);
+        margin: 1.5rem auto 0;
+        border-radius: 2px;
+    }
+
+    #hangman-display {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 2.5rem;
+        letter-spacing: 10px;
+        margin: 2rem 0;
+        color: var(--color-terracota);
+    }
+
+    #guesses {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--color-cacao);
+        margin-bottom: 1.5rem;
+    }
+
+    #message {
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: var(--color-cafetal);
+        margin-bottom: 2rem;
+    }
+
+    #keyboard {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+        gap: 8px;
+        margin-top: 1rem;
+    }
+
+    .key-btn {
+        background-color: var(--color-light);
+        color: var(--color-cacao);
+        border: 2px solid var(--color-arena);
+        padding: 10px 5px;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .key-btn:hover:not([disabled]) {
+        background-color: var(--color-arena);
+        transform: translateY(-1px);
+    }
+
+    .key-btn:disabled {
+        background-color: #e0e0e0;
+        cursor: not-allowed;
+    }
+
+    #play-again-btn, #hint-btn {
+        background-color: var(--color-lago);
+        color: var(--color-white);
+        border: none;
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        margin-top: 2rem;
+        display: none;
+    }
+
+    #play-again-btn:hover, #hint-btn:hover {
+        background-color: var(--color-cafetal);
+        transform: translateY(-2px);
+    }
+
+    #start-screen {
+        margin-bottom: 2rem;
+    }
+
+    .start-message {
+        font-size: 1.2rem;
+        color: var(--color-cacao);
+        margin-bottom: 2rem;
+    }
+
+    .start-btn {
+        background-color: var(--color-cafetal);
+        color: var(--color-white);
+        border: none;
+        padding: 15px 30px;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .start-btn:hover {
+        background-color: var(--color-lago);
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    #hangman-figure {
+        position: relative;
+        width: 150px;
+        height: 200px;
+        margin: 0 auto 30px;
+    }
+
+    .hangman-part {
+        position: absolute;
+        background-color: var(--color-cacao);
+    }
+
+    #base {
+        width: 150px;
+        height: 10px;
+        bottom: 0;
+        left: 0;
+    }
+
+    #pole {
+        width: 10px;
+        height: 180px;
+        bottom: 10px;
+        left: 20px;
+    }
+
+    #beam {
+        width: 100px;
+        height: 10px;
+        top: 0;
+        left: 20px;
+    }
+
+    #rope {
+        width: 10px;
+        height: 30px;
+        top: 0;
+        right: 20px;
+    }
+
+    #head {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        top: 30px;
+        right: 15px;
+    }
+
+    #body {
+        width: 10px;
+        height: 50px;
+        top: 60px;
+        right: 25px;
+    }
+
+    #arm1, #arm2 {
+        width: 30px;
+        height: 10px;
+        top: 70px;
+    }
+    #arm1 {
+        transform: rotate(45deg);
+        right: 25px;
+    }
+    #arm2 {
+        transform: rotate(-45deg);
+        right: 5px;
+    }
+
+    #leg1, #leg2 {
+        width: 10px;
+        height: 40px;
+        top: 100px;
+    }
+    #leg1 {
+        transform: rotate(15deg);
+        right: 30px;
+    }
+    #leg2 {
+        transform: rotate(-15deg);
+        right: 15px;
+    }
+</style>
+
+<div class="game-selector-container">
+    <button id="show-quiz" class="game-selector-btn">Juego de Preguntas</button>
+    <button id="show-hangman" class="game-selector-btn">El Ahorcado</button>
+</div>
+
+<div id="quiz-game-container" class="game-container">
+    <h1 class="section-title">El Reto Nicaragüense</h1>
+
+    <div id="welcome-screen-quiz">
+        <p id="welcome-message">
+            ¡Bienvenido a "El Reto Nicaragüense"! Pon a prueba tus conocimientos sobre la cultura, historia y tradiciones de Nicaragua. Tienes 5 vidas para completar el desafío. ¡Mucha suerte!
+        </p>
+        <button id="start-btn-quiz" class="btn">Comenzar</button>
+    </div>
+
+    <div id="quiz-content" class="hidden">
+        <div class="lives-container">Vidas restantes: <span id="lives-count">5</span> ❤️</div>
+        <div id="question-box">
+            <h2 id="question-text"></h2>
+            <div id="answer-buttons">
+            </div>
+            <button id="next-btn" style="display: none;">Siguiente</button>
+        </div>
+    </div>
+</div>
+
+<div id="hangman-game-container" class="game-container hidden">
+    <h1 class="hangman-title">El Ahorcado Histórico</h1>
+
+    <div id="start-screen-hangman">
+        <p class="start-message">¡Bienvenido al juego del Ahorcado! Adivina el nombre de un personaje histórico de Nicaragua. Tienes 10 intentos para no ser "ahorcado".</p>
+        <button id="start-hangman-btn" class="start-btn">Comenzar</button>
+    </div>
+
+    <div id="game-content-hangman" class="hidden">
+        <p id="message-hangman"></p>
+        <div id="hangman-figure">
+            <div id="base" class="hangman-part hidden"></div>
+            <div id="pole" class="hangman-part hidden"></div>
+            <div id="beam" class="hangman-part hidden"></div>
+            <div id="rope" class="hangman-part hidden"></div>
+            <div id="head" class="hangman-part hidden"></div>
+            <div id="body" class="hangman-part hidden"></div>
+            <div id="arm1" class="hangman-part hidden"></div>
+            <div id="arm2" class="hangman-part hidden"></div>
+            <div id="leg1" class="hangman-part hidden"></div>
+            <div id="leg2" class="hangman-part hidden"></div>
+        </div>
+        <p id="guesses">Intentos restantes: <span id="remaining-guesses">10</span></p>
+        <p id="hint-text"></p>
+        <button id="hint-btn" class="btn hidden">Pedir Pista</button>
+        <div id="hangman-display"></div>
+        <div id="keyboard"></div>
+        <button id="play-again-btn" style="display: none;">Jugar de Nuevo</button>
+    </div>
+</div>
+
+<script>
+    // --- Lógica para alternar juegos ---
+    const quizGameContainer = document.getElementById("quiz-game-container");
+    const hangmanGameContainer = document.getElementById("hangman-game-container");
+    const showQuizBtn = document.getElementById("show-quiz");
+    const showHangmanBtn = document.getElementById("show-hangman");
+
+    showQuizBtn.addEventListener("click", () => {
+        quizGameContainer.classList.remove("hidden");
+        hangmanGameContainer.classList.add("hidden");
+        resetQuiz();
+    });
+
+    showHangmanBtn.addEventListener("click", () => {
+        hangmanGameContainer.classList.remove("hidden");
+        quizGameContainer.classList.add("hidden");
+        resetHangman();
+    });
+
+    // --- Lógica del Quiz ---
+    const allQuestions = [
+        {
+            question: "¿Cuál es la bebida tradicional de Nicaragua, hecha de maíz y cacao?",
+            answers: [
+                { text: "Pinolillo", correct: false },
+                { text: "Tiste", correct: true },
+                { text: "Chicha", correct: false },
+                { text: "Pozol", correct: false },
+            ],
+        },
+        {
+            question: "¿Qué famoso volcán nicaragüense tiene un lago de lava?",
+            answers: [
+                { text: "Momotombo", correct: false },
+                { text: "Mombacho", correct: false },
+                { text: "Masaya", correct: true },
+                { text: "Concepción", correct: false },
+            ],
+        },
+        {
+            question: "¿Cuál es el ave nacional de Nicaragua?",
+            answers: [
+                { text: "Zanate", correct: false },
+                { text: "Guardabarranco", correct: true },
+                { text: "Colibrí", correct: false },
+                { text: "Águila", correct: false },
+            ],
+        },
+        {
+            question: "¿Qué celebración religiosa se realiza en honor a la Inmaculada Concepción de María?",
+            answers: [
+                { text: "La Gritería", correct: true },
+                { text: "La Purísima", correct: false },
+                { text: "La Conchita", correct: false },
+                { text: "El Nacimiento", correct: false },
+            ],
+        },
+        {
+            question: "¿Quién fue el héroe nacional que se inmoló en la Batalla de San Jacinto?",
+            answers: [
+                { text: "Andrés Castro", correct: true },
+                { text: "José Dolores Estrada", correct: false },
+                { text: "Rubén Darío", correct: false },
+                { text: "Augusto C. Sandino", correct: false },
+            ],
+        },
+        {
+            question: "¿Cómo se le conoce a Nicaragua por la abundancia de sus volcanes y lagos?",
+            answers: [
+                { text: "Tierra de lagos y volcanes", correct: true },
+                { text: "País del sol", correct: false },
+                { text: "El país de las palmeras", correct: false },
+                { text: "La joya de Centroamérica", correct: false },
+            ],
+        },
+        {
+            question: "¿Cuál es el nombre de la danza folclórica de Masaya donde los bailarines se visten con máscaras y trajes coloridos?",
+            answers: [
+                { text: "El Güegüense", correct: false },
+                { text: "El Baile de Negras", correct: true },
+                { text: "El Toro Huaco", correct: false },
+                { text: "La Vaca", correct: false },
+            ],
+        },
+        {
+            question: "¿Qué poeta nicaragüense es conocido como el 'Príncipe de las Letras Castellanas'?",
+            answers: [
+                { text: "Pablo Antonio Cuadra", correct: false },
+                { text: "Ernesto Cardenal", correct: false },
+                { text: "Gioconda Belli", correct: false },
+                { text: "Rubén Darío", correct: true },
+            ],
+        },
+        {
+            question: "¿En qué departamento de Nicaragua se encuentra el Volcán Mombacho?",
+            answers: [
+                { text: "Masaya", correct: false },
+                { text: "León", correct: false },
+                { text: "Granada", correct: true },
+                { text: "Managua", correct: false },
+            ],
+        },
+        {
+            question: "¿Qué nombre recibe el plato típico de arroz con carne de res desmenuzada y plátano frito?",
+            answers: [
+                { text: "Gallo Pinto", correct: false },
+                { text: "Vigorón", correct: false },
+                { text: "Indio Viejo", correct: true },
+                { text: "Nacatamal", correct: false },
+            ],
+        },
+        {
+            question: "¿Cuál es la capital de Nicaragua?",
+            answers: [
+                { text: "León", correct: false },
+                { text: "Managua", correct: true },
+                { text: "Granada", correct: false },
+                { text: "Masaya", correct: false },
+            ],
+        },
+        {
+            question: "¿Cómo se llama el lago más grande de Centroamérica, ubicado en Nicaragua?",
+            answers: [
+                { text: "Lago de Managua", correct: false },
+                { text: "Lago de Apanás", correct: false },
+                { text: "Lago de Cocibolca", correct: true },
+                { text: "Laguna de Apoyo", correct: false },
+            ],
+        },
+        {
+            question: "¿Qué producto agrícola es conocido como el 'grano de oro' de Nicaragua?",
+            answers: [
+                { text: "El café", correct: true },
+                { text: "El banano", correct: false },
+                { text: "La caña de azúcar", correct: false },
+                { text: "El cacao", correct: false },
+            ],
+        },
+        {
+            question: "¿Cuál es el árbol nacional de Nicaragua?",
+            answers: [
+                { text: "El Madroño", correct: true },
+                { text: "El Malinche", correct: false },
+                { text: "El Cedro", correct: false },
+                { text: "El Roble", correct: false },
+            ],
+        },
+        {
+            question: "¿En qué ciudad se celebra la famosa fiesta de San Lázaro, donde la gente lleva a sus perros disfrazados?",
+            answers: [
+                { text: "León", correct: false },
+                { text: "Granada", correct: false },
+                { text: "Masaya", correct: true },
+                { text: "Diriamba", correct: false },
+            ],
+        },
+        {
+            question: "El mestizaje en Nicaragua es una mezcla de las culturas indígena y española.",
+            answers: [
+                { text: "Verdadero", correct: true },
+                { text: "Falso", correct: false },
+            ],
+        },
+        {
+            question: "La Isla de Ometepe está formada por dos volcanes, Mombacho y Masaya.",
+            answers: [
+                { text: "Verdadero", correct: false },
+                { text: "Falso", correct: true },
+            ],
+        },
+        {
+            question: "El plato 'Gallo Pinto' es una mezcla de arroz y frijoles refritos.",
+            answers: [
+                { text: "Verdadero", correct: true },
+                { text: "Falso", correct: false },
+            ],
+        },
+        {
+            question: "La bandera de Nicaragua tiene tres franjas horizontales de color azul, blanco y azul.",
+            answers: [
+                { text: "Verdadero", correct: true },
+                { text: "Falso", correct: false },
+            ],
+        },
+        {
+            question: "La 'gigantona' y el 'enano cabezón' son personajes tradicionales de las fiestas patronales de Managua.",
+            answers: [
+                { text: "Verdadero", correct: false },
+                { text: "Falso", correct: true },
+            ],
+        },
+    ];
+
+    const welcomeScreenQuiz = document.getElementById("welcome-screen-quiz");
+    const startButtonQuiz = document.getElementById("start-btn-quiz");
+    const quizContent = document.getElementById("quiz-content");
+    const questionElement = document.getElementById("question-text");
+    const answerButtons = document.getElementById("answer-buttons");
+    const nextButton = document.getElementById("next-btn");
+    const livesCountElement = document.getElementById("lives-count");
+
+    let currentQuestions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let lives = 5;
+    let startTime;
+    let totalQuestions = 0;
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    function resetQuiz() {
+        welcomeScreenQuiz.classList.remove("hidden");
+        quizContent.classList.add("hidden");
+    }
+
+    function startQuiz() {
+        welcomeScreenQuiz.classList.add("hidden");
+        quizContent.classList.remove("hidden");
+        lives = 5;
+        score = 0;
+        currentQuestionIndex = 0;
+        shuffleArray(allQuestions);
+        currentQuestions = allQuestions;
+        totalQuestions = currentQuestions.length;
+        livesCountElement.textContent = lives;
+        nextButton.innerHTML = "Siguiente";
+        startTime = new Date();
+        showQuestion();
+    }
+
+    function showQuestion() {
+        resetStateQuiz();
+        let currentQuestion = currentQuestions[currentQuestionIndex];
+        let questionNo = currentQuestionIndex + 1;
+        questionElement.innerHTML = `Pregunta ${questionNo}/${totalQuestions}:<br>${currentQuestion.question}`;
+
+        currentQuestion.answers.forEach(answer => {
+            const button = document.createElement("button");
+            button.innerHTML = answer.text;
+            button.classList.add("btn");
+            answerButtons.appendChild(button);
+            if (answer.correct) {
+                button.dataset.correct = answer.correct;
+            }
+            button.addEventListener("click", selectAnswer);
+        });
+    }
+
+    function resetStateQuiz() {
+        nextButton.style.display = "none";
+        while (answerButtons.firstChild) {
+            answerButtons.removeChild(answerButtons.firstChild);
+        }
+    }
+
+    function selectAnswer(e) {
+        const selectedBtn = e.target;
+        const isCorrect = selectedBtn.dataset.correct === "true";
+        if (isCorrect) {
+            selectedBtn.classList.add("correct");
+            score++;
+        } else {
+            selectedBtn.classList.add("incorrect");
+            lives--;
+            livesCountElement.textContent = lives;
+        }
+
+        Array.from(answerButtons.children).forEach(button => {
+            if (button.dataset.correct === "true") {
+                button.classList.add("correct");
+            }
+            button.disabled = true;
+        });
+        nextButton.style.display = "block";
+
+        if (lives === 0) {
+            showEndGame(false);
+        }
+    }
+
+    function showEndGame(isWin) {
+        resetStateQuiz();
+        let message = "";
+        let finalScore = Math.round((score / totalQuestions) * 100);
+
+        if (isWin) {
+            const endTime = new Date();
+            const timeElapsed = (endTime - startTime) / 1000;
+            const minutes = Math.floor(timeElapsed / 60);
+            const seconds = Math.floor(timeElapsed % 60);
+            message = `¡Felicidades, completaste el reto! 🎉 Obtuviste una puntuación de ${finalScore}% y un total de ${score} respuestas correctas en ${minutes} minutos y ${seconds} segundos.`;
+        } else {
+            message = `¡Has perdido! 😥 Tus vidas se agotaron. Tu puntuación final es de ${finalScore}%. Inténtalo de nuevo para mejorar.`;
+        }
+        questionElement.innerHTML = message;
+        nextButton.innerHTML = "Jugar de Nuevo";
+        nextButton.style.display = "block";
+    }
+
+    function handleNextButton() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < currentQuestions.length) {
+            showQuestion();
+        } else {
+            showEndGame(true);
+        }
+    }
+
+    startButtonQuiz.addEventListener("click", startQuiz);
+
+    nextButton.addEventListener("click", () => {
+        if (currentQuestionIndex < currentQuestions.length && lives > 0) {
+            handleNextButton();
+        } else {
+            startQuiz();
+        }
+    });
+
+    // --- Lógica del Ahorcado ---
+    const historicalFigures = [
+        "RUBEN DARIO",
+        "AUGUSTO SANDINO",
+        "ANDRES CASTRO",
+        "JOSE DOLORES ESTRADA",
+        "BLANCA ARAUZ",
+        "RIGOBERTO LOPEZ",
+        "GERTRUDIS AGUIRRE",
+        "PABLO ANTONIO CUADRA",
+        "ERNESTO CARDENAL",
+        "GIL GONZALEZ",
+        "JOSE SANTOS ZELAYA",
+        "PEDRO JOAQUIN CHAMORRO",
+        "FRANCISCO HERNANDEZ DE CORDOBA",
+        "DARÍO",
+        "SANDINO",
+        "ARAUZ",
+        "ZELAYA",
+        "MADRIZ",
+        "BARRIOS",
+        "CERNA",
+        "MORA",
+    ];
+
+    const hangmanHints = {
+        "RUBEN DARIO": "Poeta, escritor y diplomático, figura máxima del modernismo literario en lengua española.",
+        "AUGUSTO SANDINO": "Líder de la resistencia contra la ocupación estadounidense en Nicaragua en la década de 1930.",
+        "ANDRES CASTRO": "Héroe de la Batalla de San Jacinto que derribó a un filibustero con una piedra.",
+        "JOSE DOLORES ESTRADA": "General del ejército nicaragüense que lideró la victoria en la Batalla de San Jacinto.",
+        "BLANCA ARAUZ": "Telégrafa y esposa de Augusto Sandino, conocida por su apoyo en la lucha de Sandino.",
+        "RIGOBERTO LOPEZ": "Poeta y activista que ajustició a un dictador de Nicaragua.",
+        "GERTRUDIS AGUIRRE": "Heroína de la Batalla de San Jacinto que proveyó de víveres a las tropas nicaragüenses.",
+        "GABRIELA MISTRAL": "Poeta y educadora chilena, Premio Nobel de Literatura, que visitó Nicaragua y escribió sobre Rubén Darío.",
+        "PABLO ANTONIO CUADRA": "Poeta, ensayista y dramaturgo, cofundador del movimiento de Vanguardia en Nicaragua.",
+        "ERNESTO CARDENAL": "Sacerdote, poeta y político, uno de los principales exponentes de la poesía mística en América Latina.",
+        "GIL GONZALEZ": "Conquistador español que fue el primer europeo en llegar a lo que hoy es Nicaragua.",
+        "JOSE SANTOS ZELAYA": "Presidente de Nicaragua a principios del siglo XX, conocido por su política liberal.",
+        "PEDRO JOAQUIN CHAMORRO": "Periodista, político y escritor, figura clave en la lucha por la libertad de prensa en Nicaragua.",
+        "FRANCISCO HERNANDEZ DE CORDOBA": "Conquistador español fundador de las ciudades de Granada y León.",
+        "DARÍO": "Apellido del 'Príncipe de las Letras Castellanas'.",
+        "SANDINO": "Apellido del General de Hombres Libres.",
+        "ARAUZ": "Apellido de la telegrafista esposa de un héroe nacional.",
+        "ZELAYA": "Apellido del presidente que unificó el territorio de Nicaragua y el Caribe.",
+        "MADRIZ": "Presidente que combatió contra la intervención de Estados Unidos en 1909.",
+        "BARRIOS": "Presidente de la República de las Provincias Unidas de Centroamérica en 1823.",
+        "CERNA": "Líder conservador que luchó en la Batalla de San Jacinto.",
+        "MORA": "Líder costarricense que enfrentó a William Walker.",
+    };
+
+    const hangmanParts = ["base", "pole", "beam", "rope", "head", "body", "arm1", "arm2", "leg1", "leg2"];
+
+    const startScreenHangman = document.getElementById("start-screen-hangman");
+    const startButtonHangman = document.getElementById("start-hangman-btn");
+    const gameContentHangman = document.getElementById("game-content-hangman");
+    const hangmanDisplay = document.getElementById("hangman-display");
+    const keyboard = document.getElementById("keyboard");
+    const messageHangman = document.getElementById("message-hangman");
+    const remainingGuessesSpan = document.getElementById("remaining-guesses");
+    const playAgainBtn = document.getElementById("play-again-btn");
+    const hintBtn = document.getElementById("hint-btn");
+    const hintText = document.getElementById("hint-text");
+
+    let wordToGuess;
+    let guessedWord;
+    let remainingGuesses;
+    let failedGuesses = 0;
+    let hintUsed = false;
+
+    function resetHangman() {
+        startScreenHangman.classList.remove("hidden");
+        gameContentHangman.classList.add("hidden");
+    }
+
+    function startGameHangman() {
+        startScreenHangman.classList.add("hidden");
+        gameContentHangman.classList.remove("hidden");
+
+        wordToGuess = historicalFigures[Math.floor(Math.random() * historicalFigures.length)];
+        guessedWord = "_".repeat(wordToGuess.replace(/ /g, "").length);
+        remainingGuesses = 10;
+        failedGuesses = 0;
+        hintUsed = false;
+
+        messageHangman.textContent = "";
+        remainingGuessesSpan.textContent = remainingGuesses;
+        playAgainBtn.style.display = "none";
+        hintBtn.style.display = "none";
+        hintText.textContent = "";
+
+        updateDisplayHangman();
+        createKeyboardHangman();
+        hideAllHangmanParts();
+    }
+
+    function updateDisplayHangman() {
+        let displayString = "";
+        let guessedIndex = 0;
+        for (let i = 0; i < wordToGuess.length; i++) {
+            if (wordToGuess[i] === " ") {
+                displayString += "  ";
+            } else {
+                displayString += guessedWord[guessedIndex] + " ";
+                guessedIndex++;
+            }
+        }
+        hangmanDisplay.textContent = displayString.trim();
+    }
+
+    function createKeyboardHangman() {
+        keyboard.innerHTML = "";
+        const alphabet = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ"; // Agregué la Ñ
+        for (const letter of alphabet) {
+            const button = document.createElement("button");
+            button.textContent = letter;
+            button.classList.add("key-btn");
+            button.addEventListener("click", () => handleGuessHangman(letter));
+            keyboard.appendChild(button);
+        }
+    }
+
+    function hideAllHangmanParts() {
+        hangmanParts.forEach(part => {
+            document.getElementById(part).classList.add("hidden");
+        });
+    }
+
+    function handleGuessHangman(letter) {
+        if (remainingGuesses === 0) return;
+
+        let found = false;
+        let newGuessedWord = "";
+        let guessedIndex = 0;
+
+        for (let i = 0; i < wordToGuess.length; i++) {
+            if (wordToGuess[i] === " ") {
+                newGuessedWord += " ";
+            } else {
+                if (wordToGuess[i] === letter) {
+                    newGuessedWord += letter;
+                    found = true;
+                } else {
+                    newGuessedWord += guessedWord[guessedIndex];
+                }
+                guessedIndex++;
+            }
+        }
+
+        guessedWord = newGuessedWord.replace(/ /g, "");
+
+        if (!found) {
+            remainingGuesses--;
+            failedGuesses++;
+            remainingGuessesSpan.textContent = remainingGuesses;
+            document.getElementById(hangmanParts[failedGuesses - 1]).classList.remove("hidden");
+
+            if (failedGuesses >= 2 && !hintUsed) {
+                hintBtn.style.display = "block";
+            }
+        }
+
+        const guessedLetterButton = Array.from(keyboard.children).find(btn => btn.textContent === letter);
+        if (guessedLetterButton) {
+            guessedLetterButton.disabled = true;
+        }
+
+        updateDisplayHangman();
+        checkGameStatusHangman();
+    }
+
+    function checkGameStatusHangman() {
+        if (!guessedWord.includes("_")) {
+            messageHangman.textContent = "¡Felicidades, ganaste! 🎉";
+            endGameHangman(true);
+        } else if (remainingGuesses === 0) {
+            messageHangman.textContent = `¡Perdiste! 😥 La palabra era: ${wordToGuess}`;
+            endGameHangman(false);
+        }
+    }
+
+    function endGameHangman(win) {
+        Array.from(keyboard.children).forEach(btn => btn.disabled = true);
+        playAgainBtn.style.display = "block";
+        hintBtn.style.display = "none";
+    }
+
+    function showHint() {
+        hintText.textContent = `Pista: ${hangmanHints[wordToGuess]}`;
+        hintUsed = true;
+        hintBtn.disabled = true;
+    }
+
+    startButtonHangman.addEventListener("click", startGameHangman);
+    playAgainBtn.addEventListener("click", startGameHangman);
+    hintBtn.addEventListener("click", showHint);
+</script>
+{% endblock %}
