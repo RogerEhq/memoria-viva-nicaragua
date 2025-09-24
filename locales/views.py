@@ -254,15 +254,28 @@ def reclamar_negocio(request):
 
 def detalle_negocio(request, negocio_id):
     negocio = get_object_or_404(Negocio, id=negocio_id)
-    comentarios = Comentario.objects.filter(negocio=negocio)
+
+    comentarios = Comentario.objects.filter(negocio=negocio).select_related('usuario')
+    for comentario in comentarios:
+        calificacion = Calificacion.objects.filter(comentario=comentario).first()
+        comentario.puntuacion_usuario = calificacion.puntuacion if calificacion else None
+
     calificaciones = Calificacion.objects.filter(negocio=negocio)
     promedio = calificaciones.aggregate(promedio=Avg('puntuacion'))['promedio'] or 0
+
+    user_calificacion = None
+    if request.user.is_authenticated:
+        user_calificacion = Calificacion.objects.filter(negocio=negocio, usuario=request.user).first()
+
     return render(request, 'locales/detalle_negocio.html', {
         'negocio': negocio,
         'comentarios': comentarios,
         'calificaciones': calificaciones,
         'promedio': round(promedio, 1),
+        'user_calificacion': user_calificacion,
     })
+
+
 
 def lista_negocios(request):
     departamento = request.GET.get('departamento')
@@ -294,3 +307,57 @@ def reportar_comentario(request, comentario_id):
 def juego_view(request):
     return render(request, 'locales/juego.html')
 
+@login_required
+def agregar_comentario(request, negocio_id):
+    negocio = get_object_or_404(Negocio, id=negocio_id)
+    if request.method == 'POST':
+        texto = request.POST.get('texto')
+        if texto:
+            Comentario.objects.create(
+                negocio=negocio,
+                usuario=request.user,
+                texto=texto
+            )
+            messages.success(request, "Comentario enviado correctamente.")
+    return redirect('detalle_negocio', negocio_id=negocio.id)
+
+@login_required
+def agregar_calificacion(request, negocio_id):
+    negocio = get_object_or_404(Negocio, id=negocio_id)
+    if request.method == 'POST':
+        puntuacion = request.POST.get('puntuacion')
+        if puntuacion:
+            Calificacion.objects.create(
+                negocio=negocio,
+                usuario=request.user,
+                puntuacion=int(puntuacion)
+            )
+            messages.success(request, "Calificación registrada correctamente.")
+    return redirect('detalle_negocio', negocio_id=negocio.id)
+
+def juego_view(request):
+    return render(request, 'locales/juego.html')
+
+@login_required
+def comentar_y_calificar(request, negocio_id):
+    negocio = get_object_or_404(Negocio, id=negocio_id)
+    if request.method == 'POST':
+        texto = request.POST.get('texto')
+        puntuacion = request.POST.get('puntuacion')
+
+        if texto and puntuacion:
+            comentario = Comentario.objects.create(
+                negocio=negocio,
+                usuario=request.user,
+                texto=texto
+            )
+            Calificacion.objects.create(
+                negocio=negocio,
+                usuario=request.user,
+                comentario=comentario,
+                puntuacion=int(puntuacion)
+            )
+            messages.success(request, "Tu comentario y calificación fueron enviados.")
+        else:
+            messages.error(request, "Debes completar ambos campos.")
+    return redirect('detalle_negocio', negocio_id=negocio.id)

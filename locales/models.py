@@ -1,9 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# Modelos existentes...
-
-
 class Relato(models.Model):
     STATUS_CHOICES = (
         ('pending', 'Pendiente'),
@@ -39,9 +36,6 @@ class Negocio(models.Model):
     def __str__(self):
         return self.name
 
-    def __str__(self):
-        return self.name
-
 class SugerenciaNegocio(models.Model):
     STATUS_CHOICES = (
         ('pending', 'Pendiente'),
@@ -58,16 +52,14 @@ class SugerenciaNegocio(models.Model):
     def __str__(self):
         return self.nombre_negocio
 
-# 📚 Nuevo modelo para la "Biblioteca" de Recetas
 class Receta(models.Model):
     STATUS_CHOICES = (
         ('pending', 'Pendiente'),
         ('approved', 'Aprobada'),
         ('rejected', 'Rechazada'),
     )
-
     titulo = models.CharField(max_length=200)
-    descripcion = models.TextField()  # Combina descripcion_corta y descripcion
+    descripcion = models.TextField()
     ingredientes = models.TextField()
     pasos = models.TextField()
     imagen = models.ImageField(upload_to='recetas/', blank=True, null=True)
@@ -78,8 +70,6 @@ class Receta(models.Model):
     def __str__(self):
         return self.titulo
 
-
-# 📚 Nuevo modelo para la "Biblioteca" de Saberes Populares
 class SaberPopular(models.Model):
     CATEGORIES = (
         ('dicho', 'Dicho'),
@@ -104,7 +94,6 @@ class PerfilUsuario(models.Model):
     telefono = models.CharField(max_length=20, blank=True)
     ubicacion = models.CharField(max_length=100, blank=True)
 
-    # Nuevo campo
     RANGOS = [
         ('visitante', 'Visitante'),
         ('colaborador', 'Colaborador'),
@@ -125,6 +114,7 @@ class Comentario(models.Model):
 class Calificacion(models.Model):
     negocio = models.ForeignKey(Negocio, on_delete=models.CASCADE)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    comentario = models.OneToOneField(Comentario, on_delete=models.CASCADE, null=True, blank=True)
     puntuacion = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
 
 class ReclamoNegocio(models.Model):

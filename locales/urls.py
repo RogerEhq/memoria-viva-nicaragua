@@ -37,11 +37,12 @@ urlpatterns = [
 
     path('negocios/', locales_views.lista_negocios, name='lista_negocios'),
 
-
-    path('local/<int:negocio_id>/comentario/', locales_views.detalle_negocio, name='agregar_comentario'),
-    path('local/<int:negocio_id>/calificacion/', locales_views.detalle_negocio, name='agregar_calificacion'),
+    path('local/<int:negocio_id>/comentario/', locales_views.agregar_comentario, name='agregar_comentario'),
+    path('local/<int:negocio_id>/calificacion/', locales_views.agregar_calificacion, name='agregar_calificacion'),
 
     path('comentario/<int:comentario_id>/reportar/', locales_views.reportar_comentario, name='reportar_comentario'),
+    path('local/<int:negocio_id>/comentar-y-calificar/', locales_views.comentar_y_calificar, name='comentar_y_calificar'),
+
 
 
 ]
