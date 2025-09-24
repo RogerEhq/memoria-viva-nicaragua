@@ -79,7 +79,11 @@ def logout_view(request):
 
 def home_view(request):
     relatos = Relato.objects.filter(status='approved')
-    negocios = Negocio.objects.all()
+
+    # 🌟 Nuevo: Obtener negocios, calcular la calificación promedio y ordenarlos de mayor a menor
+    negocios = Negocio.objects.annotate(
+        avg_rating=Avg('calificacion__puntuacion')
+    ).order_by('-avg_rating')
 
     perfil = None
     if request.user.is_authenticated:
