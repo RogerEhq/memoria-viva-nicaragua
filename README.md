@@ -62,4 +62,4 @@ Mejorar accesibilidad con etiquetas ARIA y contraste de texto.
 Añadir soporte multilingüe si se desea expandir a otras regiones.
 
 📞 Contacto
-Para dudas o colaboración, puedes contactar al equipo de desarrollo o al administrador del sitio.
+Para dudas o colaboración, puedes contactar al equipo de desarrollo de memorias de mi pueblo
