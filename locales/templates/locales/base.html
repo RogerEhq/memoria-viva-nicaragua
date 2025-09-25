@@ -11,7 +11,7 @@
 
     :root {
       --color-primary: #DCC7A1;
-      --color-nav-light: #F3E9D3; /* ✅ Nuevo tono más claro para el nav */
+      --color-nav-light: #F3E9D3;
       --color-secondary: #6B4226;
       --color-accent-1: #3F6B4C;
       --color-accent-2: #2F5C8F;
@@ -31,19 +31,38 @@
     }
 
     nav {
-      background-color: var(--color-nav-light); /* ✅ Color actualizado */
-      padding: 1.5rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+      height: 150px;
+      overflow: hidden;
+      color: black;
+    }
+
+    .nav-volcan-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .nav-volcan-bg img {
+      width: 100%;
+      height: 350%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      position: absolute;
     }
 
     .nav-left {
+      position: relative;
+      z-index: 1;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 1rem;
+      padding: 1.5rem 2rem;
+      flex-wrap: wrap;
     }
 
     .nav-logo img {
@@ -67,7 +86,7 @@
 
     nav a {
       font-family: 'Lato', sans-serif;
-      color: var(--color-secondary);
+      color: white;
       text-decoration: none;
       font-weight: bold;
       font-size: 1rem;
@@ -93,12 +112,12 @@
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid var(--color-accent-2);
-      cursor: pointer; /* Añadido para indicar que es un enlace */
+      cursor: pointer;
     }
 
     .perfil-nav span {
       font-weight: bold;
-      color: var(--color-secondary);
+      color: white;
     }
 
     h1, h2 {
@@ -155,18 +174,35 @@
     }
 
     footer {
-      background-color: var(--color-secondary);
+      position: relative;
+      height: 150px;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    footer img {
+      width:100%;
+      height: 260%;
+      object-fit: cover;
+      display: block;
+      border-radius: 0;
+      margin: 0;
+      position: absolute;
+    }
+
+    footer p {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      margin: 0;
+      padding: 0.5rem;
+      background-color: rgba(107, 66, 38, 0.7);
       color: var(--color-light-beige);
+      font-weight: bold;
       text-align: center;
-      padding: 1rem;
     }
 
     @media (max-width: 600px) {
-      nav {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
       .nav-left {
         flex-direction: column;
         align-items: flex-start;
@@ -186,6 +222,9 @@
 </head>
 <body>
   <nav>
+    <div class="nav-volcan-bg">
+      <img src="/media/volcan.jpg" alt="Imagen de volcán">
+    </div>
     <div class="nav-left">
       <div class="nav-logo">
         <img src="/media/Memorias de mi pueblo.png" alt="Memorias de mi Pueblo">
@@ -195,37 +234,33 @@
         <a href="{% url 'biblioteca_view' %}">Biblioteca</a>
         <a href="{% url 'evento_cultural_list' %}">Calendario Cultural</a>
         <a href="{% url 'lista_usuarios' %}">Usuarios</a>
-
         <a href="{% url 'lista_negocios' %}">Negocios</a>
-
         <a href="{% url 'juego_view' %}">🎮 Juego</a>
-
         {% if user.is_authenticated %}
           <a href="{% url 'create_relato_view' %}">Crear Relato</a>
           <a href="{% url 'sugerir_negocio_view' %}">Sugerir Negocio</a>
           <a href="{% url 'create_receta_view' %}">Crear Receta</a>
         {% endif %}
       </div>
+      {% if user.is_authenticated %}
+        <div class="perfil-nav">
+          <a href="{% url 'perfil_view' %}">
+            {% if user.perfilusuario.avatar %}
+              <img src="{{ user.perfilusuario.avatar.url }}" alt="Avatar de {{ user.username }}">
+            {% else %}
+              <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=DCC7A1&color=6B4226&size=80" alt="Avatar por defecto">
+            {% endif %}
+          </a>
+          <span>{{ user.username }}</span>
+          <a href="{% url 'logout_view' %}">Cerrar Sesión</a>
+        </div>
+      {% else %}
+        <div class="nav-links">
+          <a href="{% url 'login_view' %}">Iniciar Sesión</a>
+          <a href="{% url 'register_view' %}">Registrarse</a>
+        </div>
+      {% endif %}
     </div>
-
-    {% if user.is_authenticated %}
-      <div class="perfil-nav">
-        <a href="{% url 'perfil_view' %}">
-          {% if user.perfilusuario.avatar %}
-            <img src="{{ user.perfilusuario.avatar.url }}" alt="Avatar de {{ user.username }}">
-          {% else %}
-            <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=DCC7A1&color=6B4226&size=80" alt="Avatar por defecto">
-          {% endif %}
-        </a>
-        <span>{{ user.username }}</span>
-        <a href="{% url 'logout_view' %}">Cerrar Sesión</a>
-      </div>
-    {% else %}
-      <div class="nav-links">
-        <a href="{% url 'login_view' %}">Iniciar Sesión</a>
-        <a href="{% url 'register_view' %}">Registrarse</a>
-      </div>
-    {% endif %}
   </nav>
 
   <hr>
@@ -244,26 +279,10 @@
 
   <hr>
   <footer>
+    <img src="/media/fauna.jpg" alt="Imagen de fauna">
     <p>Derechos Reservados © 2025 Memoria Viva Nicaragua</p>
   </footer>
 
   <script src="https://unpkg.com/htmx.org@1.9.2"></script>
-  <script>
-    function toggleMapa(id, direccion) {
-      const mapaDiv = document.getElementById(`mapa-${id}`);
-      const boton = document.getElementById(`btn-${id}`);
-
-      if (mapaDiv.innerHTML.trim() === "") {
-        htmx.ajax('GET', `/mostrar_mapa/?ubicacion=${direccion}`, {
-          target: mapaDiv,
-          swap: 'innerHTML'
-        });
-        boton.textContent = "Ocultar mapa";
-      } else {
-        mapaDiv.innerHTML = "";
-        boton.textContent = "Ver ubicación";
-      }
-    }
-  </script>
 </body>
 </html>
