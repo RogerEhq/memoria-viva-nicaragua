@@ -31,7 +31,7 @@ from .models import (
     PerfilUsuario,
     Relato,
     Negocio,
-    SaberPopular, Comentario, Calificacion, ReporteComentario,ReclamoNegocio
+    SaberPopular, Comentario, Calificacion, ReporteComentario,ReclamoNegocio, SugerenciaNegocio
 )
 from eventos.models import EventoCultural
 from django.utils.http import urlencode
@@ -115,16 +115,19 @@ def create_relato_view(request):
 @login_required
 def sugerir_negocio_view(request):
     if request.method == 'POST':
-        form = SugerenciaNegocioForm(request.POST)
+        form = SugerenciaNegocioForm(request.POST, request.FILES)
         if form.is_valid():
             sugerencia = form.save(commit=False)
             sugerencia.sugerido_por = request.user
             sugerencia.save()
             messages.success(request, '¡Sugerencia enviada! El equipo la revisará pronto.')
-            return redirect('home_view')
+            return redirect('sugerir_negocio_view')  # Redirige a la misma vista para mostrar el mensaje
+        else:
+            messages.error(request, 'Hubo un error al enviar la sugerencia. Revisa los campos.')
     else:
         form = SugerenciaNegocioForm()
     return render(request, 'locales/sugerir_negocio.html', {'form': form})
+
 
 
 def mostrar_mapa(request):
@@ -366,3 +369,17 @@ def comentar_y_calificar(request, negocio_id):
         else:
             messages.error(request, "Debes completar ambos campos.")
     return redirect('detalle_negocio', negocio_id=negocio.id)
+
+@staff_member_required
+def aprobar_foto_referencia_view(request, sugerencia_id):
+    sugerencia = get_object_or_404(SugerenciaNegocio, id=sugerencia_id)
+    sugerencia.foto_aprobada = True
+    sugerencia.save()
+
+    negocio = Negocio.objects.filter(name=sugerencia.nombre_negocio).first()
+    if negocio:
+        negocio.foto_principal = sugerencia.foto_referencia
+        negocio.save()
+
+    messages.success(request, "Foto aprobada y vinculada al negocio.")
+    return redirect('/admin/')

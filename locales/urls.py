@@ -43,7 +43,7 @@ urlpatterns = [
     path('comentario/<int:comentario_id>/reportar/', locales_views.reportar_comentario, name='reportar_comentario'),
     path('local/<int:negocio_id>/comentar-y-calificar/', locales_views.comentar_y_calificar, name='comentar_y_calificar'),
 
-
+    path('admin/aprobar-foto/<int:sugerencia_id>/', locales_views.aprobar_foto_referencia_view, name='aprobar_foto'),
 
 ]
 

@@ -1,7 +1,10 @@
 from django.contrib import admin
-from .models import Relato, Negocio, SugerenciaNegocio, Receta, PerfilUsuario, Comentario, Calificacion, ReclamoNegocio, \
-    ReporteComentario
-
+from django.utils.html import format_html
+from .models import (
+    Relato, Negocio, SugerenciaNegocio, Receta,
+    PerfilUsuario, Comentario, Calificacion,
+    ReclamoNegocio, ReporteComentario,
+)
 
 @admin.register(Relato)
 class RelatoAdmin(admin.ModelAdmin):
@@ -22,31 +25,98 @@ class RelatoAdmin(admin.ModelAdmin):
 
 @admin.register(Negocio)
 class NegocioAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'created_by')
+    list_display = ('name', 'category', 'created_by', 'vista_foto')
     list_filter = ('category',)
     search_fields = ('name',)
+    readonly_fields = ('vista_foto_detalle',)
+    fields = (
+        'name', 'description', 'category', 'address_text', 'hours',
+        'created_by', 'propietario', 'foto_principal', 'vista_foto_detalle', 'calificacion_promedio'
+    )
+
+    def vista_foto(self, obj):
+        if obj.foto_principal:
+            return format_html('<img src="{}" width="100" style="border-radius:6px;" />', obj.foto_principal.url)
+        return "Sin imagen"
+    vista_foto.short_description = "Foto principal"
+
+    def vista_foto_detalle(self, obj):
+        if obj.foto_principal:
+            return format_html('<img src="{}" width="300" style="border-radius:10px;" />', obj.foto_principal.url)
+        return "Sin imagen"
+    vista_foto_detalle.short_description = "Vista ampliada"
 
 @admin.register(SugerenciaNegocio)
 class SugerenciaNegocioAdmin(admin.ModelAdmin):
-    list_display = ('nombre_negocio', 'sugerido_por', 'estado')
-    list_filter = ('estado',)
-    search_fields = ('nombre_negocio',)
-    actions = ['aprobar_sugerencia_y_crear_negocio']
+    list_display = (
+        'nombre_negocio', 'sugerido_por', 'estado',
+        'categoria_negocio', 'foto_aprobada', 'vista_previa'
+    )
+    list_filter = ('estado', 'categoria_negocio', 'foto_aprobada')
+    search_fields = ('nombre_negocio', 'sugerido_por__username')
+    readonly_fields = ('mostrar_foto', 'fecha_sugerencia')
+    fields = (
+        'nombre_negocio', 'ubicacion_texto', 'comentarios', 'sugerido_por',
+        'estado', 'categoria_negocio',
+        'foto_referencia', 'mostrar_foto', 'foto_aprobada'
+    )
+    actions = ['aprobar_sugerencia_y_crear_negocio', 'aprobar_foto_referencia']
+
+    def mostrar_foto(self, obj):
+        if obj.foto_referencia:
+            return format_html('<img src="{}" width="300" style="border-radius:10px;" />', obj.foto_referencia.url)
+        return "Sin imagen"
+    mostrar_foto.short_description = "Vista previa"
+
+    def vista_previa(self, obj):
+        if obj.foto_referencia:
+            return format_html('<img src="{}" width="100" style="border-radius:6px;" />', obj.foto_referencia.url)
+        return "Sin imagen"
+    vista_previa.short_description = "Miniatura"
 
     def aprobar_sugerencia_y_crear_negocio(self, request, queryset):
+        creados = 0
+        actualizados = 0
         for sugerencia in queryset:
-            if sugerencia.estado == 'pending':
-                Negocio.objects.create(
-                    name=sugerencia.nombre_negocio,
-                    description=sugerencia.comentarios,
-                    address_text=sugerencia.ubicacion_texto,
-                    created_by=sugerencia.sugerido_por,
-                    category='restaurante'
-                )
+            try:
+                negocio_existente = Negocio.objects.filter(name=sugerencia.nombre_negocio).first()
+                if negocio_existente:
+                    negocio_existente.description = sugerencia.comentarios
+                    negocio_existente.address_text = sugerencia.ubicacion_texto
+                    negocio_existente.category = sugerencia.categoria_negocio
+                    if sugerencia.foto_aprobada:
+                        negocio_existente.foto_principal = sugerencia.foto_referencia
+                    negocio_existente.save()
+                    actualizados += 1
+                else:
+                    Negocio.objects.create(
+                        name=sugerencia.nombre_negocio,
+                        description=sugerencia.comentarios,
+                        address_text=sugerencia.ubicacion_texto,
+                        created_by=sugerencia.sugerido_por,
+                        category=sugerencia.categoria_negocio,
+                        foto_principal=sugerencia.foto_referencia if sugerencia.foto_aprobada else None
+                    )
+                    creados += 1
                 sugerencia.estado = 'approved'
                 sugerencia.save()
-        self.message_user(request, "Sugerencias seleccionadas aprobadas y negocios creados.")
-    aprobar_sugerencia_y_crear_negocio.short_description = "Aprobar y crear negocio"
+            except Exception as e:
+                self.message_user(request, f"Error al procesar sugerencia: {e}", level='error')
+        self.message_user(request, f"{creados} negocio(s) creados, {actualizados} actualizado(s).")
+
+    def aprobar_foto_referencia(self, request, queryset):
+        actualizadas = 0
+        for sugerencia in queryset:
+            if sugerencia.foto_referencia and not sugerencia.foto_aprobada:
+                sugerencia.foto_aprobada = True
+                sugerencia.save()
+                actualizadas += 1
+                negocio_existente = Negocio.objects.filter(name=sugerencia.nombre_negocio).first()
+                if negocio_existente:
+                    negocio_existente.foto_principal = sugerencia.foto_referencia
+                    negocio_existente.save()
+        self.message_user(request, f"{actualizadas} foto(s) aprobadas y vinculadas a negocios existentes.")
+    aprobar_foto_referencia.short_description = "Aprobar foto(s) de referencia"
 
 @admin.register(Receta)
 class RecetaAdmin(admin.ModelAdmin):
@@ -73,7 +143,6 @@ class PerfilUsuarioAdmin(admin.ModelAdmin):
     readonly_fields = ('usuario',)
     fields = ('usuario', 'rango', 'avatar', 'biografia', 'telefono', 'ubicacion')
 
-
 @admin.register(ReclamoNegocio)
 class ReclamoAdmin(admin.ModelAdmin):
     list_display = ('negocio', 'usuario', 'aprobado', 'fecha_envio')
@@ -82,23 +151,26 @@ class ReclamoAdmin(admin.ModelAdmin):
 
     def aprobar_reclamos(self, request, queryset):
         queryset.update(aprobado=True)
+        self.message_user(request, "Los reclamos seleccionados han sido aprobados.")
+    aprobar_reclamos.short_description = "Aprobar reclamos seleccionados"
 
 @admin.register(Comentario)
 class ComentarioAdmin(admin.ModelAdmin):
     list_display = ('negocio', 'usuario', 'texto', 'fecha')
     readonly_fields = ('negocio', 'usuario', 'texto', 'fecha')
     def has_add_permission(self, request):
-        return False  # evita que el admin cree comentarios manualmente
+        return False
 
 @admin.register(Calificacion)
 class CalificacionAdmin(admin.ModelAdmin):
     list_display = ('negocio', 'usuario', 'puntuacion')
     readonly_fields = ('negocio', 'usuario', 'puntuacion')
     def has_add_permission(self, request):
-        return False  # evita que el admin cree calificaciones manualmente
+        return False
 
 @admin.register(ReporteComentario)
 class ReporteComentarioAdmin(admin.ModelAdmin):
     list_display = ('comentario', 'usuario', 'motivo', 'fecha')
     search_fields = ('comentario__texto', 'usuario__username', 'motivo')
     list_filter = ('fecha',)
+
