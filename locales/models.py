@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.html import mark_safe
 
 class Relato(models.Model):
     STATUS_CHOICES = (
@@ -18,10 +19,27 @@ class Relato(models.Model):
 
 class Negocio(models.Model):
     CATEGORIES = (
-        ('restaurante', 'Restaurante'),
-        ('hotel', 'Hotel'),
-        ('artesania', 'Artesanía'),
-        ('museo', 'Museo'),
+        ('Sin especificar', 'Sin especificar'),
+        ('Restaurante', 'Restaurante'),
+        ('Hotel', 'Hotel'),
+        ('Artesania', 'Artesanía'),
+        ('Museo', 'Museo'),
+        ('Limpieza', 'Limpieza'),
+        ('Diseño gráfico', 'Diseño gráfico'),
+        ('Repostería', 'Repostería'),
+        ('Joyería', 'Joyería'),
+        ('Gimnasio', 'Gimnasio'),
+        ('Coaching', 'Coaching'),
+        ('Tecnología', 'Tecnología'),
+        ('Clínica', 'Clínica'),
+        ('Bar', 'Bar'),
+        ('Barbería', 'Barbería'),
+        ('Tiendas de ropa', 'Tiendas de ropa'),
+        ('Salón de Belleza', 'Salón de Belleza'),
+        ('Carpintería', 'Carpintería'),
+        ('Zapatería', 'Zapatería'),
+        ('Bodega', 'Bodega'),
+        ('Turismo', 'Turismo'),
     )
     name = models.CharField(max_length=200)
     description = models.TextField()
@@ -33,6 +51,12 @@ class Negocio(models.Model):
     foto_principal = models.ImageField(upload_to='negocios/', blank=True, null=True)
     calificacion_promedio = models.FloatField(default=0)
 
+    def mostrar_foto_principal(self):
+        if self.foto_principal:
+            return mark_safe(f'<img src="{self.foto_principal.url}" width="300" style="border-radius:10px;" />')
+        return "Sin imagen"
+    mostrar_foto_principal.short_description = "Vista ampliada"
+
     def __str__(self):
         return self.name
 
@@ -42,12 +66,23 @@ class SugerenciaNegocio(models.Model):
         ('approved', 'Aprobada'),
         ('rejected', 'Rechazada'),
     )
+    CATEGORIES = Negocio.CATEGORIES
+
     nombre_negocio = models.CharField(max_length=200)
     ubicacion_texto = models.TextField()
     comentarios = models.TextField()
     sugerido_por = models.ForeignKey(User, on_delete=models.CASCADE)
     estado = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     fecha_sugerencia = models.DateTimeField(auto_now_add=True)
+    categoria_negocio = models.CharField(max_length=50, choices=CATEGORIES, default='Sin especificar')
+    foto_referencia = models.ImageField(upload_to='sugerencias/', blank=True, null=True)
+    foto_aprobada = models.BooleanField(default=False)
+
+    def mostrar_foto(self):
+        if self.foto_referencia:
+            return mark_safe(f'<img src="{self.foto_referencia.url}" width="300" style="border-radius:10px;" />')
+        return "Sin imagen"
+    mostrar_foto.short_description = "Vista previa"
 
     def __str__(self):
         return self.nombre_negocio
@@ -111,11 +146,17 @@ class Comentario(models.Model):
     texto = models.TextField()
     fecha = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"Comentario de {self.usuario.username} en {self.negocio.name}"
+
 class Calificacion(models.Model):
     negocio = models.ForeignKey(Negocio, on_delete=models.CASCADE)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     comentario = models.OneToOneField(Comentario, on_delete=models.CASCADE, null=True, blank=True)
     puntuacion = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
+
+    def __str__(self):
+        return f"{self.puntuacion} por {self.usuario.username} en {self.negocio.name}"
 
 class ReclamoNegocio(models.Model):
     negocio = models.ForeignKey(Negocio, on_delete=models.CASCADE)
@@ -125,11 +166,14 @@ class ReclamoNegocio(models.Model):
     aprobado = models.BooleanField(default=False)
     fecha_envio = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"Reclamo de {self.usuario.username} sobre {self.negocio.name}"
+
 class ReporteComentario(models.Model):
-    comentario = models.ForeignKey('Comentario', on_delete=models.CASCADE)
+    comentario = models.ForeignKey(Comentario, on_delete=models.CASCADE)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     motivo = models.TextField()
     fecha = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Reporte de {self.comentario} por {self.usuario.username}"
+        return f"Reporte de {self.usuario.username} sobre comentario #{self.comentario.id}"

@@ -2,54 +2,115 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit
+from crispy_forms.layout import Layout, Submit, Field
 from .models import Relato, SugerenciaNegocio, Receta, PerfilUsuario, ReclamoNegocio
 
-
+# Registro de usuario
 class UserRegisterForm(UserCreationForm):
-    email = forms.EmailField(required=True)
+    email = forms.EmailField(required=True, label="Correo electrónico")
 
     class Meta:
         model = User
-        fields = ['username', 'email']
-
-class UserLoginForm(AuthenticationForm):
-    class Meta:
-        model = User
-        fields = ['username']
-
-# Este es el formulario original, lo mantendremos para uso exclusivo del admin
-class PerfilUsuarioForm(forms.ModelForm):
-    class Meta:
-        model = PerfilUsuario
-        fields = ['biografia', 'telefono', 'ubicacion', 'avatar', 'rango']
-
-# Este es el nuevo formulario para los usuarios normales
-class PerfilUsuarioUpdateForm(forms.ModelForm):
-    class Meta:
-        model = PerfilUsuario
-        fields = ['biografia', 'telefono', 'ubicacion', 'avatar']
-
-class RelatoForm(forms.ModelForm):
-    class Meta:
-        model = Relato
-        fields = ['title', 'content', 'image']
-
-class SugerenciaNegocioForm(forms.ModelForm):
-    class Meta:
-        model = SugerenciaNegocio
-        fields = ['nombre_negocio', 'ubicacion_texto', 'comentarios']
+        fields = ['username', 'email', 'password1', 'password2']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
+            'username',
+            'email',
+            'password1',
+            'password2',
+            Submit('submit', 'Registrarse')
+        )
+
+# Inicio de sesión
+class UserLoginForm(AuthenticationForm):
+    class Meta:
+        model = User
+        fields = ['username', 'password']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            'username',
+            'password',
+            Submit('submit', 'Iniciar sesión')
+        )
+
+# Perfil de usuario (creación)
+class PerfilUsuarioForm(forms.ModelForm):
+    class Meta:
+        model = PerfilUsuario
+        fields = ['biografia', 'telefono', 'ubicacion', 'avatar', 'rango']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            'biografia',
+            'telefono',
+            'ubicacion',
+            'avatar',
+            'rango',
+            Submit('submit', 'Guardar perfil')
+        )
+
+# Perfil de usuario (actualización)
+class PerfilUsuarioUpdateForm(forms.ModelForm):
+    class Meta:
+        model = PerfilUsuario
+        fields = ['biografia', 'telefono', 'ubicacion', 'avatar']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            'biografia',
+            'telefono',
+            'ubicacion',
+            'avatar',
+            Submit('submit', 'Actualizar perfil')
+        )
+
+# Formulario de relatos
+class RelatoForm(forms.ModelForm):
+    class Meta:
+        model = Relato
+        fields = ['title', 'content', 'image']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            'title',
+            'content',
+            'image',
+            Submit('submit', 'Enviar relato')
+        )
+
+# Formulario de sugerencia de negocio
+class SugerenciaNegocioForm(forms.ModelForm):
+    class Meta:
+        model = SugerenciaNegocio
+        fields = ['nombre_negocio', 'ubicacion_texto', 'comentarios', 'categoria_negocio', 'foto_referencia']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['categoria_negocio'].label = "Categoría del negocio"
+        self.fields['categoria_negocio'].empty_label = None
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
             'nombre_negocio',
             'ubicacion_texto',
             'comentarios',
-            Submit('submit', 'Enviar Sugerencia')
+            'categoria_negocio',
+            'foto_referencia',
+            Submit('submit', 'Enviar sugerencia')
         )
 
+# Formulario de recetas
 class RecetaForm(forms.ModelForm):
     class Meta:
         model = Receta
@@ -64,11 +125,10 @@ class RecetaForm(forms.ModelForm):
             'ingredientes',
             'pasos',
             'imagen',
-            Submit('submit', 'Enviar Receta')
-
+            Submit('submit', 'Enviar receta')
         )
 
-
+# Formulario de reclamo de negocio
 class ReclamoNegocioForm(forms.ModelForm):
     class Meta:
         model = ReclamoNegocio
@@ -76,3 +136,13 @@ class ReclamoNegocioForm(forms.ModelForm):
         widgets = {
             'mensaje': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Describe tu relación con el negocio...'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            'negocio',
+            'contrato_pdf',
+            'mensaje',
+            Submit('submit', 'Enviar reclamo')
+        )
