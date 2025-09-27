@@ -60,7 +60,7 @@
 
   .card {
     background: var(--color-white);
-    height: 600px;
+    min-height: 600px;
     padding: 2rem;
     border-radius: 20px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
@@ -139,8 +139,13 @@
     transform: scale(1.05);
   }
 
-  .mapa-container {
+  /* Estilo para el contenedor del mapa */
+  .mapa-leaflet {
+    height: 250px;
+    width: 100%;
+    border-radius: 12px;
     margin-top: 1rem;
+    border: 1px solid var(--color-cafetal);
   }
 
   hr {
@@ -192,12 +197,14 @@
 
         <p>Categoría: {{ negocio.get_category_display }}</p>
         <p>Descripción: {{ negocio.description }}</p>
-        <p>Dirección: {{ negocio.address_text }}</p>
+        <p>Dirección: **{{ negocio.address_text }}**</p>
 
-        <button onclick="toggleMapa('{{ negocio.id }}', '{{ negocio.address_text|urlencode }}')" id="btn-{{ negocio.id }}">
-          Ver ubicación
+        <button
+          onclick="toggleLeafletMap('{{ negocio.id }}', '{{ negocio.latitud|default_if_none:"0" }}', '{{ negocio.longitud|default_if_none:"0" }}')"
+          id="btn-mapa-{{ negocio.id }}">
+          Ver ubicación exacta
         </button>
-        <div id="mapa-{{ negocio.id }}" class="mapa-container"></div>
+        <div id="mapa-{{ negocio.id }}" class="mapa-leaflet" style="display:none;"></div>
       </div>
     </div>
   {% empty %}
@@ -205,35 +212,79 @@
   {% endfor %}
 </div>
 
-<script>
-  function toggleMapa(id, direccion) {
-    const mapaDiv = document.getElementById(`mapa-${id}`);
-    const btn = document.getElementById(`btn-${id}`);
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-    document.querySelectorAll('[id^="mapa-"]').forEach(div => {
-      if (div.id !== `mapa-${id}`) {
-        div.innerHTML = '';
+<script>
+  let mapasActivos = {}; // Objeto para guardar instancias de mapas Leaflet
+
+  function toggleLeafletMap(id, lat, lng) {
+    const mapaDiv = document.getElementById(`mapa-${id}`);
+    const btn = document.getElementById(`btn-mapa-${id}`);
+    const latitud = parseFloat(lat);
+    const longitud = parseFloat(lng);
+
+    // 1. Ocultar y limpiar otros mapas
+    document.querySelectorAll('.mapa-leaflet').forEach(div => {
+      if (div.id !== `mapa-${id}` && div.style.display !== 'none') {
+        div.style.display = 'none';
         const negocioId = div.id.replace('mapa-', '');
-        const otherBtn = document.getElementById(`btn-${negocioId}`);
-        if (otherBtn) otherBtn.textContent = 'Ver ubicación';
+        const otherBtn = document.getElementById(`btn-mapa-${negocioId}`);
+        if (otherBtn) otherBtn.textContent = 'Ver ubicación exacta';
+
+        // Destruir instancia de Leaflet si existe
+        if (mapasActivos[negocioId]) {
+          mapasActivos[negocioId].remove();
+          delete mapasActivos[negocioId];
+        }
       }
     });
 
-    if (mapaDiv.innerHTML.trim() !== '') {
-      mapaDiv.innerHTML = '';
-      btn.textContent = 'Ver ubicación';
-    } else {
-      mapaDiv.innerHTML = `
-        <iframe
-          width="100%"
-          height="250"
-          frameborder="0"
-          style="border:0; border-radius: 12px;"
-          src="https://maps.google.com/maps?q=${direccion}&output=embed"
-          allowfullscreen>
-        </iframe>
-      `;
+    // 2. Mostrar/Ocultar el mapa actual
+    if (mapaDiv.style.display === 'none') {
+      // Mostrar mapa
+      if (latitud === 0 || longitud === 0) {
+        alert("Las coordenadas para este negocio no son válidas o no se han guardado.");
+        return;
+      }
+
+      mapaDiv.style.display = 'block';
       btn.textContent = 'Ocultar ubicación';
+
+      // Inicializar Leaflet
+      if (!mapasActivos[id]) {
+        // Inicializa el mapa
+        const mapa = L.map(mapaDiv).setView([latitud, longitud], 15);
+        mapasActivos[id] = mapa; // Guarda la instancia
+
+        // Capa de OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(mapa);
+
+        // Colocar marcador
+        L.marker([latitud, longitud]).addTo(mapa)
+          .bindPopup('Ubicación del negocio')
+          .openPopup();
+      }
+
+      // 🚨 Solución para el mapa gris: forzar a Leaflet a recalcular dimensiones
+      // Esto debe ir después de que el div sea visible.
+      if (mapasActivos[id]) {
+        mapasActivos[id].invalidateSize();
+      }
+
+    } else {
+      // Ocultar mapa
+      mapaDiv.style.display = 'none';
+      btn.textContent = 'Ver ubicación exacta';
+
+      // Destruir instancia de Leaflet
+      if (mapasActivos[id]) {
+        mapasActivos[id].remove();
+        delete mapasActivos[id];
+      }
     }
   }
 </script>

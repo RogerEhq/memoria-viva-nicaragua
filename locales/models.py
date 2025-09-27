@@ -69,7 +69,9 @@ class SugerenciaNegocio(models.Model):
     CATEGORIES = Negocio.CATEGORIES
 
     nombre_negocio = models.CharField(max_length=200)
-    ubicacion_texto = models.TextField()
+    ubicacion_texto = models.CharField(max_length=500)
+    latitud = models.FloatField(blank=True, null=True)
+    longitud = models.FloatField(blank=True, null=True)
     comentarios = models.TextField()
     sugerido_por = models.ForeignKey(User, on_delete=models.CASCADE)
     estado = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')

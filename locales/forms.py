@@ -92,14 +92,22 @@ class RelatoForm(forms.ModelForm):
 
 # Formulario de sugerencia de negocio
 class SugerenciaNegocioForm(forms.ModelForm):
+    # Campos ocultos para latitud y longitud
+    latitud = forms.FloatField(widget=forms.HiddenInput(), required=False)
+    longitud = forms.FloatField(widget=forms.HiddenInput(), required=False)
+
     class Meta:
         model = SugerenciaNegocio
-        fields = ['nombre_negocio', 'ubicacion_texto', 'comentarios', 'categoria_negocio', 'foto_referencia']
+        # Incluir latitud y longitud en los campos del formulario
+        fields = ['nombre_negocio', 'ubicacion_texto', 'latitud', 'longitud', 'comentarios', 'categoria_negocio',
+                  'foto_referencia']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['categoria_negocio'].label = "Categoría del negocio"
         self.fields['categoria_negocio'].empty_label = None
+
+        # Ocultar campos en el layout de crispy-forms
         self.helper = FormHelper()
         self.helper.layout = Layout(
             'nombre_negocio',
@@ -107,6 +115,9 @@ class SugerenciaNegocioForm(forms.ModelForm):
             'comentarios',
             'categoria_negocio',
             'foto_referencia',
+            # Añadir los campos ocultos al layout
+            'latitud',
+            'longitud',
             Submit('submit', 'Enviar sugerencia')
         )
 

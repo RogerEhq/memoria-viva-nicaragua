@@ -9,29 +9,24 @@ from django.template.loader import render_to_string
 from django.db.models import Q
 from django.core.paginator import Paginator
 
-from django.forms import ModelForm  # ✅ Importación correcta
+from django.forms import ModelForm  # Importación correcta
 from django.db.models import Avg
-
-from django.forms import ModelForm
-
 
 from .forms import (
     RecetaForm,
-    # 💡 Importa el nuevo formulario
     PerfilUsuarioUpdateForm,
     UserRegisterForm,
     UserLoginForm,
     RelatoForm,
     SugerenciaNegocioForm,
     ReclamoNegocioForm
-
 )
 from .models import (
     Receta,
     PerfilUsuario,
     Relato,
     Negocio,
-    SaberPopular, Comentario, Calificacion, ReporteComentario,ReclamoNegocio, SugerenciaNegocio
+    SaberPopular, Comentario, Calificacion, ReporteComentario, ReclamoNegocio, SugerenciaNegocio
 )
 from eventos.models import EventoCultural
 from django.utils.http import urlencode
@@ -42,7 +37,7 @@ def register_view(request):
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            # 💡 Creamos el PerfilUsuario al registrarse para evitar errores
+            # Creamos el PerfilUsuario al registrarse para evitar errores
             PerfilUsuario.objects.get_or_create(usuario=user)
             messages.success(request, '¡Registro exitoso! Ya puedes iniciar sesión.')
             return redirect('login_view')
@@ -60,7 +55,7 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                # 💡 Aseguramos que el perfil existe al iniciar sesión
+                # Aseguramos que el perfil existe al iniciar sesión
                 PerfilUsuario.objects.get_or_create(usuario=user)
                 messages.success(request, f'¡Bienvenido, {username}!')
                 return redirect('home_view')
@@ -80,7 +75,7 @@ def logout_view(request):
 def home_view(request):
     relatos = Relato.objects.filter(status='approved')
 
-    # 🌟 Nuevo: Obtener negocios, calcular la calificación promedio y ordenarlos de mayor a menor
+    # Obtener negocios, calcular la calificación promedio y ordenarlos de mayor a menor
     negocios = Negocio.objects.annotate(
         avg_rating=Avg('calificacion__puntuacion')
     ).order_by('-avg_rating')
@@ -119,15 +114,20 @@ def sugerir_negocio_view(request):
         if form.is_valid():
             sugerencia = form.save(commit=False)
             sugerencia.sugerido_por = request.user
+
+            # 📌 CONEXIÓN CLAVE: Asignar latitud y longitud desde el formulario (campos ocultos)
+            # Estos campos se llenan mediante JavaScript en el template.
+            sugerencia.latitud = form.cleaned_data.get('latitud')
+            sugerencia.longitud = form.cleaned_data.get('longitud')
+
             sugerencia.save()
             messages.success(request, '¡Sugerencia enviada! El equipo la revisará pronto.')
-            return redirect('sugerir_negocio_view')  # Redirige a la misma vista para mostrar el mensaje
+            return redirect('sugerir_negocio_view')
         else:
             messages.error(request, 'Hubo un error al enviar la sugerencia. Revisa los campos.')
     else:
         form = SugerenciaNegocioForm()
     return render(request, 'locales/sugerir_negocio.html', {'form': form})
-
 
 
 def mostrar_mapa(request):
@@ -189,7 +189,7 @@ def evento_cultural_list(request):
 
 @login_required
 def perfil_view(request):
-    # 💡 Perfil del usuario autenticado
+    # Perfil del usuario autenticado
     perfil, _ = PerfilUsuario.objects.get_or_create(usuario=request.user)
     return render(request, 'usuarios/perfil_view.html', {'perfil': perfil})
 
@@ -199,14 +199,14 @@ def editar_perfil(request):
     perfil, _ = PerfilUsuario.objects.get_or_create(usuario=request.user)
 
     if request.method == 'POST':
-        # 💡 Usamos el nuevo formulario sin el campo 'rango'
+        # Usamos el formulario sin el campo 'rango'
         form = PerfilUsuarioUpdateForm(request.POST, request.FILES, instance=perfil)
         if form.is_valid():
             form.save()
             messages.success(request, '¡Tu perfil ha sido actualizado exitosamente!')
             return redirect('perfil_view')
     else:
-        # 💡 Usamos el nuevo formulario sin el campo 'rango'
+        # Usamos el formulario sin el campo 'rango'
         form = PerfilUsuarioUpdateForm(instance=perfil)
 
     return render(request, 'usuarios/editar_perfil.html', {'form': form, 'perfil': perfil})
@@ -237,8 +237,8 @@ class RangoForm(ModelForm):
         model = PerfilUsuario
         fields = ['rango']
 
-@login_required
 
+@login_required
 def reclamar_negocio(request):
     negocio_id = request.GET.get('negocio_id')
     negocio = get_object_or_404(Negocio, id=negocio_id) if negocio_id else None
@@ -258,6 +258,7 @@ def reclamar_negocio(request):
         'form': form,
         'negocio': negocio
     })
+
 
 def detalle_negocio(request, negocio_id):
     negocio = get_object_or_404(Negocio, id=negocio_id)
@@ -283,7 +284,6 @@ def detalle_negocio(request, negocio_id):
     })
 
 
-
 def lista_negocios(request):
     departamento = request.GET.get('departamento')
     if departamento:
@@ -296,6 +296,7 @@ def lista_negocios(request):
         'negocios': negocios,
         'departamentos': departamentos
     })
+
 
 @login_required
 def reportar_comentario(request, comentario_id):
@@ -312,8 +313,10 @@ def reportar_comentario(request, comentario_id):
         return redirect('detalle_negocio', negocio_id=comentario.negocio.id)
     return render(request, 'locales/reportar_comentario.html', {'comentario': comentario})
 
+
 def juego_view(request):
     return render(request, 'locales/juego.html')
+
 
 @login_required
 def agregar_comentario(request, negocio_id):
@@ -329,6 +332,7 @@ def agregar_comentario(request, negocio_id):
             messages.success(request, "Comentario enviado correctamente.")
     return redirect('detalle_negocio', negocio_id=negocio.id)
 
+
 @login_required
 def agregar_calificacion(request, negocio_id):
     negocio = get_object_or_404(Negocio, id=negocio_id)
@@ -343,8 +347,10 @@ def agregar_calificacion(request, negocio_id):
             messages.success(request, "Calificación registrada correctamente.")
     return redirect('detalle_negocio', negocio_id=negocio.id)
 
+
 def juego_view(request):
     return render(request, 'locales/juego.html')
+
 
 @login_required
 def comentar_y_calificar(request, negocio_id):
@@ -369,6 +375,7 @@ def comentar_y_calificar(request, negocio_id):
         else:
             messages.error(request, "Debes completar ambos campos.")
     return redirect('detalle_negocio', negocio_id=negocio.id)
+
 
 @staff_member_required
 def aprobar_foto_referencia_view(request, sugerencia_id):
