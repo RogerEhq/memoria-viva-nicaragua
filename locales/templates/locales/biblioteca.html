@@ -1,8 +1,8 @@
 {% extends 'locales/base.html' %}
-
+{% load static %}
 {% block content %}
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Lato:wght@400;700&display=swap');
 
   :root {
     --color-arena: #DCC7A1;
@@ -18,21 +18,23 @@
   body {
     font-family: 'Lato', sans-serif;
     color: var(--color-cacao);
-    background-color: var(--color-arena);
+    background: linear-gradient(135deg, var(--color-light) 0%, var(--color-arena) 100%);
+    min-height: 100vh;
   }
 
   @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
   .section-title {
     font-family: 'Playfair Display', serif;
     color: var(--color-terracota);
-    font-size: 2.5rem;
-    margin-top: 2rem;
-    margin-bottom: 2.5rem;
+    font-size: 2.8rem;
+    font-weight: 700;
     text-align: center;
+    margin-top: 3rem;
+    margin-bottom: 2.5rem;
     animation: fadeInUp 0.8s ease forwards;
     position: relative;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
@@ -41,16 +43,17 @@
   .section-title::after {
     content: '';
     display: block;
-    width: 80px;
+    width: 100px;
     height: 4px;
     background-color: var(--color-cafetal);
     margin: 1.5rem auto 0;
     border-radius: 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   form {
     max-width: 600px;
-    margin: 0 auto 2rem;
+    margin: 0 auto 3rem;
     display: flex;
     gap: 10px;
     justify-content: center;
@@ -60,8 +63,8 @@
   input[type="text"] {
     flex: 1;
     padding: 12px;
-    border: 1px solid var(--color-cafetal);
-    border-radius: 10px;
+    border: 2px solid var(--color-cafetal);
+    border-radius: 15px;
     font-family: 'Lato', sans-serif;
     background-color: var(--color-white);
     color: var(--color-cacao);
@@ -70,24 +73,25 @@
 
   input[type="text"]:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(63, 107, 76, 0.3);
+    box-shadow: 0 0 0 4px rgba(63, 107, 76, 0.2);
   }
 
   button[type="submit"] {
-    background-color: var(--color-lago);
+    background: linear-gradient(135deg, var(--color-lago), var(--color-turquesa));
     color: var(--color-white);
     padding: 12px 25px;
     border: none;
-    border-radius: 10px;
+    border-radius: 15px;
     cursor: pointer;
     font-weight: bold;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
     font-family: 'Lato', sans-serif;
+    box-shadow: 0 4px 10px rgba(47, 92, 143, 0.2);
   }
 
   button[type="submit"]:hover {
-    background-color: var(--color-turquesa);
-    transform: scale(1.05);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(47, 92, 143, 0.3);
   }
 
   .card-container {
@@ -96,7 +100,7 @@
     gap: 2.5rem;
     max-width: 800px;
     margin: 0 auto;
-    animation: fadeInUp 0.6s ease forwards;
+    animation: fadeInUp 0.8s ease forwards;
   }
 
   .card {
@@ -106,6 +110,7 @@
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     font-family: 'Lato', sans-serif;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-top: 4px solid var(--color-terracota);
   }
 
   .card:hover {
@@ -118,13 +123,33 @@
     color: var(--color-lago);
     margin-top: 0;
     margin-bottom: 0.75rem;
-    font-size: 1.75rem;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  .card h4 {
+    font-family: 'Playfair Display', serif;
+    color: var(--color-cafetal);
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
   }
 
   .card p {
-    font-size: 1rem;
+    font-size: 1.1rem;
     line-height: 1.7;
     color: var(--color-cacao);
+  }
+
+  .card ul, .card ol {
+    margin-top: 0;
+    padding-left: 20px;
+    color: var(--color-cacao);
+  }
+
+  .card ul li, .card ol li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
   }
 
   .card img {
@@ -185,6 +210,28 @@
       <h3>{{ receta.titulo }}</h3>
       <p>{{ receta.descripcion_corta }}</p>
       <p>Autor: {{ receta.autor.username }}</p>
+
+      {% if receta.titulo == "Vigorón" %}
+        <h4>Ingredientes</h4>
+        <ul>
+          <li>Yuca cocida</li>
+          <li>Chicharrón de cerdo</li>
+          <li>Ensalada de repollo (curtido)</li>
+          <li>Rodajas de tomate y cebolla</li>
+          <li>Vinagre, sal y chiles</li>
+        </ul>
+
+        <h4>Preparación</h4>
+        <ol>
+          <li>Corta la yuca en trozos y cuécela hasta que esté suave.</li>
+          <li>Prepara la ensalada de repollo mezclando repollo picado, tomate, cebolla, vinagre y sal.</li>
+          <li>En un plato o envuelto en una hoja de plátano, coloca una cama de yuca.</li>
+          <li>Añade una porción generosa de chicharrón de cerdo crujiente.</li>
+          <li>Cubre con la ensalada de repollo (curtido) y, opcionalmente, rodajas de chile.</li>
+          <li>Sirve inmediatamente.</li>
+        </ol>
+      {% endif %}
+
       {% if receta.imagen %}
         <img src="{{ receta.imagen.url }}" alt="{{ receta.titulo }}">
       {% endif %}

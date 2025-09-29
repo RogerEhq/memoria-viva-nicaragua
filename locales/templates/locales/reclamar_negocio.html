@@ -1,37 +1,337 @@
 {% extends 'locales/base.html' %}
 {% block content %}
-  <h2>Reclamar negocio</h2>
+<style>
+.main-container {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+    min-height: 100vh;
+    padding: 2rem 0;
+    position: relative;
+    overflow: hidden;
+}
+.main-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(108deg, #b85c38 0%, #dcc7a1 50%, #334155 100%);
+    pointer-events: none;
+}
+.claim-card {
+    background:#001f3f;
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    box-shadow:
+        0 25px 50px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+    animation: slideUp 0.8s ease-out;
+}
+.claim-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #7c3aed, #ec4899, #f59e0b, #7c3aed);
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
 
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
+}
+.claim-title {
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    position: relative;
+    letter-spacing: -0.5px;
+}
+.claim-title::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #7c3aed, #ec4899);
+    border-radius: 2px;
+    box-shadow: 0 2px 10px rgba(124, 58, 237, 0.3);
+}
+.fieldset-container {
+    background: rgba(400, 216, 166, 0.7);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.1),
+        0 4px 12px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+.fieldset-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: rgb(233, 216, 166);
+    opacity: 0.6;
+}
+.fieldset-container:hover {
+    border-color: rgba(124, 58, 237, 0.3);
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.1),
+        0 8px 25px rgba(0, 0, 0, 0.15),
+        0 0 20px rgba(124, 58, 237, 0.1);
+    transform: translateY(-2px);
+}
+.legend-title {
+    color: #f1f5f9;
+    font-weight: 800;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.legend-title::before {
+    content: '';
+    width: 4px;
+    height: 20px;
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    border-radius: 2px;
+}
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 10px;
+    border-left: 3px solid #7c3aed;
+    transition: all 0.3s ease;
+}
+.info-item:hover {
+    background: rgba(15, 23, 42, 0.8);
+    border-left-color: #ec4899;
+    transform: translateX(3px);
+}
+.info-item strong {
+    color: #cbd5e1;
+    font-weight: 700;
+    min-width: 100px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.info-item span {
+    color: #f1f5f9;
+    font-weight: 600;
+    flex: 1;
+}
+.form-group {
+    margin-bottom: 2rem;
+}
+.form-label {
+    color: #e2e8f0;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    display: block;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.form-control, .form-control-file {
+    background: rgba(15, 23, 42, 0.8) !important;
+    border: 2px solid rgba(148, 163, 184, 0.3) !important;
+    border-radius: 12px !important;
+    padding: 1rem !important;
+    color: #f1f5f9 !important;
+    font-size: 1rem !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+.form-control:focus, .form-control-file:focus {
+    border-color: #7c3aed !important;
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.1),
+        0 0 0 3px rgba(124, 58, 237, 0.2),
+        0 4px 12px rgba(124, 58, 237, 0.15) !important;
+    background: rgba(15, 23, 42, 0.95) !important;
+    transform: translateY(-1px) !important;
+}
+.form-control::placeholder {
+    color: #64748b !important;
+}
+textarea.form-control {
+    min-height: 120px !important;
+    resize: vertical !important;
+}
+.submit-button {
+    background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%) !important;
+    border: none !important;
+    border-radius: 16px !important;
+    padding: 1.2rem 3rem !important;
+    color: white !important;
+    font-weight: 800 !important;
+    font-size: 1.1rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow:
+        0 8px 25px rgba(124, 58, 237, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    cursor: pointer !important;
+    min-width: 250px !important;
+}
+.submit-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.6s ease;
+}
+.submit-button:hover::before {
+    left: 100%;
+}
+.submit-button:hover {
+    background: linear-gradient(135deg, #6d28d9 0%, #db2777 100%) !important;
+    transform: translateY(-3px) !important;
+    box-shadow:
+        0 12px 35px rgba(124, 58, 237, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+.submit-button:active {
+    transform: translateY(-1px) !important;
+}
+.disclaimer {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.05));
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    color: #cbd5e1;
+    font-style: italic;
+    text-align: center;
+    position: relative;
+}
+.disclaimer::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    padding: 0.5rem;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    border: 2px solid rgba(59, 130, 246, 0.3);
+}
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(50px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+@media (max-width: 768px) {
+    .claim-title { font-size: 2rem; }
+    .fieldset-container { padding: 1.5rem; }
+    .submit-button {
+        padding: 1rem 2rem !important;
+        font-size: 1rem !important;
+        min-width: 200px !important;
+    }
+}
+</style>
 
-    <!-- Campo oculto para negocio -->
-    {{ form.negocio.as_hidden }}
+<div class="main-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+                <div class="claim-card" style="padding: 3rem 2.5rem;">
 
-    <fieldset style="margin-bottom: 2rem;">
-      <legend><strong>Datos del negocio</strong></legend>
-      <p><strong>Negocio:</strong> {{ negocio.name }}</p>
-    </fieldset>
+                    <h2 class="claim-title">Reclamar Negocio</h2>
 
-    <fieldset style="margin-bottom: 2rem;">
-      <legend><strong>Datos del usuario</strong></legend>
-      <p><strong>Usuario:</strong> {{ user.username }}</p>
-      <p><strong>Email:</strong> {{ user.email }}</p>
-    </fieldset>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
 
-    <fieldset style="margin-bottom: 2rem;">
-      <legend><strong>Documentación</strong></legend>
-      <label for="id_contrato_pdf">Sube el contrato o escritura en PDF:</label><br>
-      {{ form.contrato_pdf }}<br><br>
+                        {{ form.negocio.as_hidden }}
 
-      <label for="id_mensaje">Mensaje adicional:</label><br>
-      {{ form.mensaje }}<br>
-    </fieldset>
+                        <div class="fieldset-container">
+                            <div class="legend-title">🏢 Datos del negocio</div>
+                            <div class="info-item">
+                                <strong>Negocio:</strong>
+                                <span>{{ negocio.name }}</span>
+                            </div>
+                        </div>
 
-    <button type="submit">Enviar solicitud de reclamo</button>
-  </form>
+                        <div class="fieldset-container">
+                            <div class="legend-title">👤 Datos del usuario</div>
+                            <div class="info-item">
+                                <strong>Usuario:</strong>
+                                <span>{{ user.username }}</span>
+                            </div>
+                            <div class="info-item">
+                                <strong>Email:</strong>
+                                <span>{{ user.email }}</span>
+                            </div>
+                        </div>
 
-  <p style="margin-top: 2rem; font-size: 0.9em; color: gray;">
-    Tu solicitud será revisada por el equipo administrativo. Recibirás una notificación cuando sea aprobada o rechazada.
-  </p>
+                        <div class="fieldset-container">
+                            <div class="legend-title">📄 Documentación</div>
+
+                            <div class="form-group">
+                                <label for="id_contrato_pdf" class="form-label">
+                                    📎 Sube el contrato o escritura en PDF:
+                                </label>
+                                {{ form.contrato_pdf }}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="id_mensaje" class="form-label">
+                                    💬 Mensaje adicional:
+                                </label>
+                                {{ form.mensaje }}
+                            </div>
+                        </div>
+
+                        <div style="text-align: center; margin-top: 3rem;">
+                            <button type="submit" class="submit-button">
+                                Enviar Solicitud de Reclamo
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="disclaimer">
+                        Tu solicitud será revisada por el equipo administrativo.
+                        Recibirás una notificación cuando sea aprobada o rechazada.
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

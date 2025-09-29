@@ -10,8 +10,8 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.forms import ModelForm
 from django.db.models import Avg
-from django.db import IntegrityError # <-- LÍNEA CORREGIDA
-from django.utils import timezone # Se importa timezone para uso en funciones
+from django.db import IntegrityError
+from django.utils import timezone
 
 # Importaciones necesarias para el filtro de categorías
 from .models import Negocio, Categoria, PerfilUsuario, Relato, SaberPopular, Comentario, Calificacion, \
@@ -101,6 +101,8 @@ def create_relato_view(request):
             relato.save()
             messages.success(request, 'Relato enviado para revisión. ¡Gracias por tu contribución!')
             return redirect('home_view')
+        else:
+            messages.error(request, 'Hubo un error al enviar el relato. Por favor, revisa que todos los campos estén llenos y hayas seleccionado un punto en el mapa.')
     else:
         form = RelatoForm()
     return render(request, 'locales/create_relato.html', {'form': form})
@@ -268,8 +270,8 @@ def detalle_negocio(request, negocio_id):
         'negocio': negocio,
         'comentarios': comentarios,
         'promedio': round(promedio, 1),
-        'comentario_form': comentario_form, # <-- Agregado
-        'calificacion_form': calificacion_form, # <-- Agregado
+        'comentario_form': comentario_form,
+        'calificacion_form': calificacion_form,
         'is_turismo_negocio': negocio.is_turismo,
     }
     return render(request, 'locales/detalle_negocio.html', context)

@@ -2,7 +2,7 @@
 
 {% block content %}
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Lato:wght@400;700&display=swap');
 
   :root {
     --color-arena: #DCC7A1;
@@ -18,13 +18,14 @@
   body {
     font-family: 'Lato', sans-serif;
     color: var(--color-cacao);
-    background-color: var(--color-arena);
+    background: linear-gradient(135deg, var(--color-light) 0%, var(--color-arena) 100%);
+    min-height: 100vh;
   }
 
   @keyframes fadeInUp {
     from {
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(30px);
     }
     to {
       opacity: 1;
@@ -40,12 +41,14 @@
     border-radius: 20px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     animation: fadeInUp 0.8s ease forwards;
-    border: 1px solid var(--color-cafetal);
+    border-top: 4px solid var(--color-lago);
+    box-shadow: 0 8px 25px rgba(47, 92, 143, 0.15);
   }
 
   h1 {
     font-family: 'Playfair Display', serif;
-    font-size: 2.5rem;
+    font-size: 2.8rem;
+    font-weight: 700;
     color: var(--color-terracota);
     text-align: center;
     margin-bottom: 2.5rem;
@@ -56,11 +59,12 @@
   h1::after {
     content: '';
     display: block;
-    width: 80px;
+    width: 100px;
     height: 4px;
     background-color: var(--color-cafetal);
     margin: 1.5rem auto 0;
     border-radius: 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   form {
@@ -98,24 +102,27 @@
   }
 
   button[type="submit"] {
-    background-color: var(--color-lago);
+    background: linear-gradient(135deg, var(--color-lago) 0%, var(--color-cafetal) 100%);
     color: var(--color-white);
     padding: 14px 28px;
     border: none;
-    border-radius: 12px;
+    border-radius: 50px;
     cursor: pointer;
     font-weight: bold;
     font-size: 1.1rem;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: block;
     width: 100%;
     margin-top: 2.5rem;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: 0 6px 20px rgba(47, 92, 143, 0.3);
   }
 
   button[type="submit"]:hover {
-    background-color: var(--color-cafetal);
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, var(--color-cafetal) 0%, var(--color-turquesa) 100%);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 10px 30px rgba(63, 107, 76, 0.4);
   }
 </style>
 

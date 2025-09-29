@@ -1,123 +1,168 @@
 {% extends 'locales/base.html' %}
-{% load crispy_forms_tags %}  {# <-- Importante para usar |crispy #}
+{% load crispy_forms_tags %}
 
 {% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Lato:wght@400;700&display=swap');
 
-    :root {
-        --color-arena: #DCC7A1;
-        --color-cacao: #6B4226;
-        --color-cafetal: #3F6B4C;
-        --color-lago: #2F5C8F;
-        --color-terracota: #B85C38;
-        --color-turquesa: #2CBEC6;
-        --color-light: #F9F6F2;
-        --color-white: #ffffff;
-    }
+  :root {
+    --color-arena: #DCC7A1;
+    --color-cacao: #6B4226;
+    --color-cafetal: #3F6B4C;
+    --color-lago: #2F5C8F;
+    --color-terracota: #B85C38;
+    --color-turquesa: #2CBEC6;
+    --color-light: #F9F6F2;
+    --color-white: #ffffff;
+  }
 
-    body {
-        font-family: 'Lato', sans-serif;
-        color: var(--color-cacao);
-        background-color: var(--color-arena);
-    }
+  body {
+    font-family: 'Lato', sans-serif;
+    color: var(--color-cacao);
+    background: linear-gradient(135deg, var(--color-light) 0%, var(--color-arena) 100%);
+    min-height: 100vh;
+  }
 
-    .section-title {
-        font-family: 'Playfair Display', serif;
-        color: var(--color-terracota);
-        font-size: 2.5rem;
-        margin-top: 2rem;
-        margin-bottom: 2.5rem;
-        text-align: center;
-        position: relative;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-    }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-    .form-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 0 1rem 3rem;
-    }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    color: var(--color-terracota);
+    font-size: 2.8rem;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 3rem;
+    margin-bottom: 2.5rem;
+    animation: fadeInUp 0.8s ease forwards;
+    position: relative;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
-    form {
-        background-color: var(--color-white);
-        padding: 3rem;
-        border-radius: 20px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        max-width: 680px;
-        width: 100%;
-        text-align: left;
-        border: 1px solid var(--color-cafetal);
-    }
+  .section-title::after {
+    content: '';
+    display: block;
+    width: 100px;
+    height: 4px;
+    background-color: var(--color-cafetal);
+    margin: 1.5rem auto 0;
+    border-radius: 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
-    label {
-        display: block;
-        margin-top: 1.75rem;
-        font-weight: bold;
-        color: var(--color-lago);
-        font-size: 1.1rem;
-    }
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 1rem 3rem;
+  }
 
-    input[type="text"],
-    input[type="email"],
-    input[type="file"],
-    textarea,
-    select {
-        width: 100%;
-        padding: 14px;
-        margin-top: 8px;
-        border: 2px solid var(--color-arena);
-        border-radius: 12px;
-        background-color: var(--color-light);
-        color: var(--color-cacao);
-        font-family: 'Lato', sans-serif;
-        transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
+  form {
+    background-color: var(--color-white);
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(184, 92, 56, 0.15);
+    max-width: 680px;
+    width: 100%;
+    text-align: left;
+    border-top: 4px solid var(--color-terracota);
+  }
 
-    input:focus,
-    textarea:focus,
-    select:focus {
-        border-color: var(--color-turquesa);
-        box-shadow: 0 0 0 4px rgba(44, 190, 198, 0.2);
-        outline: none;
-    }
+  .form-group label {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700 !important;
+      color: var(--color-terracota) !important;
+      font-size: 1.4rem !important;
+      margin-top: 1rem !important;
+      margin-bottom: 0.5rem !important;
+      display: block !important;
+  }
 
-    #id_ubicacion_texto {
-        width: 100%;
-        padding: 6px;
-        font-size: 0.9rem;
-        height: auto;
-        max-width: 100%;
-    }
+  /* Estilos para los campos de Crispy Forms */
+  .form-control {
+    width: 100% !important;
+    background-color: var(--color-light) !important;
+    border: 2px solid var(--color-cafetal) !important;
+    border-radius: 15px !important;
+    padding: 1.2rem !important;
+    color: var(--color-cacao) !important;
+    font-family: 'Lato', sans-serif !important;
+    font-size: 1rem !important;
+    line-height: 1.7 !important;
+    resize: vertical !important;
+    min-height: 50px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: inset 0 2px 6px rgba(107, 66, 38, 0.1) !important;
+  }
 
-    button[type="submit"] {
-        margin-top: 3rem;
-        padding: 14px 28px;
-        background-color: var(--color-terracota);
-        color: var(--color-white);
-        border: none;
-        border-radius: 12px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 1.1rem;
-        width: 100%;
-    }
+  .form-control:focus {
+    outline: none !important;
+    border-color: var(--color-terracota) !important;
+    background-color: var(--color-white) !important;
+    box-shadow:
+      inset 0 2px 6px rgba(107, 66, 38, 0.1),
+      0 0 0 4px rgba(184, 92, 56, 0.15) !important;
+    transform: translateY(-2px) !important;
+  }
 
-    button[type="submit"]:hover {
-        background-color: var(--color-cafetal);
-        transform: translateY(-2px);
-    }
+  /* Estilo específico para el botón de submit */
+  .submit-btn-custom {
+    background: linear-gradient(135deg, var(--color-lago) 0%, var(--color-turquesa) 100%) !important;
+    color: var(--color-white) !important;
+    padding: 1.2rem 3rem !important;
+    border: none !important;
+    border-radius: 50px !important;
+    font-family: 'Lato', sans-serif !important;
+    font-weight: bold !important;
+    font-size: 1.1rem !important;
+    cursor: pointer !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 6px 20px rgba(47, 92, 143, 0.3) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    width: 100%;
+    margin-top: 3rem;
+  }
 
-    #mapa {
-        margin-top: 2rem;
-        border: 1px solid var(--color-cafetal);
-        border-radius: 15px;
-        height: 400px;
-        width: 100%;
-        max-width: 680px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    }
+  .submit-btn-custom::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.6s ease;
+  }
+
+  .submit-btn-custom:hover::before {
+    left: 100%;
+  }
+
+  .submit-btn-custom:hover {
+    background: linear-gradient(135deg, var(--color-turquesa) 0%, var(--color-cafetal) 100%) !important;
+    transform: translateY(-3px) scale(1.01) !important;
+    box-shadow: 0 10px 30px rgba(44, 190, 198, 0.4) !important;
+  }
+
+  .submit-btn-custom:active {
+    transform: translateY(-1px) scale(1.00) !important;
+  }
+
+  #mapa {
+    margin-top: 2rem;
+    border-radius: 15px;
+    height: 400px;
+    width: 100%;
+    max-width: 680px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
 </style>
 
 <h1 class="section-title">Sugerir un Nuevo Negocio</h1>
@@ -125,15 +170,13 @@
 <div class="form-container">
     <form method="post" enctype="multipart/form-data" id="sugerencia-form">
         {% csrf_token %}
-        {#  AQUÍ ESTÁ EL CAMBIO CLAVE  #}
         {{ form|crispy }}
-        <button type="submit">Enviar Sugerencia</button>
+        <button type="submit" class="submit-btn-custom">Enviar Sugerencia</button>
     </form>
 
     <div id="mapa"></div>
 </div>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>

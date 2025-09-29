@@ -2,100 +2,431 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-  <div style="max-width: 900px; margin: auto; padding: 2rem;">
-    <h1 style="font-size: 2.5rem; color: #2c3e50; margin-bottom: 1rem;">{{ negocio.name }}</h1>
+<style>
+.main-container {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    min-height: 100vh;
+    padding: 2rem 0;
+    position: relative;
+    overflow: hidden;
+}
+.main-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1" fill="rgba(255,255,255,0.08)"/><circle cx="40" cy="80" r="1" fill="rgba(255,255,255,0.06)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+.business-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+    animation: slideUp 0.8s ease-out;
+}
+.business-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #667eea);
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+}
+.business-title {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 2rem;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: relative;
+}
+.business-title::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 2px;
+    box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+}
+.info-section {
+    background: linear-gradient(145deg, rgba(255,255,255,0.8), rgba(248,249,250,0.9));
+    padding: 2.5rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+.info-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #667eea, transparent);
+}
+.info-section:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+}
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.2rem;
+    padding: 0.8rem;
+    background: rgba(255,255,255,0.6);
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+    transition: all 0.3s ease;
+}
+.info-item:hover {
+    background: rgba(255,255,255,0.9);
+    transform: translateX(5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+.info-item strong {
+    color: #495057;
+    font-weight: 700;
+    min-width: 150px;
+    display: inline-block;
+}
+.info-item .emoji {
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
+}
+.action-button {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 15px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin: 0.5rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.action-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.6s ease;
+}
+.action-button:hover::before {
+    left: 100%;
+}
+.action-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+    color: white;
+    text-decoration: none;
+}
+.action-button.secondary {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    box-shadow: 0 8px 25px rgba(44, 62, 80, 0.3);
+}
+.action-button.secondary:hover {
+    box-shadow: 0 12px 35px rgba(44, 62, 80, 0.4);
+}
+.action-button.warning {
+    background: linear-gradient(135deg, #f39c12, #f1c40f);
+    box-shadow: 0 8px 25px rgba(243, 156, 18, 0.3);
+}
+.action-button.warning:hover {
+    box-shadow: 0 12px 35px rgba(243, 156, 18, 0.4);
+}
+.action-button.success {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    box-shadow: 0 8px 25px rgba(39, 174, 96, 0.3);
+}
+.action-button.success:hover {
+    box-shadow: 0 12px 35px rgba(39, 174, 96, 0.4);
+}
+.rating-section {
+    background: linear-gradient(145deg, rgba(39, 174, 96, 0.1), rgba(46, 204, 113, 0.05));
+    padding: 2rem;
+    border-radius: 20px;
+    border: 2px solid rgba(39, 174, 96, 0.2);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+.rating-number {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.comment-section {
+    background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(248,249,250,0.95));
+    padding: 2.5rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+.comment-form {
+    background: rgba(255,255,255,0.8);
+    padding: 2rem;
+    border-radius: 15px;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+    margin-bottom: 2rem;
+}
+.comment-item {
+    background: linear-gradient(145deg, rgba(238, 242, 247, 0.8), rgba(255,255,255,0.6));
+    padding: 1.5rem;
+    border-radius: 15px;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #667eea;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+.comment-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+.business-image {
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+    margin: 2rem 0;
+}
+.business-image:hover {
+    transform: scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+.form-control {
+    border-radius: 12px !important;
+    border: 2px solid rgba(102, 126, 234, 0.2) !important;
+    padding: 12px 16px !important;
+    transition: all 0.3s ease !important;
+}
+.form-control:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15) !important;
+}
+.btn-submit {
+    background: linear-gradient(135deg, #2980b9, #3498db) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 12px 24px !important;
+    font-weight: 700 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 6px 20px rgba(41, 128, 185, 0.3) !important;
+}
+.btn-submit:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(41, 128, 185, 0.4) !important;
+}
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(50px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+</style>
 
-    <div style="background-color: #f9f9f9; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 2rem;">
-      <p><strong>Categoría:</strong> 🗂️ {% if negocio.categoria_relacionada %}{{ negocio.categoria_relacionada.nombre }}{% else %}{{ negocio.get_category_display }}{% endif %}</p>
-      <p><strong>Departamento:</strong> 📍 {{ negocio.address_text }}</p>
-      <p><strong>Horario:</strong> 🕒 {{ negocio.hours }}</p>
-      <p><strong>Descripción:</strong> {{ negocio.description }}</p>
+<div class="main-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-9">
+                <div class="business-card" style="padding: 3rem 2.5rem;">
 
-      <p><strong>Teléfono:</strong> 📞 {{ negocio.phone|default:"No especificado" }}</p>
-      <p><strong>Correo electrónico:</strong> 📧 {{ negocio.email|default:"No especificado" }}</p>
-      <p><strong>Sitio web:</strong> 🌐 {% if negocio.website %}<a href="{{ negocio.website }}" target="_blank">{{ negocio.website }}</a>{% else %}No especificado{% endif %}</p>
-      <p><strong>Es un negocio de turismo:</strong> {% if negocio.is_turismo %}✔️ Sí{% else %}❌ No{% endif %}</p>
-      <p><strong>Propietario:</strong> {{ negocio.propietario.username }}</p>
+                    <!-- Título Principal -->
+                    <h1 class="business-title" style="font-size: 3rem; margin-bottom: 3rem;">{{ negocio.name }}</h1>
 
+                    <!-- Información Principal -->
+                    <div class="info-section">
+                        <div class="info-item">
+                            <span class="emoji">🗂️</span>
+                            <strong>Categoría:</strong>
+                            {% if negocio.categoria_relacionada %}{{ negocio.categoria_relacionada.nombre }}{% else %}{{ negocio.get_category_display }}{% endif %}
+                        </div>
+                        <div class="info-item">
+                            <span class="emoji">📍</span>
+                            <strong>Departamento:</strong> {{ negocio.address_text }}
+                        </div>
+                        <div class="info-item">
+                            <span class="emoji">🕒</span>
+                            <strong>Horario:</strong> {{ negocio.hours }}
+                        </div>
+                        <div class="info-item">
+                            <span class="emoji">📝</span>
+                            <strong>Descripción:</strong> {{ negocio.description }}
+                        </div>
+                        <div class="info-item">
+                            <span class="emoji">📞</span>
+                            <strong>Teléfono:</strong> {{ negocio.phone|default:"No especificado" }}
+                        </div>
+                        <div class="info-item">
+                            <span class="emoji">📧</span>
+                            <strong>Correo:</strong> {{ negocio.email|default:"No especificado" }}
+                        </div>
+                        <div class="info-item">
+                            <span class="emoji">🌐</span>
+                            <strong>Sitio web:</strong>
+                            {% if negocio.website %}
+                                <a href="{{ negocio.website }}" target="_blank" style="color:#667eea; font-weight: 600;">{{ negocio.website }}</a>
+                            {% else %}
+                                No especificado
+                            {% endif %}
+                        </div>
+                        <div class="info-item">
+                            <span class="emoji">🏖️</span>
+                            <strong>Negocio de turismo:</strong>
+                            {% if negocio.is_turismo %}
+                                <span style="color:#27ae60; font-weight: 700;">✔️ Sí</span>
+                            {% else %}
+                                <span style="color:#e74c3c; font-weight: 700;">❌ No</span>
+                            {% endif %}
+                        </div>
+                        <div class="info-item">
+                            <span class="emoji">👤</span>
+                            <strong>Propietario:</strong> {{ negocio.propietario.username }}
+                        </div>
 
-      {% if negocio.foto_principal %}
-        <div style="margin-top: 1.5rem;">
-          <img src="{{ negocio.foto_principal.url }}" alt="Foto del negocio" style="width: 100%; max-width: 600px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+                        {% if negocio.foto_principal %}
+                            <div style="text-align: center; margin-top: 2rem;">
+                                <img src="{{ negocio.foto_principal.url }}" alt="Foto del negocio" class="business-image" style="width: 100%; max-width: 600px;">
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Paquetes de Turismo -->
+                    {% if negocio.is_turismo and negocio.paquetes_turismo %}
+                        <div style="text-align: center; margin: 2rem 0;">
+                            <a href="{% url 'detalle_paquetes_turismo' negocio.id %}" class="action-button success">
+                                🏕️ Ver Paquetes de Turismo
+                            </a>
+                        </div>
+                    {% endif %}
+
+                    <!-- Botones de Acción del Propietario -->
+                    {% if user.is_authenticated and user == negocio.propietario %}
+                        <div style="text-align: center; margin: 2rem 0;">
+                            <a href="{% url 'editar_negocio' negocio.id %}" class="action-button secondary">
+                                ✏️ Editar mi Negocio
+                            </a>
+                            <a href="{% url 'editar_paquetes_turismo' negocio.id %}" class="action-button">
+                                ✏️ Editar Paquetes
+                            </a>
+                            <a href="{% url 'enviar_mensaje_admin' %}" class="action-button warning">
+                                📧 Mensaje a Admin
+                            </a>
+                        </div>
+                    {% endif %}
+
+                    <!-- Sección de Calificación -->
+                    <div class="rating-section">
+                        <h2 style="font-size: 1.8rem; color: #34495e; margin-bottom: 1rem;">⭐ Calificación promedio</h2>
+                        <div class="rating-number">{{ promedio }} / 5</div>
+                        {% if user_calificacion %}
+                            <p style="color: #2c3e50; font-weight: 600; margin-top: 1rem;">
+                                <strong>Tu calificación:</strong> {{ user_calificacion.puntuacion }} ⭐
+                            </p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Sección de Comentarios y Calificación -->
+                    <div class="comment-section">
+                        <h3 style="font-size: 1.8rem; color: #2c3e50; margin-bottom: 2rem; text-align: center;">📝 Comentar y Calificar</h3>
+
+                        {% if user.is_authenticated %}
+                            <div class="comment-form">
+                                <form method="post" action="{% url 'comentar_y_calificar' negocio.id %}">
+                                    {% csrf_token %}
+                                    {{ comentario_form|crispy }}
+                                    {{ calificacion_form|crispy }}
+                                    <div style="text-align: center; margin-top: 1.5rem;">
+                                        <button type="submit" class="btn-submit">
+                                            💬 Enviar comentario y calificación
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        {% else %}
+                            <div style="text-align: center; padding: 2rem; background: rgba(52, 152, 219, 0.1); border-radius: 15px;">
+                                <p style="margin: 0; font-size: 1.1rem;">
+                                    <a href="{% url 'login_view' %}" style="color: #667eea; font-weight: 700; text-decoration: none;">
+                                        🔐 Inicia sesión
+                                    </a> para comentar y calificar este negocio.
+                                </p>
+                            </div>
+                        {% endif %}
+
+                        <!-- Lista de Comentarios -->
+                        <h3 style="font-size: 1.5rem; color: #2c3e50; margin: 2rem 0 1rem 0;">💬 Comentarios</h3>
+
+                        {% for comentario in comentarios %}
+                            <div class="comment-item">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                    <strong style="color: #2c3e50; font-size: 1.1rem;">{{ comentario.usuario.username }}</strong>
+                                    <small style="color: #7f8c8d;">🗓️ {{ comentario.fecha|date:"d M Y H:i" }}</small>
+                                </div>
+                                <p style="margin: 0.8rem 0; color: #34495e; line-height: 1.6;">{{ comentario.texto }}</p>
+                                {% if comentario.puntuacion_usuario %}
+                                    <p style="margin: 0.5rem 0; color: #f39c12; font-weight: 600;">
+                                        ⭐ Calificación: {{ comentario.puntuacion_usuario }} / 5
+                                    </p>
+                                {% else %}
+                                    <p style="margin: 0.5rem 0; color: #7f8c8d;">Calificación: No ha calificado</p>
+                                {% endif %}
+                                {% if user.is_authenticated %}
+                                    <a href="{% url 'reportar_comentario' comentario.id %}" style="color: #e74c3c; font-size: 0.9rem; text-decoration: none; font-weight: 600;">
+                                        🚩 Reportar
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% empty %}
+                            <div style="text-align: center; padding: 2rem; background: rgba(231, 76, 60, 0.1); border-radius: 15px;">
+                                <p style="color: #c0392b; font-weight: 700; margin: 0; font-size: 1.1rem;">
+                                    No hay comentarios aún. ¡Sé el primero en comentar!
+                                </p>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Botón Reclamar Negocio -->
+                    <div style="text-align: center; margin-top: 3rem;">
+                        <a href="{% url 'reclamar_negocio' %}?negocio_id={{ negocio.id }}" class="action-button warning">
+                            📄 Reclamar este negocio
+                        </a>
+                    </div>
+
+                </div>
+            </div>
         </div>
-      {% endif %}
-
-      {% if negocio.is_turismo and negocio.paquetes_turismo %}
-        <div style="margin-top: 2rem; text-align: center;">
-          <a href="{% url 'detalle_paquetes_turismo' negocio.id %}" style="display: inline-block; padding: 0.8rem 1.5rem; background-color: #2ecc71; color: white; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1.1rem; transition: background-color 0.3s ease;">
-            🏕️ Ver Paquetes de Turismo
-          </a>
-        </div>
-      {% endif %}
-
-      {% if user.is_authenticated and user == negocio.propietario %}
-        <div style="margin-top: 1rem; text-align: center;">
-            <a href="{% url 'editar_negocio' negocio.id %}" style="display: inline-block; padding: 0.8rem 1.5rem; background-color: #2c3e50; color: white; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1.1rem; transition: background-color 0.3s ease;">
-                ✏️ Editar mi Negocio
-            </a>
-            <a href="{% url 'editar_paquetes_turismo' negocio.id %}" style="display: inline-block; padding: 0.8rem 1.5rem; background-color: #3498db; color: white; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1.1rem; transition: background-color 0.3s ease;">
-                ✏️ Editar Paquetes
-            </a>
-            <a href="{% url 'enviar_mensaje_admin' %}" style="display: inline-block; padding: 0.8rem 1.5rem; background-color: #f39c12; color: white; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1.1rem; transition: background-color 0.3s ease;">
-                📧 Enviar Mensaje a Administración
-            </a>
-        </div>
-      {% endif %}
     </div>
-
-    <div style="margin-bottom: 2rem;">
-      <h2 style="font-size: 1.8rem; color: #34495e;">⭐ Calificación promedio: {{ promedio }} / 5</h2>
-      {% if user_calificacion %}
-        <p style="color: #2c3e50;"><strong>Tu calificación:</strong> {{ user_calificacion.puntuacion }} ⭐</p>
-      {% endif %}
-    </div>
-
-    <div style="margin-bottom: 2rem;">
-      <h3 style="font-size: 1.5rem; color: #2c3e50;">📝 Comentar y Calificar</h3>
-      {% if user.is_authenticated %}
-        <form method="post" action="{% url 'comentar_y_calificar' negocio.id %}" style="margin-top: 1rem;">
-          {% csrf_token %}
-          {{ comentario_form|crispy }}
-          {{ calificacion_form|crispy }}
-          <button type="submit" style="padding: 0.6rem 1.2rem; background-color: #3498db; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
-            💬 Enviar comentario y calificación
-          </button>
-        </form>
-      {% else %}
-        <p style="text-align: center; margin-top: 2rem;">
-          <a href="{% url 'login_view' %}" style="color: #3498db; font-weight: bold;">🔐 Inicia sesión</a> para comentar y calificar este negocio.
-        </p>
-      {% endif %}
-    </div>
-
-    <div style="margin-bottom: 2rem;">
-      <h3 style="font-size: 1.5rem; color: #2c3e50;">💬 Comentarios</h3>
-      {% for comentario in comentarios %}
-        <div style="margin-top: 1rem; padding: 1rem; background-color: #eef2f7; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
-          <strong style="color: #2c3e50;">{{ comentario.usuario.username }}</strong> dijo:
-          <p style="margin: 0.5rem 0;">{{ comentario.texto }}</p>
-          {% if comentario.puntuacion_usuario %}
-            <p style="margin: 0.5rem 0;">⭐ Calificación: {{ comentario.puntuacion_usuario }} / 5</p>
-          {% else %}
-            <p style="margin: 0.5rem 0; color: #7f8c8d;">Calificación: No ha calificado</p>
-          {% endif %}
-          <small style="color: #7f8c8d;">🗓️ {{ comentario.fecha|date:"d M Y H:i" }}</small><br>
-          {% if user.is_authenticated %}
-            <a href="{% url 'reportar_comentario' comentario.id %}" style="color: #e74c3c; font-size: 0.9rem;">🚩 Reportar</a>
-          {% endif %}
-        </div>
-      {% empty %}
-        <p style="color: #c0392b; font-weight: bold;">No hay comentarios aún.</p>
-      {% endfor %}
-    </div>
-
-    <div style="text-align: center; margin-top: 2rem;">
-      <a href="{% url 'reclamar_negocio' %}?negocio_id={{ negocio.id }}" style="padding: 0.8rem 1.5rem; background-color: #f39c12; color: white; border-radius: 8px; text-decoration: none; font-weight: bold;">📄 Reclamar este negocio</a>
-    </div>
-
-  </div>
+</div>
 {% endblock %}

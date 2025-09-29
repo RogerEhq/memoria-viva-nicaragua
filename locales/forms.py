@@ -3,7 +3,9 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field
-from .models import Relato, SugerenciaNegocio, Receta, PerfilUsuario, ReclamoNegocio, Negocio, MensajePropietario, Comentario, Calificacion
+from .models import Relato, SugerenciaNegocio, Receta, PerfilUsuario, ReclamoNegocio, Negocio, MensajePropietario, \
+    Comentario, Calificacion
+
 
 # Registro de usuario
 class UserRegisterForm(UserCreationForm):
@@ -24,6 +26,7 @@ class UserRegisterForm(UserCreationForm):
             Submit('submit', 'Registrarse')
         )
 
+
 # Inicio de sesión
 class UserLoginForm(AuthenticationForm):
     class Meta:
@@ -38,6 +41,7 @@ class UserLoginForm(AuthenticationForm):
             'password',
             Submit('submit', 'Iniciar sesión')
         )
+
 
 # Perfil de usuario (creación)
 class PerfilUsuarioForm(forms.ModelForm):
@@ -57,6 +61,7 @@ class PerfilUsuarioForm(forms.ModelForm):
             Submit('submit', 'Guardar perfil')
         )
 
+
 # Perfil de usuario (actualización)
 class PerfilUsuarioUpdateForm(forms.ModelForm):
     class Meta:
@@ -74,11 +79,16 @@ class PerfilUsuarioUpdateForm(forms.ModelForm):
             Submit('submit', 'Actualizar perfil')
         )
 
+
 # Formulario de relatos
 class RelatoForm(forms.ModelForm):
+    latitud = forms.DecimalField(max_digits=20, decimal_places=15, required=False, widget=forms.HiddenInput())
+    longitud = forms.DecimalField(max_digits=20, decimal_places=15, required=False, widget=forms.HiddenInput())
+    ubicacion_texto = forms.CharField(required=False, widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+
     class Meta:
         model = Relato
-        fields = ['title', 'content', 'image']
+        fields = ['title', 'content', 'image', 'latitud', 'longitud', 'ubicacion_texto']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -87,16 +97,25 @@ class RelatoForm(forms.ModelForm):
             'title',
             'content',
             'image',
+            'ubicacion_texto',
+            'latitud',
+            'longitud',
             Submit('submit', 'Enviar relato')
         )
 
-# Formulario de sugerencia de negocio (CORREGIDO)
-# locales/forms.py
 
+# Formulario de sugerencia de negocio (CORREGIDO)
 class SugerenciaNegocioForm(forms.ModelForm):
     # Campos ocultos para latitud y longitud. Ahora se definen aquí
     latitud = forms.DecimalField(max_digits=20, decimal_places=15, required=False, widget=forms.HiddenInput())
     longitud = forms.DecimalField(max_digits=20, decimal_places=15, required=False, widget=forms.HiddenInput())
+
+    # Campo de categoría (obligatorio por defecto)
+    categoria_relacionada = forms.ModelChoiceField(
+        queryset=SugerenciaNegocio.categoria_relacionada.field.related_model.objects.all(),
+        label="Categoría Relacionada",
+        required=True  # El campo vuelve a ser obligatorio
+    )
 
     class Meta:
         model = SugerenciaNegocio
@@ -106,7 +125,6 @@ class SugerenciaNegocioForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['comentarios'].required = False
-        self.fields['categoria_relacionada'].required = False
         self.fields['foto_referencia'].required = False
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -119,6 +137,7 @@ class SugerenciaNegocioForm(forms.ModelForm):
             'longitud',
             Submit('submit', 'Enviar sugerencia')
         )
+
 
 # Formulario de recetas
 class RecetaForm(forms.ModelForm):
@@ -137,6 +156,7 @@ class RecetaForm(forms.ModelForm):
             'imagen',
             Submit('submit', 'Enviar receta')
         )
+
 
 # Formulario de reclamo de negocio
 class ReclamoNegocioForm(forms.ModelForm):
@@ -157,6 +177,7 @@ class ReclamoNegocioForm(forms.ModelForm):
             Submit('submit', 'Enviar reclamo')
         )
 
+
 # NUEVO: Formulario para el propietario del negocio
 class NegocioPaquetesForm(forms.ModelForm):
     class Meta:
@@ -171,11 +192,13 @@ class NegocioPaquetesForm(forms.ModelForm):
             Submit('submit', 'Guardar Paquetes de Turismo', css_class='btn btn-primary mt-3')
         )
 
+
 # NUEVO: Formulario para la edición general del negocio
 class NegocioForm(forms.ModelForm):
     class Meta:
         model = Negocio
-        fields = ['name', 'description', 'address_text', 'phone', 'email', 'website', 'categoria_relacionada', 'is_turismo']
+        fields = ['name', 'description', 'address_text', 'phone', 'email', 'website', 'categoria_relacionada',
+                  'is_turismo']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -191,6 +214,7 @@ class NegocioForm(forms.ModelForm):
             'is_turismo',
             Submit('submit', 'Guardar Cambios')
         )
+
 
 # NUEVO: Formulario para que el propietario envíe un mensaje al admin
 class MensajePropietarioForm(forms.ModelForm):
@@ -210,6 +234,7 @@ class MensajePropietarioForm(forms.ModelForm):
             Submit('submit', 'Enviar Mensaje')
         )
 
+
 # NUEVO: Formulario para el comentario
 class ComentarioForm(forms.ModelForm):
     class Meta:
@@ -226,6 +251,7 @@ class ComentarioForm(forms.ModelForm):
             'texto',
             Submit('submit', 'Enviar Comentario')
         )
+
 
 # NUEVO: Formulario para la calificación
 class CalificacionForm(forms.ModelForm):

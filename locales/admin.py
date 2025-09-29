@@ -3,7 +3,8 @@ from django.utils.html import format_html
 from .models import (
     Relato, Negocio, SugerenciaNegocio, Receta,
     PerfilUsuario, Comentario, Calificacion,
-    ReclamoNegocio, ReporteComentario, Categoria, MensajePropietario
+    ReclamoNegocio, ReporteComentario, Categoria, MensajePropietario,
+    Rango  # <-- NUEVO: Importación del modelo Rango
 )
 
 
@@ -217,6 +218,13 @@ class ReporteComentarioAdmin(admin.ModelAdmin):
 class CategoriaAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('nombre',)}
     list_display = ('nombre', 'slug')
+
+
+# Registramos el modelo Rango para que aparezca en el panel de administración
+@admin.register(Rango)
+class RangoAdmin(admin.ModelAdmin):
+    list_display = ('nombre',)
+    search_fields = ('nombre',)
 
 
 # Registramos el modelo MensajePropietario para que aparezca en el panel de administración

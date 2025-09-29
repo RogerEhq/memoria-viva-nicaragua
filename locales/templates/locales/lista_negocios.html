@@ -1,61 +1,379 @@
 {% extends 'locales/base.html' %}
 {% block content %}
-  <h1 style="margin-bottom: 2rem; font-size: 2.8rem; color: #2c3e50; text-align: center; font-weight: 700;">
-    🏪 Negocios
-  </h1>
+<style>
+.negocios-container {
+    background: linear-gradient(135deg, #fdf6e3 0%, #e9d8a6 100%);
+    min-height: 100vh;
+    padding: 2rem 0;
+    position: relative;
+}
+.negocios-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 30% 20%, rgba(44, 62, 80, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(52, 152, 219, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+}
+.main-title {
+    margin-bottom: 2rem !important;
+    font-size: 2.8rem !important;
+    color: #2c3e50 !important;
+    text-align: center !important;
+    font-weight: 700 !important;
+    position: relative;
+    text-shadow: 0 2px 4px rgba(44, 62, 80, 0.1);
+    animation: titleFadeIn 0.8s ease-out;
+}
+.main-title::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, #2c3e50, #3498db);
+    border-radius: 2px;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+}
+.filter-form {
+    margin-bottom: 3rem !important;
+    padding: 2rem !important;
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%) !important;
+    border-radius: 20px !important;
+    box-shadow:
+        0 8px 32px rgba(44, 62, 80, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+    max-width: 700px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    border: 1px solid rgba(52, 152, 219, 0.1);
+    position: relative;
+    overflow: hidden;
+    animation: formSlideUp 0.8s ease-out 0.2s both;
+}
+.filter-form::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #2c3e50, #3498db, #2c3e50);
+    background-size: 200% 100%;
+    animation: borderShimmer 3s ease-in-out infinite;
+}
+.form-controls {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+    flex-wrap: wrap !important;
+}
+.form-label {
+    font-weight: 600 !important;
+    font-size: 1.1rem !important;
+    color: #2c3e50 !important;
+    margin-bottom: 0.5rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    padding-left: 1.5rem;
+}
+.form-label::before {
+    content: '▶';
+    position: absolute;
+    left: 0;
+    color: #3498db;
+    font-size: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.form-select {
+    flex: 1 !important;
+    padding: 1rem !important;
+    border-radius: 12px !important;
+    border: 2px solid #e9ecef !important;
+    font-size: 1rem !important;
+    min-width: 200px !important;
+    background: linear-gradient(145deg, #ffffff, #f8f9fa) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: inset 0 2px 4px rgba(44, 62, 80, 0.05);
+}
+.form-select:focus {
+    border-color: #3498db !important;
+    box-shadow:
+        inset 0 2px 4px rgba(44, 62, 80, 0.05),
+        0 0 0 3px rgba(52, 152, 219, 0.15),
+        0 4px 12px rgba(52, 152, 219, 0.1) !important;
+    outline: none !important;
+    transform: translateY(-1px);
+}
+.form-select:hover {
+    border-color: #3498db !important;
+    transform: translateY(-1px);
+}
+.submit-container {
+    text-align: center !important;
+    margin-top: 2rem !important;
+}
+.submit-button {
+    padding: 1rem 2rem !important;
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-weight: bold !important;
+    font-size: 1.1rem !important;
+    cursor: pointer !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow:
+        0 4px 15px rgba(52, 152, 219, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+}
+.submit-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+.submit-button:hover::before {
+    left: 100%;
+}
+.submit-button:hover {
+    background: linear-gradient(135deg, #2980b9 0%, #21618c 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow:
+        0 6px 20px rgba(52, 152, 219, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+.negocios-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+    gap: 2rem !important;
+    animation: gridFadeIn 0.8s ease-out 0.4s both;
+}
+.negocio-card {
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%) !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+    box-shadow:
+        0 8px 32px rgba(44, 62, 80, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    border: 1px solid rgba(52, 152, 219, 0.05);
+    position: relative;
+    animation: cardSlideUp 0.6s ease-out both;
+}
+.negocio-card:nth-child(odd) {
+    animation-delay: 0.1s;
+}
+.negocio-card:nth-child(even) {
+    animation-delay: 0.2s;
+}
+.negocio-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #3498db, transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.negocio-card:hover::before {
+    opacity: 1;
+}
+.negocio-card:hover {
+    transform: translateY(-8px) !important;
+    box-shadow:
+        0 16px 48px rgba(44, 62, 80, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+    border-color: rgba(52, 152, 219, 0.2);
+}
+.negocio-image {
+    height: 180px !important;
+    background-size: cover !important;
+    background-position: center !important;
+    position: relative;
+    overflow: hidden;
+}
+.negocio-image::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(44, 62, 80, 0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.negocio-card:hover .negocio-image::after {
+    opacity: 1;
+}
+.negocio-placeholder {
+    height: 180px !important;
+    background: linear-gradient(135deg, #dfe6e9, #bdc3c7) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #7f8c8d !important;
+    font-size: 1.2rem !important;
+    position: relative;
+}
+.negocio-content {
+    padding: 1.5rem !important;
+    background: linear-gradient(145deg, #ffffff, #f8f9fa);
+}
+.negocio-title {
+    font-size: 1.4rem !important;
+    font-weight: bold !important;
+    color: #2c3e50 !important;
+    text-decoration: none !important;
+    display: block;
+    margin-bottom: 0.5rem;
+    transition: color 0.3s ease;
+    position: relative;
+}
+.negocio-title::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #2c3e50, #3498db);
+    transition: width 0.3s ease;
+}
+.negocio-title:hover::after {
+    width: 100%;
+}
+.negocio-title:hover {
+    color: #3498db !important;
+}
+.negocio-info {
+    margin-top: 0.5rem !important;
+    color: #555 !important;
+    font-size: 0.95rem !important;
+    line-height: 1.6;
+}
+.no-results {
+    grid-column: 1 / -1 !important;
+    background: linear-gradient(135deg, #ffecec, #ffeaea) !important;
+    border-radius: 16px !important;
+    padding: 2.5rem !important;
+    text-align: center !important;
+    color: #c0392b !important;
+    font-weight: bold !important;
+    font-size: 1.2rem !important;
+    border: 1px solid rgba(192, 57, 43, 0.2);
+    box-shadow: 0 4px 15px rgba(192, 57, 43, 0.1);
+}
+@keyframes titleFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes formSlideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes gridFadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes cardSlideUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes borderShimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+@media (max-width: 768px) {
+    .filter-form { padding: 1.5rem !important; }
+    .main-title { font-size: 2.2rem !important; }
+    .negocios-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+    .negocio-content { padding: 1.2rem !important; }
+}
+</style>
 
-  <form method="get" style="margin-bottom: 3rem; padding: 1.5rem; background-color: #f9f9f9; border-radius: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); max-width: 700px; margin-left: auto; margin-right: auto;">
+<div class="negocios-container">
+    <div class="container">
+        <h1 class="main-title">
+            🏪 Negocios
+        </h1>
 
-    <div style="display: flex; flex-direction: column; gap: 1rem; flex-wrap: wrap;">
+        <form method="get" class="filter-form">
+            <div class="form-controls">
+                <div>
+                    <label for="categoria" class="form-label">Filtrar por Categoría:</label>
+                    <select name="categoria" id="categoria" class="form-select">
+                        <option value="">Todas las categorías</option>
+                        {% for categoria in categorias %}
+                            <option value="{{ categoria.slug }}" {% if categoria_actual_slug == categoria.slug %}selected{% endif %}>{{ categoria.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-      <label for="categoria" style="font-weight: 600; font-size: 1.2rem; color: #2c3e50;">Filtrar por Categoría:</label>
-      <select name="categoria" id="categoria" style="flex: 1; padding: 0.6rem; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem; min-width: 200px;">
-        <option value="">Todas las categorías</option>
-        {% for categoria in categorias %}
-          <option value="{{ categoria.slug }}" {% if categoria_actual_slug == categoria.slug %}selected{% endif %}>{{ categoria.nombre }}</option>
-        {% endfor %}
-      </select>
+                <div>
+                    <label for="departamento" class="form-label">Filtrar por Departamento:</label>
+                    <select name="departamento" id="departamento" class="form-select">
+                        <option value="">Todos los departamentos</option>
+                        {% for dept in departamentos %}
+                            <option value="{{ dept }}" {% if departamento_actual == dept %}selected{% endif %}>{{ dept }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
 
-      <label for="departamento" style="font-weight: 600; font-size: 1.2rem; color: #2c3e50; margin-top: 1rem;">Filtrar por Departamento:</label>
-      <select name="departamento" id="departamento" style="flex: 1; padding: 0.6rem; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem; min-width: 200px;">
-        <option value="">Todos los departamentos</option>
-        {% for dept in departamentos %}
-          <option value="{{ dept }}" {% if departamento_actual == dept %}selected{% endif %}>{{ dept }}</option>
-        {% endfor %}
-      </select>
-    </div>
+            <div class="submit-container">
+                <button type="submit" class="submit-button">
+                    🔍 Aplicar Filtros
+                </button>
+            </div>
+        </form>
 
-    <div style="text-align: center; margin-top: 2rem;">
-        <button type="submit" style="padding: 0.8rem 1.6rem; background-color: #3498db; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background-color 0.3s;">
-          🔍 Aplicar Filtros
-        </button>
-    </div>
-  </form>
-
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-    {% for negocio in negocios %}
-      <div style="background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: transform 0.3s ease; display: flex; flex-direction: column;">
-        {% if negocio.foto_principal %}
-          <div style="height: 180px; background-image: url('{{ negocio.foto_principal.url }}'); background-size: cover; background-position: center;"></div>
-        {% else %}
-          <div style="height: 180px; background-color: #dfe6e9; display: flex; align-items: center; justify-content: center; color: #7f8c8d; font-size: 1.2rem;">
-            📷 Sin imagen
-          </div>
-        {% endif %}
-        <div style="padding: 1.2rem;">
-          <a href="{% url 'detalle_negocio' negocio.id %}" style="font-size: 1.4rem; font-weight: bold; color: #2c3e50; text-decoration: none;">
-            {{ negocio.name }}
-          </a>
-          <p style="margin-top: 0.5rem; color: #555; font-size: 0.95rem;">
-            🗂️ {{ negocio.categoria_relacionada.nombre|title }}<br>
-            📍 {{ negocio.address_text }}
-          </p>
+        <div class="negocios-grid">
+            {% for negocio in negocios %}
+                <div class="negocio-card">
+                    {% if negocio.foto_principal %}
+                        <div class="negocio-image" style="background-image: url('{{ negocio.foto_principal.url }}');"></div>
+                    {% else %}
+                        <div class="negocio-placeholder">
+                            📷 Sin imagen
+                        </div>
+                    {% endif %}
+                    <div class="negocio-content">
+                        <a href="{% url 'detalle_negocio' negocio.id %}" class="negocio-title">
+                            {{ negocio.name }}
+                        </a>
+                        <p class="negocio-info">
+                            🗂️ {{ negocio.categoria_relacionada.nombre|title }}<br>
+                            📍 {{ negocio.address_text }}
+                        </p>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="no-results">
+                    🚫 No se encontraron negocios que coincidan con los filtros.
+                </div>
+            {% endfor %}
         </div>
-      </div>
-    {% empty %}
-      <div style="grid-column: 1 / -1; background-color: #ffecec; border-radius: 12px; padding: 2rem; text-align: center; color: #c0392b; font-weight: bold; font-size: 1.2rem;">
-        🚫 No se encontraron negocios que coincidan con los filtros.
-      </div>
-    {% endfor %}
-  </div>
+    </div>
+</div>
 {% endblock %}

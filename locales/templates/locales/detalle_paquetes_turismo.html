@@ -1,25 +1,266 @@
 {% extends 'locales/base.html' %}
 
 {% block content %}
-<div style="max-width: 900px; margin: auto; padding: 2rem;">
-    <a href="{% url 'detalle_negocio' negocio.id %}" style="display: inline-block; margin-bottom: 2rem; color: #3498db; text-decoration: none; font-weight: bold;">
-        &larr; Volver al detalle del negocio
-    </a>
+<style>
+.main-container {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    min-height: 100vh;
+    padding: 2rem 0;
+    position: relative;
+    overflow: hidden;
+}
+.main-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1" fill="rgba(255,255,255,0.08)"/><circle cx="40" cy="80" r="1" fill="rgba(255,255,255,0.06)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+.packages-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+    animation: slideUp 0.8s ease-out;
+}
+.packages-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #667eea);
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+}
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.8rem 1.5rem;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+    color: white;
+    text-decoration: none;
+    border-radius: 15px;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(255,255,255,0.3);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+.back-button:hover {
+    background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    color: white;
+    text-decoration: none;
+}
+.back-button::before {
+    content: '←';
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+}
+.packages-title {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 3rem;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: relative;
+}
+.packages-title::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 2px;
+    box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+}
+.packages-content {
+    background: linear-gradient(145deg, rgba(255,255,255,0.8), rgba(248,249,250,0.9));
+    padding: 3rem;
+    border-radius: 20px;
+    margin-bottom: 3rem;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+.packages-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #667eea, transparent);
+}
+.packages-content:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+}
+.packages-text {
+    white-space: pre-wrap;
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #2c3e50;
+    margin: 0;
+    text-align: justify;
+    position: relative;
+}
+.packages-text::first-letter {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #667eea;
+    float: left;
+    line-height: 2.5rem;
+    margin: 0.2rem 0.5rem 0 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+.contact-info {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.05));
+    padding: 2.5rem;
+    border-radius: 20px;
+    text-align: center;
+    border: 2px solid rgba(102, 126, 234, 0.2);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+.contact-info::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+}
+.contact-text {
+    font-style: italic;
+    color: #495057;
+    font-size: 1.2rem;
+    margin: 0;
+    font-weight: 500;
+    position: relative;
+}
+.contact-text::before {
+    content: '📞';
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 1rem;
+}
+.floating-icons {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+.floating-icon {
+    position: absolute;
+    font-size: 1.5rem;
+    opacity: 0.2;
+    animation: float 15s infinite ease-in-out;
+}
+.floating-icon:nth-child(1) {
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+.floating-icon:nth-child(2) {
+    top: 60%;
+    right: 15%;
+    animation-delay: 5s;
+}
+.floating-icon:nth-child(3) {
+    bottom: 30%;
+    left: 70%;
+    animation-delay: 10s;
+}
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(50px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.2; }
+    25% { transform: translateY(-20px) rotate(90deg); opacity: 0.4; }
+    50% { transform: translateY(-30px) rotate(180deg); opacity: 0.3; }
+    75% { transform: translateY(-10px) rotate(270deg); opacity: 0.4; }
+}
+@media (max-width: 768px) {
+    .packages-content {
+        padding: 2rem;
+    }
+    .packages-title {
+        font-size: 2rem;
+    }
+    .packages-text {
+        font-size: 1.1rem;
+    }
+    .back-button {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+}
+</style>
 
-    <h1 style="font-size: 2.5rem; color: #2c3e50; margin-bottom: 1rem;">
-        Paquetes de Turismo de {{ negocio.name }}
-    </h1>
-
-    <div style="background-color: #f9f9f9; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 2rem;">
-        <p style="white-space: pre-wrap; font-size: 1.1rem; line-height: 1.6;">
-            {{ negocio.paquetes_turismo }}
-        </p>
+<div class="main-container">
+    <!-- Iconos flotantes decorativos -->
+    <div class="floating-icons">
+        <div class="floating-icon">🏖️</div>
+        <div class="floating-icon">🏕️</div>
+        <div class="floating-icon">🚶‍♂️</div>
     </div>
 
-    <div style="text-align: center; margin-top: 3rem;">
-        <p style="font-style: italic; color: #7f8c8d;">
-            Para más información, contacta directamente con el negocio.
-        </p>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-9">
+                <div class="packages-card" style="padding: 3rem 2.5rem;">
+
+                    <!-- Botón de regreso estilizado -->
+                    <a href="{% url 'detalle_negocio' negocio.id %}" class="back-button">
+                        Volver al detalle del negocio
+                    </a>
+
+                    <!-- Título principal -->
+                    <h1 class="packages-title" style="font-size: 2.8rem; margin-bottom: 3.5rem;">
+                        Paquetes de Turismo de {{ negocio.name }}
+                    </h1>
+
+                    <!-- Contenido de los paquetes -->
+                    <div class="packages-content">
+                        <p class="packages-text">{{ negocio.paquetes_turismo }}</p>
+                    </div>
+
+                    <!-- Información de contacto -->
+                    <div class="contact-info">
+                        <p class="contact-text">
+                            Para más información, contacta directamente con el negocio.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

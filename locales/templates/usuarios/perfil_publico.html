@@ -2,7 +2,7 @@
 
 {% block content %}
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Lato:wght@400;700&display=swap');
 
   :root {
     --color-arena: #DCC7A1;
@@ -18,11 +18,12 @@
   body {
     font-family: 'Lato', sans-serif;
     color: var(--color-cacao);
-    background-color: var(--color-arena);
+    background: linear-gradient(135deg, var(--color-light) 0%, var(--color-arena) 100%);
+    min-height: 100vh;
   }
 
   @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
@@ -30,13 +31,14 @@
     max-width: 650px;
     margin: 3rem auto;
     background-color: var(--color-white);
-    border: 1px solid var(--color-cafetal);
+    border: none;
     border-radius: 20px;
-    padding: 3rem;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-top: 4px solid var(--color-terracota);
+    padding: 3.5rem;
+    box-shadow: 0 8px 25px rgba(184, 92, 56, 0.15);
     text-align: center;
     animation: fadeInUp 0.8s ease forwards;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .perfil-container:hover {
@@ -51,16 +53,19 @@
     object-fit: cover;
     border: 5px solid var(--color-turquesa);
     margin-bottom: 1.5rem;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   }
 
   .perfil-container:hover .perfil-avatar {
     transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
   }
 
   .perfil-nombre {
     font-family: 'Playfair Display', serif;
-    font-size: 2.5rem;
+    font-size: 2.8rem;
+    font-weight: 700;
     color: var(--color-lago);
     margin-bottom: 0.5rem;
   }
@@ -83,6 +88,15 @@
 
   .perfil-info p {
     margin-bottom: 1.25rem;
+    padding: 0.5rem;
+    border-left: 3px solid var(--color-cafetal);
+    transition: all 0.3s ease;
+  }
+
+  .perfil-info p:hover {
+    background-color: var(--color-light);
+    transform: translateX(5px);
+    border-left-color: var(--color-lago);
   }
 
   .perfil-info strong {
@@ -98,7 +112,7 @@
   {% if perfil.avatar %}
     <img src="{{ perfil.avatar.url }}" alt="Avatar de {{ perfil.usuario.username }}" class="perfil-avatar">
   {% else %}
-    <img src="https://ui-avatars.com/api/?name={{ perfil.usuario.username }}&background=B85C38&color=ffffff&size=150" alt="Avatar por defecto" class="perfil-avatar">
+    <img src="https://ui-avatars.com/api/?name={{ perfil.usuario.username }}&background=B85C38&color=ffffff&size=150&bold=true" alt="Avatar por defecto" class="perfil-avatar">
   {% endif %}
 
   <div class="perfil-nombre">{{ perfil.usuario.username }}</div>

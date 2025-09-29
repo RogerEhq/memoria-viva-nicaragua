@@ -2,7 +2,7 @@
 
 {% block content %}
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Lato:wght@400;700&display=swap');
 
   :root {
     --color-arena: #DCC7A1;
@@ -17,7 +17,7 @@
 
   body {
     font-family: 'Lato', sans-serif;
-    background-color: var(--color-arena);
+    background: linear-gradient(135deg, var(--color-light) 0%, var(--color-arena) 100%);
     color: var(--color-cacao);
     margin: 0;
     padding: 0;
@@ -34,7 +34,7 @@
   }
 
   @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
@@ -46,13 +46,15 @@
     max-width: 500px;
     width: 90%;
     animation: fadeInUp 1s ease-in-out;
-    border: 1px solid var(--color-cafetal);
+    border-top: 4px solid var(--color-cafetal);
+    box-shadow: 0 8px 25px rgba(63, 107, 76, 0.15);
   }
 
   h1 {
     font-family: 'Playfair Display', serif;
     color: var(--color-terracota);
-    font-size: 2.5rem;
+    font-size: 2.8rem;
+    font-weight: 700;
     margin-bottom: 2.5rem;
     position: relative;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
@@ -60,7 +62,7 @@
 
   h1::after {
     content: '';
-    width: 80px;
+    width: 100px;
     height: 4px;
     background-color: var(--color-cafetal);
     position: absolute;
@@ -68,6 +70,7 @@
     left: 50%;
     transform: translateX(-50%);
     border-radius: 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .form-group {
@@ -107,23 +110,26 @@
   }
 
   .btn-submit {
-    background-color: var(--color-cacao);
+    background: linear-gradient(135deg, var(--color-cacao) 0%, var(--color-terracota) 100%);
     color: var(--color-white);
     padding: 15px 30px;
     border: none;
-    border-radius: 12px;
+    border-radius: 50px;
     cursor: pointer;
     font-size: 1.1rem;
     font-weight: bold;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
     margin-top: 2.5rem;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     width: 100%;
+    box-shadow: 0 6px 20px rgba(107, 66, 38, 0.3);
   }
 
   .btn-submit:hover {
-    background-color: var(--color-cafetal);
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, var(--color-terracota) 0%, var(--color-cafetal) 100%);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 10px 30px rgba(184, 92, 56, 0.4);
   }
 </style>
 
