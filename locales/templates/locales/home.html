@@ -1,163 +1,170 @@
 {% extends 'locales/base.html' %}
 
-{% block content %}
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
 
-  :root {
-    --color-arena: #DCC7A1;
-    --color-cacao: #6B4226;
-    --color-cafetal: #3F6B4C;
-    --color-lago: #2F5C8F;
-    --color-terracota: #B85C38;
-    --color-turquesa: #2CBEC6;
-    --color-light: #F9F6F2;
-    --color-white: #ffffff;
-  }
+    :root {
+        --color-arena: #DCC7A1;
+        --color-cacao: #6B4226;
+        --color-cafetal: #3F6B4C;
+        --color-lago: #2F5C8F;
+        --color-terracota: #B85C38;
+        --color-turquesa: #2CBEC6;
+        --color-light: #F9F6F2;
+        --color-white: #ffffff;
+    }
 
-  body {
-    font-family: 'Lato', sans-serif;
-    color: var(--color-cacao);
-    background-color: var(--color-arena);
-  }
+    body {
+        font-family: 'Lato', sans-serif;
+        color: var(--color-cacao);
+        background-color: var(--color-arena);
+    }
 
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    color: var(--color-terracota);
-    font-size: 2.5rem;
-    margin-top: 2rem;
-    margin-bottom: 2.5rem;
-    text-align: center;
-    animation: fadeInUp 0.8s ease forwards;
-    position: relative;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-  }
+    .section-title {
+        font-family: 'Playfair Display', serif;
+        color: var(--color-terracota);
+        font-size: 2.5rem;
+        margin-top: 2rem;
+        margin-bottom: 2.5rem;
+        text-align: center;
+        animation: fadeInUp 0.8s ease forwards;
+        position: relative;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-  .section-title::after {
-    content: '';
-    display: block;
-    width: 80px;
-    height: 4px;
-    background-color: var(--color-cafetal);
-    margin: 1.5rem auto 0;
-    border-radius: 2px;
-  }
+    .section-title::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        background-color: var(--color-cafetal);
+        margin: 1.5rem auto 0;
+        border-radius: 2px;
+    }
 
-  .card-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2.5rem;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 0 1rem;
-    animation: fadeInUp 1s ease forwards;
-  }
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2.5rem;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 0 1rem;
+        animation: fadeInUp 1s ease forwards;
+    }
 
-  .card {
-    background: var(--color-white);
-    min-height: 600px;
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 420px;
-    font-family: 'Lato', sans-serif;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    border: 1px solid var(--color-arena);
-    animation: fadeInUp 0.6s ease forwards;
-  }
+    .card {
+        background: var(--color-white);
+        height: 600px;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 420px;
+        font-family: 'Lato', sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border: 1px solid var(--color-arena);
+        animation: fadeInUp 0.6s ease forwards;
+    }
 
-  .card-content {
-    flex: 1;
-    overflow-y: auto;
-    max-height: 450px;
-    padding-right: 5px;
-    scroll-behavior: smooth;
-  }
+    .card-content {
+        flex: 1;
+        overflow-y: auto;
+        max-height: 450px;
+        padding-right: 5px;
+        scroll-behavior: smooth;
+    }
 
-  .card-content::-webkit-scrollbar {
-    width: 6px;
-  }
+    .card-content::-webkit-scrollbar {
+        width: 6px;
+    }
 
-  .card-content::-webkit-scrollbar-thumb {
-    background-color: var(--color-turquesa);
-    border-radius: 3px;
-  }
+    .card-content::-webkit-scrollbar-thumb {
+        background-color: var(--color-turquesa);
+        border-radius: 3px;
+    }
 
-  .card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-  }
+    .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    }
 
-  .card h3 {
-    font-family: 'Playfair Display', serif;
-    color: var(--color-lago);
-    margin-top: 0;
-    margin-bottom: 0.75rem;
-    font-size: 1.75rem;
-  }
+    .card h3 {
+        font-family: 'Playfair Display', serif;
+        color: var(--color-lago);
+        margin-top: 0;
+        margin-bottom: 0.75rem;
+        font-size: 1.75rem;
+    }
 
-  .card p {
-    font-size: 1rem;
-    line-height: 1.7;
-    color: var(--color-cacao);
-  }
+    .card p {
+        font-size: 1rem;
+        line-height: 1.7;
+        color: var(--color-cacao);
+    }
 
-  .card img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 12px;
-    margin-bottom: 1rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
+    .card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
 
-  .card button {
-    background-color: var(--color-turquesa);
-    color: var(--color-white);
-    padding: 12px 25px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 1rem;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    font-family: 'Lato', sans-serif;
-    letter-spacing: 0.5px;
-    margin-top: 1rem;
-  }
+    .card button {
+        background-color: var(--color-turquesa);
+        color: var(--color-white);
+        padding: 12px 25px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 1rem;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        font-family: 'Lato', sans-serif;
+        letter-spacing: 0.5px;
+        margin-top: 1rem;
+    }
 
-  .card button:hover {
-    background-color: var(--color-lago);
-    transform: scale(1.05);
-  }
+    .card button:hover {
+        background-color: var(--color-lago);
+        transform: scale(1.05);
+    }
 
-  /* Estilo para el contenedor del mapa */
-  .mapa-leaflet {
-    height: 250px;
-    width: 100%;
-    border-radius: 12px;
-    margin-top: 1rem;
-    border: 1px solid var(--color-cafetal);
-  }
+    .mapa-container {
+        margin-top: 1rem;
+    }
 
-  hr {
-    border: none;
-    border-top: 3px solid var(--color-turquesa);
-    width: 80%;
-    margin: 3rem auto;
-    opacity: 0.6;
-  }
+    hr {
+        border: none;
+        border-top: 3px solid var(--color-turquesa);
+        width: 80%;
+        margin: 3rem auto;
+        opacity: 0.6;
+    }
+
+    #main-map {
+        height: 500px;
+        width: 100%;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
 </style>
+{% endblock %}
 
-<h1 class="section-title">Bienvenidos a Memorias de mi pueblo</h1>
+{% block content %}
+<h1 class="section-title">Mapa de Negocios y Memorias</h1>
+
+<div id="main-map" style="height: 500px;"></div>
 
 <h2 class="section-title">Relatos Culturales</h2>
 <div class="card-container">
@@ -197,14 +204,12 @@
 
         <p>Categoría: {{ negocio.get_category_display }}</p>
         <p>Descripción: {{ negocio.description }}</p>
-        <p>Dirección: **{{ negocio.address_text }}**</p>
+        <p>Dirección: {{ negocio.address_text }}</p>
 
-        <button
-          onclick="toggleLeafletMap('{{ negocio.id }}', '{{ negocio.latitud|default_if_none:"0" }}', '{{ negocio.longitud|default_if_none:"0" }}')"
-          id="btn-mapa-{{ negocio.id }}">
-          Ver ubicación exacta
+        <button onclick="toggleMapa('{{ negocio.id }}', '{{ negocio.address_text|urlencode }}')" id="btn-{{ negocio.id }}">
+          Ver ubicación
         </button>
-        <div id="mapa-{{ negocio.id }}" class="mapa-leaflet" style="display:none;"></div>
+        <div id="mapa-{{ negocio.id }}" class="mapa-container"></div>
       </div>
     </div>
   {% empty %}
@@ -212,80 +217,85 @@
   {% endfor %}
 </div>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
 <script>
-  let mapasActivos = {}; // Objeto para guardar instancias de mapas Leaflet
+    document.addEventListener('DOMContentLoaded', function() {
+        const mainMap = L.map('main-map').setView([12.8654, -85.2072], 7);
 
-  function toggleLeafletMap(id, lat, lng) {
-    const mapaDiv = document.getElementById(`mapa-${id}`);
-    const btn = document.getElementById(`btn-mapa-${id}`);
-    const latitud = parseFloat(lat);
-    const longitud = parseFloat(lng);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(mainMap);
 
-    // 1. Ocultar y limpiar otros mapas
-    document.querySelectorAll('.mapa-leaflet').forEach(div => {
-      if (div.id !== `mapa-${id}` && div.style.display !== 'none') {
-        div.style.display = 'none';
-        const negocioId = div.id.replace('mapa-', '');
-        const otherBtn = document.getElementById(`btn-mapa-${negocioId}`);
-        if (otherBtn) otherBtn.textContent = 'Ver ubicación exacta';
+        mainMap.invalidateSize();
 
-        // Destruir instancia de Leaflet si existe
-        if (mapasActivos[negocioId]) {
-          mapasActivos[negocioId].remove();
-          delete mapasActivos[negocioId];
+        // ----------------------------------------------------
+        // Lógica para el mapa principal (con todos los negocios)
+        // ----------------------------------------------------
+        const negocios = [
+            {% for negocio in negocios %}
+            {
+                name: "{{ negocio.name|escapejs }}",
+                address: "{{ negocio.address_text|escapejs }}",
+            },
+            {% endfor %}
+        ];
+
+        async function geocodeAndAddMarker(map, address, name) {
+            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data && data.length > 0) {
+                    const lat = parseFloat(data[0].lat);
+                    const lon = parseFloat(data[0].lon);
+                    L.marker([lat, lon]).addTo(map).bindPopup(`<b>${name}</b><br>${address}`).openPopup();
+                } else {
+                    console.warn(`No se encontraron coordenadas para: ${address}`);
+                }
+            } catch (error) {
+                console.error(`Error de geocodificación para ${address}:`, error);
+            }
         }
-      }
+
+        negocios.forEach(negocio => {
+            geocodeAndAddMarker(mainMap, negocio.address, negocio.name);
+        });
+
     });
 
-    // 2. Mostrar/Ocultar el mapa actual
-    if (mapaDiv.style.display === 'none') {
-      // Mostrar mapa
-      if (latitud === 0 || longitud === 0) {
-        alert("Las coordenadas para este negocio no son válidas o no se han guardado.");
-        return;
-      }
+    // ----------------------------------------------------
+    // Lógica para los mapas individuales
+    // ----------------------------------------------------
+    function toggleMapa(id, direccion) {
+        const mapaDiv = document.getElementById(`mapa-${id}`);
+        const btn = document.getElementById(`btn-${id}`);
 
-      mapaDiv.style.display = 'block';
-      btn.textContent = 'Ocultar ubicación';
+        // Limpia los mapas que estén abiertos en otros negocios
+        document.querySelectorAll('[id^="mapa-"]').forEach(div => {
+            if (div.id !== `mapa-${id}`) {
+                div.innerHTML = '';
+                const negocioId = div.id.replace('mapa-', '');
+                const otherBtn = document.getElementById(`btn-${negocioId}`);
+                if (otherBtn) otherBtn.textContent = 'Ver ubicación';
+            }
+        });
 
-      // Inicializar Leaflet
-      if (!mapasActivos[id]) {
-        // Inicializa el mapa
-        const mapa = L.map(mapaDiv).setView([latitud, longitud], 15);
-        mapasActivos[id] = mapa; // Guarda la instancia
-
-        // Capa de OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 19,
-          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }).addTo(mapa);
-
-        // Colocar marcador
-        L.marker([latitud, longitud]).addTo(mapa)
-          .bindPopup('Ubicación del negocio')
-          .openPopup();
-      }
-
-      // 🚨 Solución para el mapa gris: forzar a Leaflet a recalcular dimensiones
-      // Esto debe ir después de que el div sea visible.
-      if (mapasActivos[id]) {
-        mapasActivos[id].invalidateSize();
-      }
-
-    } else {
-      // Ocultar mapa
-      mapaDiv.style.display = 'none';
-      btn.textContent = 'Ver ubicación exacta';
-
-      // Destruir instancia de Leaflet
-      if (mapasActivos[id]) {
-        mapasActivos[id].remove();
-        delete mapasActivos[id];
-      }
+        if (mapaDiv.innerHTML.trim() !== '') {
+            mapaDiv.innerHTML = '';
+            btn.textContent = 'Ver ubicación';
+        } else {
+            mapaDiv.innerHTML = `
+                <iframe
+                    width="100%"
+                    height="250"
+                    frameborder="0"
+                    style="border:0; border-radius: 12px;"
+                    src="https://maps.google.com/maps?q=${direccion}&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                    allowfullscreen>
+                </iframe>
+            `;
+            btn.textContent = 'Ocultar ubicación';
+        }
     }
-  }
 </script>
 {% endblock %}

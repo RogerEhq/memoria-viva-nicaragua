@@ -199,6 +199,8 @@
     footer img {
       width:100%;
       height: 360%;
+      width: 100%;
+      height: 490%;
       object-fit: cover;
       display: block;
       border-radius: 0;
@@ -235,6 +237,8 @@
       }
     }
   </style>
+
+  {% block extra_head %}{% endblock %}
 </head>
 <body>
   <nav>
@@ -302,5 +306,6 @@
   </footer>
 
   <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+
 </body>
 </html>
