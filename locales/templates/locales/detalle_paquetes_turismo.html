@@ -1,0 +1,25 @@
+{% extends 'locales/base.html' %}
+
+{% block content %}
+<div style="max-width: 900px; margin: auto; padding: 2rem;">
+    <a href="{% url 'detalle_negocio' negocio.id %}" style="display: inline-block; margin-bottom: 2rem; color: #3498db; text-decoration: none; font-weight: bold;">
+        &larr; Volver al detalle del negocio
+    </a>
+
+    <h1 style="font-size: 2.5rem; color: #2c3e50; margin-bottom: 1rem;">
+        Paquetes de Turismo de {{ negocio.name }}
+    </h1>
+
+    <div style="background-color: #f9f9f9; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 2rem;">
+        <p style="white-space: pre-wrap; font-size: 1.1rem; line-height: 1.6;">
+            {{ negocio.paquetes_turismo }}
+        </p>
+    </div>
+
+    <div style="text-align: center; margin-top: 3rem;">
+        <p style="font-style: italic; color: #7f8c8d;">
+            Para más información, contacta directamente con el negocio.
+        </p>
+    </div>
+</div>
+{% endblock %}

@@ -1,17 +1,48 @@
 {% extends 'locales/base.html' %}
+{% load crispy_forms_tags %}
+
 {% block content %}
   <div style="max-width: 900px; margin: auto; padding: 2rem;">
     <h1 style="font-size: 2.5rem; color: #2c3e50; margin-bottom: 1rem;">{{ negocio.name }}</h1>
 
     <div style="background-color: #f9f9f9; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 2rem;">
-      <p><strong>Categoría:</strong> 🗂️ {{ negocio.get_category_display }}</p>
+      <p><strong>Categoría:</strong> 🗂️ {% if negocio.categoria_relacionada %}{{ negocio.categoria_relacionada.nombre }}{% else %}{{ negocio.get_category_display }}{% endif %}</p>
       <p><strong>Departamento:</strong> 📍 {{ negocio.address_text }}</p>
       <p><strong>Horario:</strong> 🕒 {{ negocio.hours }}</p>
       <p><strong>Descripción:</strong> {{ negocio.description }}</p>
 
+      <p><strong>Teléfono:</strong> 📞 {{ negocio.phone|default:"No especificado" }}</p>
+      <p><strong>Correo electrónico:</strong> 📧 {{ negocio.email|default:"No especificado" }}</p>
+      <p><strong>Sitio web:</strong> 🌐 {% if negocio.website %}<a href="{{ negocio.website }}" target="_blank">{{ negocio.website }}</a>{% else %}No especificado{% endif %}</p>
+      <p><strong>Es un negocio de turismo:</strong> {% if negocio.is_turismo %}✔️ Sí{% else %}❌ No{% endif %}</p>
+      <p><strong>Propietario:</strong> {{ negocio.propietario.username }}</p>
+
+
       {% if negocio.foto_principal %}
         <div style="margin-top: 1.5rem;">
           <img src="{{ negocio.foto_principal.url }}" alt="Foto del negocio" style="width: 100%; max-width: 600px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+        </div>
+      {% endif %}
+
+      {% if negocio.is_turismo and negocio.paquetes_turismo %}
+        <div style="margin-top: 2rem; text-align: center;">
+          <a href="{% url 'detalle_paquetes_turismo' negocio.id %}" style="display: inline-block; padding: 0.8rem 1.5rem; background-color: #2ecc71; color: white; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1.1rem; transition: background-color 0.3s ease;">
+            🏕️ Ver Paquetes de Turismo
+          </a>
+        </div>
+      {% endif %}
+
+      {% if user.is_authenticated and user == negocio.propietario %}
+        <div style="margin-top: 1rem; text-align: center;">
+            <a href="{% url 'editar_negocio' negocio.id %}" style="display: inline-block; padding: 0.8rem 1.5rem; background-color: #2c3e50; color: white; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1.1rem; transition: background-color 0.3s ease;">
+                ✏️ Editar mi Negocio
+            </a>
+            <a href="{% url 'editar_paquetes_turismo' negocio.id %}" style="display: inline-block; padding: 0.8rem 1.5rem; background-color: #3498db; color: white; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1.1rem; transition: background-color 0.3s ease;">
+                ✏️ Editar Paquetes
+            </a>
+            <a href="{% url 'enviar_mensaje_admin' %}" style="display: inline-block; padding: 0.8rem 1.5rem; background-color: #f39c12; color: white; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1.1rem; transition: background-color 0.3s ease;">
+                📧 Enviar Mensaje a Administración
+            </a>
         </div>
       {% endif %}
     </div>
@@ -20,6 +51,24 @@
       <h2 style="font-size: 1.8rem; color: #34495e;">⭐ Calificación promedio: {{ promedio }} / 5</h2>
       {% if user_calificacion %}
         <p style="color: #2c3e50;"><strong>Tu calificación:</strong> {{ user_calificacion.puntuacion }} ⭐</p>
+      {% endif %}
+    </div>
+
+    <div style="margin-bottom: 2rem;">
+      <h3 style="font-size: 1.5rem; color: #2c3e50;">📝 Comentar y Calificar</h3>
+      {% if user.is_authenticated %}
+        <form method="post" action="{% url 'comentar_y_calificar' negocio.id %}" style="margin-top: 1rem;">
+          {% csrf_token %}
+          {{ comentario_form|crispy }}
+          {{ calificacion_form|crispy }}
+          <button type="submit" style="padding: 0.6rem 1.2rem; background-color: #3498db; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
+            💬 Enviar comentario y calificación
+          </button>
+        </form>
+      {% else %}
+        <p style="text-align: center; margin-top: 2rem;">
+          <a href="{% url 'login_view' %}" style="color: #3498db; font-weight: bold;">🔐 Inicia sesión</a> para comentar y calificar este negocio.
+        </p>
       {% endif %}
     </div>
 
@@ -44,36 +93,9 @@
       {% endfor %}
     </div>
 
-    {% if user.is_authenticated %}
-      <div style="margin-bottom: 2rem;">
-        <h3 style="font-size: 1.5rem; color: #2c3e50;">📝 Comentar y calificar</h3>
-        <form method="post" action="{% url 'comentar_y_calificar' negocio.id %}" style="margin-top: 1rem;">
-          {% csrf_token %}
-          <label for="texto" style="font-weight: bold;">Comentario:</label><br>
-          <textarea name="texto" rows="4" cols="60" required style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid #ccc;"></textarea><br><br>
+    <div style="text-align: center; margin-top: 2rem;">
+      <a href="{% url 'reclamar_negocio' %}?negocio_id={{ negocio.id }}" style="padding: 0.8rem 1.5rem; background-color: #f39c12; color: white; border-radius: 8px; text-decoration: none; font-weight: bold;">📄 Reclamar este negocio</a>
+    </div>
 
-          <label for="puntuacion" style="font-weight: bold;">Puntuación (1-5):</label>
-          <select name="puntuacion" required style="margin-left: 1rem; padding: 0.4rem; border-radius: 6px; border: 1px solid #ccc;">
-            {% for i in "12345" %}
-              <option value="{{ i }}">{{ i }}</option>
-            {% endfor %}
-          </select><br><br>
-
-          <button type="submit" style="padding: 0.6rem 1.2rem; background-color: #3498db; color: white; border: none; border-radius: 6px; font-weight: bold;">💬 Enviar comentario y calificación</button>
-        </form>
-
-        {% if user_calificacion %}
-          <p style="margin-top: 1rem; color: #2c3e50;"><strong>Ya calificaste este negocio con:</strong> {{ user_calificacion.puntuacion }} ⭐</p>
-        {% endif %}
-      </div>
-
-      <div style="text-align: center; margin-top: 2rem;">
-        <a href="{% url 'reclamar_negocio' %}?negocio_id={{ negocio.id }}" style="padding: 0.8rem 1.5rem; background-color: #f39c12; color: white; border-radius: 8px; text-decoration: none; font-weight: bold;">📄 Reclamar este negocio</a>
-      </div>
-    {% else %}
-      <p style="text-align: center; margin-top: 2rem;">
-        <a href="{% url 'login_view' %}" style="color: #3498db; font-weight: bold;">🔐 Inicia sesión</a> para comentar, calificar o reclamar este negocio.
-      </p>
-    {% endif %}
   </div>
 {% endblock %}

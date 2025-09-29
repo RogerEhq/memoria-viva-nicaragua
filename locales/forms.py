@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field
-from .models import Relato, SugerenciaNegocio, Receta, PerfilUsuario, ReclamoNegocio
+from .models import Relato, SugerenciaNegocio, Receta, PerfilUsuario, ReclamoNegocio, Negocio, MensajePropietario, Comentario, Calificacion
 
 # Registro de usuario
 class UserRegisterForm(UserCreationForm):
@@ -90,32 +90,31 @@ class RelatoForm(forms.ModelForm):
             Submit('submit', 'Enviar relato')
         )
 
-# Formulario de sugerencia de negocio
+# Formulario de sugerencia de negocio (CORREGIDO)
+# locales/forms.py
+
 class SugerenciaNegocioForm(forms.ModelForm):
-    # Campos ocultos para latitud y longitud
-    latitud = forms.FloatField(widget=forms.HiddenInput(), required=False)
-    longitud = forms.FloatField(widget=forms.HiddenInput(), required=False)
+    # Campos ocultos para latitud y longitud. Ahora se definen aquí
+    latitud = forms.DecimalField(max_digits=20, decimal_places=15, required=False, widget=forms.HiddenInput())
+    longitud = forms.DecimalField(max_digits=20, decimal_places=15, required=False, widget=forms.HiddenInput())
 
     class Meta:
         model = SugerenciaNegocio
-        # Incluir latitud y longitud en los campos del formulario
-        fields = ['nombre_negocio', 'ubicacion_texto', 'latitud', 'longitud', 'comentarios', 'categoria_negocio',
-                  'foto_referencia']
+        fields = ['nombre_negocio', 'ubicacion_texto', 'latitud', 'longitud',
+                  'comentarios', 'categoria_relacionada', 'foto_referencia']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['categoria_negocio'].label = "Categoría del negocio"
-        self.fields['categoria_negocio'].empty_label = None
-
-        # Ocultar campos en el layout de crispy-forms
+        self.fields['comentarios'].required = False
+        self.fields['categoria_relacionada'].required = False
+        self.fields['foto_referencia'].required = False
         self.helper = FormHelper()
         self.helper.layout = Layout(
             'nombre_negocio',
             'ubicacion_texto',
             'comentarios',
-            'categoria_negocio',
+            'categoria_relacionada',
             'foto_referencia',
-            # Añadir los campos ocultos al layout
             'latitud',
             'longitud',
             Submit('submit', 'Enviar sugerencia')
@@ -156,4 +155,91 @@ class ReclamoNegocioForm(forms.ModelForm):
             'contrato_pdf',
             'mensaje',
             Submit('submit', 'Enviar reclamo')
+        )
+
+# NUEVO: Formulario para el propietario del negocio
+class NegocioPaquetesForm(forms.ModelForm):
+    class Meta:
+        model = Negocio
+        fields = ['paquetes_turismo']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Field('paquetes_turismo', css_class='form-control-lg'),
+            Submit('submit', 'Guardar Paquetes de Turismo', css_class='btn btn-primary mt-3')
+        )
+
+# NUEVO: Formulario para la edición general del negocio
+class NegocioForm(forms.ModelForm):
+    class Meta:
+        model = Negocio
+        fields = ['name', 'description', 'address_text', 'phone', 'email', 'website', 'categoria_relacionada', 'is_turismo']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            'name',
+            'description',
+            'address_text',
+            'phone',
+            'email',
+            'website',
+            'categoria_relacionada',
+            'is_turismo',
+            Submit('submit', 'Guardar Cambios')
+        )
+
+# NUEVO: Formulario para que el propietario envíe un mensaje al admin
+class MensajePropietarioForm(forms.ModelForm):
+    class Meta:
+        model = MensajePropietario
+        fields = ['asunto', 'cuerpo']
+        widgets = {
+            'cuerpo': forms.Textarea(attrs={'rows': 5, 'placeholder': 'Describe tu problema o sugerencia.'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            'asunto',
+            'cuerpo',
+            Submit('submit', 'Enviar Mensaje')
+        )
+
+# NUEVO: Formulario para el comentario
+class ComentarioForm(forms.ModelForm):
+    class Meta:
+        model = Comentario
+        fields = ['texto']
+        widgets = {
+            'texto': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Escribe tu comentario aquí...'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            'texto',
+            Submit('submit', 'Enviar Comentario')
+        )
+
+# NUEVO: Formulario para la calificación
+class CalificacionForm(forms.ModelForm):
+    class Meta:
+        model = Calificacion
+        fields = ['puntuacion']
+        widgets = {
+            'puntuacion': forms.RadioSelect(choices=[(i, str(i)) for i in range(1, 6)]),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            'puntuacion',
+            Submit('submit', 'Enviar Calificación')
         )

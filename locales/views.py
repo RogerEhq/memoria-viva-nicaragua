@@ -8,10 +8,14 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.db.models import Q
 from django.core.paginator import Paginator
-
-from django.forms import ModelForm  # Importación correcta
+from django.forms import ModelForm
 from django.db.models import Avg
+from django.db import IntegrityError # <-- LÍNEA CORREGIDA
+from django.utils import timezone # Se importa timezone para uso en funciones
 
+# Importaciones necesarias para el filtro de categorías
+from .models import Negocio, Categoria, PerfilUsuario, Relato, SaberPopular, Comentario, Calificacion, \
+    ReporteComentario, ReclamoNegocio, SugerenciaNegocio, Receta, MensajePropietario
 from .forms import (
     RecetaForm,
     PerfilUsuarioUpdateForm,
@@ -19,14 +23,12 @@ from .forms import (
     UserLoginForm,
     RelatoForm,
     SugerenciaNegocioForm,
-    ReclamoNegocioForm
-)
-from .models import (
-    Receta,
-    PerfilUsuario,
-    Relato,
-    Negocio,
-    SaberPopular, Comentario, Calificacion, ReporteComentario, ReclamoNegocio, SugerenciaNegocio
+    ReclamoNegocioForm,
+    NegocioPaquetesForm,
+    NegocioForm,
+    MensajePropietarioForm,
+    ComentarioForm,
+    CalificacionForm
 )
 from eventos.models import EventoCultural
 from django.utils.http import urlencode
@@ -74,16 +76,13 @@ def logout_view(request):
 
 def home_view(request):
     relatos = Relato.objects.filter(status='approved')
-
     # Obtener negocios, calcular la calificación promedio y ordenarlos de mayor a menor
     negocios = Negocio.objects.annotate(
         avg_rating=Avg('calificacion__puntuacion')
     ).order_by('-avg_rating')
-
     perfil = None
     if request.user.is_authenticated:
         perfil, _ = PerfilUsuario.objects.get_or_create(usuario=request.user)
-
     context = {
         'relatos': relatos,
         'negocios': negocios,
@@ -112,18 +111,19 @@ def sugerir_negocio_view(request):
     if request.method == 'POST':
         form = SugerenciaNegocioForm(request.POST, request.FILES)
         if form.is_valid():
-            sugerencia = form.save(commit=False)
-            sugerencia.sugerido_por = request.user
-
-            # 📌 CONEXIÓN CLAVE: Asignar latitud y longitud desde el formulario (campos ocultos)
-            # Estos campos se llenan mediante JavaScript en el template.
-            sugerencia.latitud = form.cleaned_data.get('latitud')
-            sugerencia.longitud = form.cleaned_data.get('longitud')
-
-            sugerencia.save()
-            messages.success(request, '¡Sugerencia enviada! El equipo la revisará pronto.')
-            return redirect('sugerir_negocio_view')
+            try:
+                sugerencia = form.save(commit=False)
+                sugerencia.sugerido_por = request.user
+                sugerencia.save()
+                messages.success(request, '¡Sugerencia enviada! El equipo la revisará pronto.')
+                return redirect('sugerir_negocio_view')
+            except Exception as e:
+                print("Error inesperado al guardar la sugerencia:")
+                print(e)
+                messages.error(request, f'Ocurrió un error inesperado al enviar la sugerencia: {e}.')
         else:
+            print("El formulario no es válido. Errores:")
+            print(form.errors)
             messages.error(request, 'Hubo un error al enviar la sugerencia. Revisa los campos.')
     else:
         form = SugerenciaNegocioForm()
@@ -157,7 +157,6 @@ def biblioteca_view(request):
     query = request.GET.get('q')
     recetas_list = Receta.objects.filter(estado='approved')
     saberes_list = SaberPopular.objects.filter(estado='approved')
-
     if query:
         recetas_list = recetas_list.filter(
             Q(titulo__icontains=query) | Q(ingredientes__icontains=query) | Q(pasos__icontains=query)
@@ -165,13 +164,10 @@ def biblioteca_view(request):
         saberes_list = saberes_list.filter(
             Q(titulo__icontains=query) | Q(contenido__icontains=query)
         )
-
     recetas_paginator = Paginator(recetas_list, 10)
     saberes_paginator = Paginator(saberes_list, 10)
-
     recetas = recetas_paginator.get_page(request.GET.get('page_recetas'))
     saberes = saberes_paginator.get_page(request.GET.get('page_saberes'))
-
     context = {
         'recetas': recetas,
         'saberes': saberes,
@@ -189,7 +185,6 @@ def evento_cultural_list(request):
 
 @login_required
 def perfil_view(request):
-    # Perfil del usuario autenticado
     perfil, _ = PerfilUsuario.objects.get_or_create(usuario=request.user)
     return render(request, 'usuarios/perfil_view.html', {'perfil': perfil})
 
@@ -197,18 +192,14 @@ def perfil_view(request):
 @login_required
 def editar_perfil(request):
     perfil, _ = PerfilUsuario.objects.get_or_create(usuario=request.user)
-
     if request.method == 'POST':
-        # Usamos el formulario sin el campo 'rango'
         form = PerfilUsuarioUpdateForm(request.POST, request.FILES, instance=perfil)
         if form.is_valid():
             form.save()
             messages.success(request, '¡Tu perfil ha sido actualizado exitosamente!')
             return redirect('perfil_view')
     else:
-        # Usamos el formulario sin el campo 'rango'
         form = PerfilUsuarioUpdateForm(instance=perfil)
-
     return render(request, 'usuarios/editar_perfil.html', {'form': form, 'perfil': perfil})
 
 
@@ -242,7 +233,6 @@ class RangoForm(ModelForm):
 def reclamar_negocio(request):
     negocio_id = request.GET.get('negocio_id')
     negocio = get_object_or_404(Negocio, id=negocio_id) if negocio_id else None
-
     if request.method == 'POST':
         form = ReclamoNegocioForm(request.POST, request.FILES)
         if form.is_valid():
@@ -253,7 +243,6 @@ def reclamar_negocio(request):
             return redirect('home_view')
     else:
         form = ReclamoNegocioForm(initial={'negocio': negocio})
-
     return render(request, 'locales/reclamar_negocio.html', {
         'form': form,
         'negocio': negocio
@@ -268,34 +257,68 @@ def detalle_negocio(request, negocio_id):
         calificacion = Calificacion.objects.filter(comentario=comentario).first()
         comentario.puntuacion_usuario = calificacion.puntuacion if calificacion else None
 
-    calificaciones = Calificacion.objects.filter(negocio=negocio)
-    promedio = calificaciones.aggregate(promedio=Avg('puntuacion'))['promedio'] or 0
+    # Agrega esto para calcular la calificación promedio
+    promedio = negocio.calificacion_set.aggregate(Avg('puntuacion'))['puntuacion__avg'] or 0
 
-    user_calificacion = None
-    if request.user.is_authenticated:
-        user_calificacion = Calificacion.objects.filter(negocio=negocio, usuario=request.user).first()
+    # Pasa los formularios vacíos al contexto
+    comentario_form = ComentarioForm()
+    calificacion_form = CalificacionForm()
 
-    return render(request, 'locales/detalle_negocio.html', {
+    context = {
         'negocio': negocio,
         'comentarios': comentarios,
-        'calificaciones': calificaciones,
         'promedio': round(promedio, 1),
-        'user_calificacion': user_calificacion,
-    })
+        'comentario_form': comentario_form, # <-- Agregado
+        'calificacion_form': calificacion_form, # <-- Agregado
+        'is_turismo_negocio': negocio.is_turismo,
+    }
+    return render(request, 'locales/detalle_negocio.html', context)
+
+
+def detalle_paquetes_turismo(request, negocio_id):
+    negocio = get_object_or_404(Negocio, id=negocio_id)
+    if not negocio.is_turismo or not negocio.paquetes_turismo:
+        messages.error(request, "Este negocio no tiene paquetes de turismo o no pertenece a esa categoría.")
+        return redirect('detalle_negocio', negocio_id=negocio.id)
+    context = {
+        'negocio': negocio,
+    }
+    return render(request, 'locales/detalle_paquetes_turismo.html', context)
+
+
+def plan_turismo(request):
+    negocios_turismo = Negocio.objects.filter(categoria_relacionada__slug='turismo')
+    context = {
+        'negocios': negocios_turismo,
+    }
+    return render(request, 'locales/plan_turismo.html', context)
 
 
 def lista_negocios(request):
-    departamento = request.GET.get('departamento')
-    if departamento:
-        negocios = Negocio.objects.filter(address_text__icontains=departamento)
-    else:
-        negocios = Negocio.objects.all()
-
-    departamentos = Negocio.objects.values_list('address_text', flat=True).distinct()
-    return render(request, 'locales/lista_negocios.html', {
+    categoria_slug = request.GET.get('categoria', None)
+    departamento_seleccionado = request.GET.get('departamento', None)
+    if categoria_slug == 'turismo':
+        return redirect('plan_turismo')
+    negocios = Negocio.objects.all()
+    categorias = Categoria.objects.all()
+    if categoria_slug:
+        negocios = negocios.filter(categoria_relacionada__slug=categoria_slug)
+    if departamento_seleccionado:
+        negocios = negocios.filter(address_text__icontains=departamento_seleccionado)
+    departamentos_unicos = set()
+    for negocio in Negocio.objects.all():
+        if negocio.address_text:
+            partes = negocio.address_text.split(',')
+            if len(partes) > 0:
+                departamentos_unicos.add(partes[0].strip())
+    contexto = {
         'negocios': negocios,
-        'departamentos': departamentos
-    })
+        'categorias': categorias,
+        'departamentos': sorted(list(departamentos_unicos)),
+        'departamento_actual': departamento_seleccionado,
+        'categoria_actual_slug': categoria_slug,
+    }
+    return render(request, 'locales/lista_negocios.html', contexto)
 
 
 @login_required
@@ -319,62 +342,34 @@ def juego_view(request):
 
 
 @login_required
-def agregar_comentario(request, negocio_id):
-    negocio = get_object_or_404(Negocio, id=negocio_id)
-    if request.method == 'POST':
-        texto = request.POST.get('texto')
-        if texto:
-            Comentario.objects.create(
-                negocio=negocio,
-                usuario=request.user,
-                texto=texto
-            )
-            messages.success(request, "Comentario enviado correctamente.")
-    return redirect('detalle_negocio', negocio_id=negocio.id)
-
-
-@login_required
-def agregar_calificacion(request, negocio_id):
-    negocio = get_object_or_404(Negocio, id=negocio_id)
-    if request.method == 'POST':
-        puntuacion = request.POST.get('puntuacion')
-        if puntuacion:
-            Calificacion.objects.create(
-                negocio=negocio,
-                usuario=request.user,
-                puntuacion=int(puntuacion)
-            )
-            messages.success(request, "Calificación registrada correctamente.")
-    return redirect('detalle_negocio', negocio_id=negocio.id)
-
-
-def juego_view(request):
-    return render(request, 'locales/juego.html')
-
-
-@login_required
 def comentar_y_calificar(request, negocio_id):
     negocio = get_object_or_404(Negocio, id=negocio_id)
     if request.method == 'POST':
-        texto = request.POST.get('texto')
-        puntuacion = request.POST.get('puntuacion')
-
-        if texto and puntuacion:
-            comentario = Comentario.objects.create(
-                negocio=negocio,
-                usuario=request.user,
-                texto=texto
-            )
-            Calificacion.objects.create(
-                negocio=negocio,
-                usuario=request.user,
-                comentario=comentario,
-                puntuacion=int(puntuacion)
-            )
-            messages.success(request, "Tu comentario y calificación fueron enviados.")
+        comentario_form = ComentarioForm(request.POST)
+        calificacion_form = CalificacionForm(request.POST)
+        if comentario_form.is_valid() and calificacion_form.is_valid():
+            comentario = comentario_form.save(commit=False)
+            comentario.negocio = negocio
+            comentario.usuario = request.user
+            comentario.save()
+            calificacion = calificacion_form.save(commit=False)
+            calificacion.negocio = negocio
+            calificacion.usuario = request.user
+            calificacion.comentario = comentario
+            calificacion.save()
+            messages.success(request, '¡Gracias por tu comentario y calificación!')
         else:
-            messages.error(request, "Debes completar ambos campos.")
-    return redirect('detalle_negocio', negocio_id=negocio.id)
+            messages.error(request, 'Hubo un problema con tu comentario o calificación. Por favor, revisa los campos.')
+        return redirect('detalle_negocio', negocio_id=negocio.id)
+    else:
+        comentario_form = ComentarioForm()
+        calificacion_form = CalificacionForm()
+    context = {
+        'negocio': negocio,
+        'comentario_form': comentario_form,
+        'calificacion_form': calificacion_form,
+    }
+    return render(request, 'locales/comentar_y_calificar.html', context)
 
 
 @staff_member_required
@@ -382,11 +377,67 @@ def aprobar_foto_referencia_view(request, sugerencia_id):
     sugerencia = get_object_or_404(SugerenciaNegocio, id=sugerencia_id)
     sugerencia.foto_aprobada = True
     sugerencia.save()
-
     negocio = Negocio.objects.filter(name=sugerencia.nombre_negocio).first()
     if negocio:
         negocio.foto_principal = sugerencia.foto_referencia
         negocio.save()
-
     messages.success(request, "Foto aprobada y vinculada al negocio.")
     return redirect('/admin/')
+
+
+@login_required
+def editar_paquetes_turismo(request, negocio_id):
+    negocio = get_object_or_404(Negocio, id=negocio_id)
+    if request.user != negocio.propietario:
+        messages.error(request, "No tienes permiso para editar este negocio.")
+        return redirect('detalle_negocio', negocio_id=negocio.id)
+    if request.method == 'POST':
+        form = NegocioPaquetesForm(request.POST, instance=negocio)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Los paquetes de turismo se han actualizado correctamente.")
+            return redirect('detalle_negocio', negocio_id=negocio.id)
+    else:
+        form = NegocioPaquetesForm(instance=negocio)
+    context = {
+        'form': form,
+        'negocio': negocio,
+    }
+    return render(request, 'locales/editar_paquetes.html', context)
+
+
+@login_required
+def editar_negocio(request, pk):
+    negocio = get_object_or_404(Negocio, pk=pk)
+    if request.user != negocio.propietario:
+        messages.error(request, "No tienes permiso para editar este negocio.")
+        return redirect('detalle_negocio', negocio_id=negocio.pk)
+    if request.method == 'POST':
+        form = NegocioForm(request.POST, request.FILES, instance=negocio)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '¡Los cambios se han guardado exitosamente!')
+            return redirect('detalle_negocio', negocio_id=negocio.pk)
+    else:
+        form = NegocioForm(instance=negocio)
+    context = {
+        'form': form,
+        'negocio': negocio,
+    }
+    return render(request, 'locales/editar_negocio.html', context)
+
+
+@login_required
+def enviar_mensaje_admin(request):
+    if request.method == 'POST':
+        form = MensajePropietarioForm(request.POST)
+        if form.is_valid():
+            mensaje = form.save(commit=False)
+            mensaje.propietario = request.user
+            mensaje.save()
+            messages.success(request, "Tu mensaje ha sido enviado a los administradores.")
+            return redirect('home_view')
+    else:
+        form = MensajePropietarioForm()
+    context = {'form': form}
+    return render(request, 'locales/enviar_mensaje.html', context)

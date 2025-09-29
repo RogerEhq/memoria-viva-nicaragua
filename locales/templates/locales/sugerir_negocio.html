@@ -1,4 +1,5 @@
 {% extends 'locales/base.html' %}
+{% load crispy_forms_tags %}  {# <-- Importante para usar |crispy #}
 
 {% block content %}
 <style>
@@ -82,11 +83,10 @@
         outline: none;
     }
 
-    /* 🔥 AJUSTE PARA REDUCIR AÚN MÁS EL TAMAÑO DEL CAMPO DE DIRECCIÓN 🔥 */
     #id_ubicacion_texto {
         width: 100%;
-        padding: 6px; /* Reducción de padding */
-        font-size: 0.9rem; /* Reducción de fuente */
+        padding: 6px;
+        font-size: 0.9rem;
         height: auto;
         max-width: 100%;
     }
@@ -123,29 +123,10 @@
 <h1 class="section-title">Sugerir un Nuevo Negocio</h1>
 
 <div class="form-container">
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" id="sugerencia-form">
         {% csrf_token %}
-
-        <label for="{{ form.nombre_negocio.id_for_label }}">Nombre del negocio:</label>
-        {{ form.nombre_negocio.errors }}
-        {{ form.nombre_negocio }}
-
-        <label for="{{ form.categoria_negocio.id_for_label }}">Categoría del negocio <span style="color:red;">*</span>:</label>
-        {{ form.categoria_negocio.errors }}
-        {{ form.categoria_negocio }}
-
-        <label for="{{ form.comentarios.id_for_label }}">Comentarios:</label>
-        {{ form.comentarios.errors }}
-        {{ form.comentarios }}
-
-        <label for="{{ form.foto_referencia.id_for_label }}">Foto del negocio:</label>
-        {{ form.foto_referencia.errors }}
-        {{ form.foto_referencia }}
-
-        <label for="{{ form.ubicacion_texto.id_for_label }}">Dirección exacta del negocio:</label>
-        {{ form.ubicacion_texto.errors }}
-        {{ form.ubicacion_texto }}
-
+        {#  AQUÍ ESTÁ EL CAMBIO CLAVE  #}
+        {{ form|crispy }}
         <button type="submit">Enviar Sugerencia</button>
     </form>
 
@@ -157,9 +138,8 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const mapa = L.map("mapa").setView([12.1364, -86.2514], 13); // Managua por defecto
+        const mapa = L.map("mapa").setView([12.1364, -86.2514], 13);
 
-        // Capa de OpenStreetMap
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             maxZoom: 19,
             attribution: "&copy; OpenStreetMap"
@@ -167,18 +147,15 @@
 
         let marker;
         const inputUbicacion = document.getElementById("id_ubicacion_texto");
+        const latInput = document.getElementById("id_latitud");
+        const lngInput = document.getElementById("id_longitud");
 
-        /**
-         * Función para obtener la dirección a partir de las coordenadas (Geocodificación Inversa)
-         */
         async function reverseGeocode(lat, lng) {
             const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`;
 
             try {
                 const response = await fetch(url);
                 const data = await response.json();
-
-                // Devolver la dirección legible, o un mensaje si no se encuentra
                 return data.display_name || `Ubicación no encontrada (${lat.toFixed(6)}, ${lng.toFixed(6)})`;
             } catch (error) {
                 console.error("Error al obtener la dirección:", error);
@@ -186,28 +163,36 @@
             }
         }
 
-        // Al hacer clic en el mapa, poner marcador y guardar la dirección
         mapa.on("click", async function (e) {
             const { lat, lng } = e.latlng;
 
-            // 1. Mover/crear el marcador
             if (marker) {
                 marker.setLatLng(e.latlng);
             } else {
                 marker = L.marker(e.latlng).addTo(mapa);
             }
 
-            // 2. Mostrar un mensaje de carga mientras se busca la dirección
+            latInput.value = lat;
+            lngInput.value = lng;
+
             if (inputUbicacion) {
                 inputUbicacion.value = "Buscando dirección...";
                 inputUbicacion.disabled = true;
 
-                // 3. Obtener la dirección y actualizar el campo
                 const direccion = await reverseGeocode(lat, lng);
                 inputUbicacion.value = direccion;
                 inputUbicacion.disabled = false;
             }
         });
+
+        // 📌 AGREGAMOS ESTO: Asegurarse de que los campos ocultos de lat/lng se envíen solo si tienen un valor
+        document.getElementById('sugerencia-form').addEventListener('submit', function(event) {
+            if (!latInput.value || !lngInput.value) {
+                latInput.removeAttribute('name');
+                lngInput.removeAttribute('name');
+            }
+        });
+
     });
 </script>
 {% endblock %}
