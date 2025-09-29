@@ -53,13 +53,19 @@ Las imágenes deben estar ubicadas en /media/volcan.jpg y /media/fauna.jpg.
 El sistema debe manejar autenticación de usuarios (user.is_authenticated).
 
 🛠️ Personalización sugerida
-Agregar rutas turísticas dinámicas desde la base de datos.
-
-Incluir filtros por categoría (ej. solo negocios de turismo).
-
 Mejorar accesibilidad con etiquetas ARIA y contraste de texto.
 
 Añadir soporte multilingüe si se desea expandir a otras regiones.
+
+Usar desde Pycharm
+puedes clonar el repositorio desde pycharm
+despues de activar el entorno virtual
+instalar los siguientes paquetes:
+pip install crispy_forms
+"    "      crispy_bootstrap4  
+"    "      Pillow
+"    "      Django
+
 
 📞 Contacto
 Para dudas o colaboración, puedes contactar al equipo de desarrollo de memorias de mi pueblo
