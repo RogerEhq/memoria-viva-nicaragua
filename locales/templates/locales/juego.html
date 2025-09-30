@@ -870,13 +870,13 @@
         guessedWord = "_".repeat(wordToGuess.replace(/ /g, "").length);
         remainingGuesses = 5;
         failedGuesses = 0;
-        hintUsed = false; // ✅ Reinicia la bandera de la pista al inicio de cada juego
+        hintUsed = false;
 
         messageHangman.textContent = "";
         remainingGuessesSpan.textContent = remainingGuesses;
         playAgainBtn.style.display = "none";
-        hintBtn.style.display = "none"; // ✅ Oculta el botón al inicio
-        hintBtn.disabled = false; // ✅ Habilita el botón para el nuevo juego
+        hintBtn.style.display = "none";
+        hintBtn.disabled = false;
         hintText.textContent = "";
 
         updateDisplayHangman();
@@ -886,21 +886,13 @@
 
     function updateDisplayHangman() {
         let displayString = "";
+        let guessedIndex = 0;
         for (let i = 0; i < wordToGuess.length; i++) {
             if (wordToGuess[i] === " ") {
                 displayString += "  ";
             } else {
-                let foundIndex = -1;
-                let guessedIndex = 0;
-                for (let j = 0; j <= i; j++) {
-                    if (wordToGuess[j] !== ' ') {
-                        if (j === i) {
-                            foundIndex = guessedIndex;
-                        }
-                        guessedIndex++;
-                    }
-                }
-                displayString += (guessedWord[foundIndex] || '_') + " ";
+                displayString += (guessedWord[guessedIndex] || '_') + " ";
+                guessedIndex++;
             }
         }
         hangmanDisplay.textContent = displayString.trim();
@@ -974,25 +966,35 @@
             messageHangman.textContent = "¡Felicidades, ganaste! 🎉";
             endGameHangman(true);
         } else if (remainingGuesses === 0) {
-            messageHangman.textContent = `¡Perdiste! 😥 La palabra era: ${wordToGuess}`;
+            messageHangman.textContent = `¡Has perdido! 😥 La respuesta correcta era: ${wordToGuess}`;
             endGameHangman(false);
         }
     }
 
-    function endGameHangman(win) {
-        Array.from(keyboard.children).forEach(btn => btn.disabled = true);
+    // Corregido: esta función se asegura de dibujar el cuerpo completo al perder
+    function endGameHangman(isWin) {
+        Array.from(keyboard.children).forEach(button => button.disabled = true);
         playAgainBtn.style.display = "block";
         hintBtn.style.display = "none";
+
+        if (!isWin) {
+            // Aseguramos que se muestren todas las partes al perder
+            for (let i = 0; i < hangmanParts.length; i++) {
+                document.getElementById(hangmanParts[i]).classList.remove("hidden");
+            }
+        }
     }
 
     function showHint() {
-        hintText.textContent = `Pista: ${hangmanHints[wordToGuess]}`;
+        if (hintUsed) return;
+        hintText.textContent = hangmanHints[wordToGuess];
         hintUsed = true;
-        hintBtn.disabled = true; // ✅ Deshabilita el botón de pista después de usarla
+        hintBtn.disabled = true;
     }
 
     startButtonHangman.addEventListener("click", startGameHangman);
     playAgainBtn.addEventListener("click", startGameHangman);
     hintBtn.addEventListener("click", showHint);
+
 </script>
 {% endblock %}

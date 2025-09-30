@@ -6,6 +6,9 @@
     min-height: 100vh;
     padding: 2rem 0;
     position: relative;
+    display: flex; /* Añadido para centrar el contenido */
+    flex-direction: column; /* Añadido para el flujo vertical */
+    align-items: center; /* Añadido para centrar horizontalmente */
 }
 .negocios-container::before {
     content: '';
@@ -158,12 +161,6 @@
         0 6px 20px rgba(52, 152, 219, 0.4),
         inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
 }
-.negocios-grid {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
-    gap: 2rem !important;
-    animation: gridFadeIn 0.8s ease-out 0.4s both;
-}
 .negocio-card {
     background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%) !important;
     border-radius: 20px !important;
@@ -303,6 +300,14 @@
 @keyframes borderShimmer {
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }
+}
+.negocios-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+    gap: 2rem !important;
+    max-width: 1200px; /* Limita el ancho del grid */
+    margin: 0 auto; /* Centra el grid */
+    animation: gridFadeIn 0.8s ease-out 0.4s both;
 }
 @media (max-width: 768px) {
     .filter-form { padding: 1.5rem !important; }

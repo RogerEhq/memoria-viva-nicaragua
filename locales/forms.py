@@ -194,11 +194,22 @@ class NegocioPaquetesForm(forms.ModelForm):
 
 
 # NUEVO: Formulario para la edición general del negocio
+# En tu archivo forms.py, en la línea 197 o similar.
+
 class NegocioForm(forms.ModelForm):
     class Meta:
         model = Negocio
-        fields = ['name', 'description', 'address_text', 'phone', 'email', 'website', 'categoria_relacionada',
-                  'is_turismo']
+        fields = [
+            'name',
+            'description',
+            'address_text',
+            'phone',
+            'email',
+            'website',
+            'categoria_relacionada',
+            'is_turismo',
+            'foto_principal'  # <-- Asegúrate de que este nombre sea correcto
+        ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -212,6 +223,7 @@ class NegocioForm(forms.ModelForm):
             'website',
             'categoria_relacionada',
             'is_turismo',
+            'foto_principal',  # <-- Asegúrate de que este nombre sea correcto
             Submit('submit', 'Guardar Cambios')
         )
 
