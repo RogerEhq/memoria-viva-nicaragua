@@ -1,197 +1,565 @@
 {% extends 'locales/base.html' %}
+{% load static %}
 
 {% block content %}
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Lato:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Lato:wght@400;700&display=swap');
 
-  :root {
-    --color-arena: #DCC7A1;
-    --color-cacao: #6B4226;
-    --color-cafetal: #3F6B4C;
-    --color-lago: #2F5C8F;
-    --color-terracota: #B85C38;
-    --color-turquesa: #2CBEC6;
-    --color-light: #F9F6F2;
-    --color-white: #ffffff;
-  }
+    :root {
+        --color-arena: #DCC7A1;
+        --color-cacao: #6B4226;
+        --color-cafetal: #3F6B4C;
+        --color-lago: #2F5C8F;
+        --color-terracota: #B85C38;
+        --color-turquesa: #2CBEC6;
+        --color-light: #F9F6F2;
+        --color-white: #ffffff;
+        --color-dark-gray: #333;
+    }
 
-  body {
-    font-family: 'Lato', sans-serif;
-    color: var(--color-cacao);
-    background: linear-gradient(135deg, var(--color-light) 0%, var(--color-arena) 100%);
-    min-height: 100vh;
-  }
+    body {
+        font-family: 'Lato', sans-serif;
+        color: var(--color-cacao);
+        background: linear-gradient(135deg, var(--color-light) 0%, var(--color-arena) 100%);
+        min-height: 100vh;
+    }
 
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    color: var(--color-terracota);
-    font-size: 2.8rem;
-    font-weight: 700;
-    margin-top: 3rem;
-    margin-bottom: 2.5rem;
-    text-align: center;
-    animation: fadeInUp 0.8s ease forwards;
-    position: relative;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-  }
+    .section-title {
+        font-family: 'Playfair Display', serif;
+        color: var(--color-terracota);
+        font-size: 2.8rem;
+        font-weight: 700;
+        margin-top: 3rem;
+        margin-bottom: 2.5rem;
+        text-align: center;
+        animation: fadeInUp 0.8s ease forwards;
+        position: relative;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-  .section-title::after {
-    content: '';
-    display: block;
-    width: 100px;
-    height: 4px;
-    background-color: var(--color-cafetal);
-    margin: 1.5rem auto 0;
-    border-radius: 2px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
+    .section-title::after {
+        content: '';
+        display: block;
+        width: 100px;
+        height: 4px;
+        background-color: var(--color-cafetal);
+        margin: 1.5rem auto 0;
+        border-radius: 2px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-  .form-container {
-    max-width: 650px;
-    margin: 0 auto;
-    background-color: var(--color-white);
-    padding: 3.5rem;
-    border-radius: 20px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    animation: fadeInUp 1s ease forwards;
-    border-top: 4px solid var(--color-lago);
-  }
+    .form-container {
+        max-width: 650px;
+        margin: 0 auto;
+        background-color: var(--color-white);
+        padding: 3.5rem;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        animation: fadeInUp 1s ease forwards;
+        border-top: 4px solid var(--color-lago);
+    }
 
-  .form-container::before {
-    content: "📝";
-    font-size: 2.5rem;
-    display: block;
-    text-align: center;
-    margin-bottom: 1.5rem;
-    animation: fadeInUp 0.6s ease forwards;
-  }
+    .form-container::before {
+        content: "📝";
+        font-size: 2.5rem;
+        display: block;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        animation: fadeInUp 0.6s ease forwards;
+    }
 
-  .perfil-avatar-edit {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 5px solid var(--color-turquesa);
-    margin: 0 auto 2rem;
-    display: block;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
+    .avatar-section {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
 
-  .perfil-avatar-edit:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-  }
+    .perfil-avatar-edit {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid var(--color-turquesa);
+        margin-bottom: 1rem;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+    }
 
+    .perfil-avatar-edit:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
 
-  form label {
-    display: block;
-    margin-top: 1.75rem;
-    font-weight: bold;
-    color: var(--color-lago);
-    font-size: 1.1rem;
-  }
+    .avatar-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 50%;
+        opacity: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.3s ease;
+    }
 
-  input,
-  textarea,
-  select {
-    width: 100%;
-    padding: 12px 16px;
-    margin-top: 8px;
-    border: 2px solid var(--color-arena);
-    border-radius: 12px;
-    box-sizing: border-box;
-    font-family: 'Lato', sans-serif;
-    font-size: 1rem;
-    background-color: var(--color-light);
-    color: var(--color-cacao);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  }
+    .perfil-avatar-edit-container {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        margin-left: auto;
+        margin-right: auto;
+    }
 
-  input:focus,
-  textarea:focus,
-  select:focus {
-    border-color: var(--color-turquesa);
-    box-shadow: 0 0 0 4px rgba(44, 190, 198, 0.2);
-    outline: none;
-  }
+    .perfil-avatar-edit-container:hover .avatar-overlay {
+        opacity: 1;
+    }
 
-  button[type="submit"] {
-    margin-top: 3rem;
-    padding: 14px 28px;
-    background: linear-gradient(135deg, var(--color-terracota) 0%, var(--color-lago) 100%);
-    color: var(--color-white);
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 1.1rem;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    display: block;
-    width: 100%;
-    text-align: center;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    box-shadow: 0 6px 20px rgba(184, 92, 56, 0.3);
-  }
+    .avatar-icon {
+        color: var(--color-white);
+        font-size: 2rem;
+    }
 
-  button[type="submit"]:hover {
-    background: linear-gradient(135deg, var(--color-lago) 0%, var(--color-cafetal) 100%);
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 10px 30px rgba(47, 92, 143, 0.4);
-  }
+    .delete-avatar-btn {
+        background: linear-gradient(135deg, var(--color-cacao) 0%, var(--color-terracota) 100%);
+        margin-top: 1rem;
+        padding: 14px 28px;
+        color: var(--color-white);
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 1.1rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 100%;
+        box-shadow: 0 6px 20px rgba(107, 66, 38, 0.3);
+    }
 
-  .delete-avatar-btn {
-    background: linear-gradient(135deg, var(--color-cacao) 0%, var(--color-terracota) 100%);
-    margin-top: 1.5rem;
-    padding: 14px 28px;
-    color: var(--color-white);
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 1.1rem;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    display: block;
-    width: 100%;
-    text-align: center;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    box-shadow: 0 6px 20px rgba(107, 66, 38, 0.3);
-  }
+    .delete-avatar-btn:hover {
+        background: linear-gradient(135deg, var(--color-terracota) 0%, var(--color-cafetal) 100%);
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 10px 30px rgba(184, 92, 56, 0.4);
+    }
 
-  .delete-avatar-btn:hover {
-    background: linear-gradient(135deg, var(--color-terracota) 0%, var(--color-cafetal) 100%);
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 10px 30px rgba(184, 92, 56, 0.4);
-  }
+    .form-group-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.8rem;
+        color: var(--color-lago);
+        margin-bottom: 1rem;
+        border-bottom: 2px solid var(--color-arena);
+        padding-bottom: 0.5rem;
+    }
 
+    .user-info-section {
+        margin-bottom: 2rem;
+    }
+
+    .info-display {
+        background-color: var(--color-light);
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        color: var(--color-cacao);
+        border: 1px solid var(--color-arena);
+    }
+
+    .info-display strong {
+        color: var(--color-cafetal);
+    }
+
+    .form-group {
+        margin-bottom: 2rem;
+    }
+
+    .field-wrapper {
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .field-wrapper i {
+        font-size: 1.2rem;
+        color: var(--color-cafetal);
+        margin-right: 1rem;
+    }
+
+    input,
+    textarea,
+    select {
+        flex-grow: 1;
+        padding: 12px 16px;
+        border: 2px solid var(--color-arena);
+        border-radius: 12px;
+        box-sizing: border-box;
+        font-family: 'Lato', sans-serif;
+        font-size: 1rem;
+        background-color: var(--color-light);
+        color: var(--color-cacao);
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+        border-color: var(--color-turquesa);
+        box-shadow: 0 0 0 4px rgba(44, 190, 198, 0.2);
+        outline: none;
+    }
+
+    button[type="submit"] {
+        margin-top: 3rem;
+        padding: 14px 28px;
+        background: linear-gradient(135deg, var(--color-terracota) 0%, var(--color-lago) 100%);
+        color: var(--color-white);
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 1.1rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        display: block;
+        width: 100%;
+        text-align: center;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        box-shadow: 0 6px 20px rgba(184, 92, 56, 0.3);
+    }
+
+    button[type="submit"]:hover {
+        background: linear-gradient(135deg, var(--color-lago) 0%, var(--color-cafetal) 100%);
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 10px 30px rgba(47, 92, 143, 0.4);
+    }
+
+    .errorlist {
+        color: red;
+        font-size: 0.9em;
+        margin: 0;
+        padding-left: 0;
+        list-style-type: none;
+    }
+
+    .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        font-weight: bold;
+    }
+
+    .alert-success {
+        color: #155724;
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+    }
+    .alert-danger {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+
+    .content-section {
+        margin-top: 4rem;
+    }
+
+    .perfil-tabs {
+        border-bottom: 2px solid var(--color-arena);
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap; /* Para pantallas pequeñas */
+    }
+
+    .perfil-tabs button {
+        background: none;
+        border: none;
+        font-family: 'Lato', sans-serif;
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: var(--color-cacao);
+        padding: 1rem 1.5rem;
+        cursor: pointer;
+        transition: color 0.3s ease;
+        position: relative;
+    }
+
+    .perfil-tabs button:hover {
+        color: var(--color-lago);
+    }
+
+    .perfil-tabs button::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: transparent;
+        transition: background-color 0.3s ease;
+    }
+
+    .perfil-tabs button.active {
+        color: var(--color-lago);
+    }
+
+    .perfil-tabs button.active::after {
+        background-color: var(--color-terracota);
+    }
+
+    .tab-content {
+        display: none;
+        padding-top: 1rem;
+        /* Estilos para el scroll */
+        max-height: 400px; /* Puedes ajustar esta altura */
+        overflow-y: auto;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .content-item {
+        background-color: var(--color-light);
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .content-item h3 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.5rem;
+        color: var(--color-terracota);
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    .content-item p {
+        font-size: 0.9rem;
+        color: var(--color-cacao);
+        line-height: 1.5;
+    }
 </style>
 
 <h1 class="section-title">Editar Perfil</h1>
 
 <div class="form-container">
-  {% if perfil.avatar %}
-    <img src="{{ perfil.avatar.url }}" alt="Avatar de {{ user.username }}" class="perfil-avatar-edit">
-  {% else %}
-    <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=B85C38&color=ffffff&size=150&bold=true" alt="Avatar por defecto" class="perfil-avatar-edit">
-  {% endif %}
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Guardar cambios</button>
-  </form>
+    {% if messages %}
+        <ul class="messages list-unstyled">
+            {% for message in messages %}
+                <div class="alert {{ message.tags }} text-center" role="alert">{{ message }}</div>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
-  {% if perfil.avatar %}
-    <form method="post" action="{% url 'eliminar_avatar' %}">
-      {% csrf_token %}
-      <button type="submit" class="delete-avatar-btn">Eliminar imagen de perfil</button>
+    <div class="avatar-section">
+        <label for="id_avatar_input">
+            <div class="perfil-avatar-edit-container">
+                {% if perfil.avatar %}
+                    <img src="{{ perfil.avatar.url }}" alt="Avatar de {{ user.username }}" class="perfil-avatar-edit">
+                {% else %}
+                    <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=B85C38&color=ffffff&size=150&bold=true" alt="Avatar por defecto" class="perfil-avatar-edit">
+                {% endif %}
+                <div class="avatar-overlay">
+                    <span class="avatar-icon">
+                        <i class="fas fa-camera"></i>
+                    </span>
+                </div>
+            </div>
+        </label>
+        <p class="text-muted">Haz clic en la imagen para cambiar tu avatar.</p>
+
+        <form method="post" action="{% url 'eliminar_avatar' %}">
+            {% csrf_token %}
+            {% if perfil.avatar and perfil.avatar.name != 'avatares/default_avatar.png' %}
+                <button type="submit" class="delete-avatar-btn">Eliminar imagen de perfil</button>
+            {% endif %}
+        </form>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="user-info-section">
+            <h2 class="form-group-title">Información de Cuenta</h2>
+            <div class="info-display">
+                <strong>Nombre de usuario:</strong> {{ user.username }}
+            </div>
+            <div class="info-display">
+                <strong>Correo electrónico:</strong> {{ user.email }}
+            </div>
+        </div>
+
+        <h2 class="form-group-title">Información de Perfil</h2>
+
+        <div class="form-group">
+            <label for="{{ form.biografia.id_for_label }}">
+                <i class="fas fa-file-alt"></i> {{ form.biografia.label }}
+            </label>
+            <div class="field-wrapper">
+                {{ form.biografia }}
+            </div>
+            {% if form.biografia.help_text %}
+                <small class="form-text text-muted">{{ form.biografia.help_text }}</small>
+            {% endif %}
+            {% for error in form.biografia.errors %}
+                <p class="errorlist">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.telefono.id_for_label }}">
+                <i class="fas fa-phone"></i> {{ form.telefono.label }}
+            </label>
+            <div class="field-wrapper">
+                {{ form.telefono }}
+            </div>
+            {% if form.telefono.help_text %}
+                <small class="form-text text-muted">{{ form.telefono.help_text }}</small>
+            {% endif %}
+            {% for error in form.telefono.errors %}
+                <p class="errorlist">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.ubicacion.id_for_label }}">
+                <i class="fas fa-map-marker-alt"></i> {{ form.ubicacion.label }}
+            </label>
+            <div class="field-wrapper">
+                {{ form.ubicacion }}
+            </div>
+            {% if form.ubicacion.help_text %}
+                <small class="form-text text-muted">{{ form.ubicacion.help_text }}</small>
+            {% endif %}
+            {% for error in form.ubicacion.errors %}
+                <p class="errorlist">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="d-none">
+            {{ form.avatar }}
+        </div>
+
+        <button type="submit">Guardar cambios</button>
     </form>
-  {% endif %}
+
+    <hr class="mt-5" style="border-top: 2px solid var(--color-arena);">
+
+    <div class="content-section">
+        <h2 class="form-group-title text-center">Contenido Publicado</h2>
+        <div class="perfil-tabs">
+            <button class="tab-button active" data-tab="tab-relatos">Relatos ({{ relatos|length }})</button>
+            <button class="tab-button" data-tab="tab-recetas">Recetas ({{ recetas|length }})</button>
+            <button class="tab-button" data-tab="tab-negocios">Negocios ({{ negocios|length }})</button>
+            <button class="tab-button" data-tab="tab-comentarios">Comentarios ({{ comentarios|length }})</button>
+        </div>
+
+        <div id="tab-relatos" class="tab-content active">
+            {% for relato in relatos %}
+                <div class="content-item">
+                    <h3>{{ relato.title }}</h3>
+                    <p>{{ relato.content|truncatechars:150 }}</p>
+                </div>
+            {% empty %}
+                <p>Aún no has publicado ningún relato.</p>
+            {% endfor %}
+        </div>
+
+        <div id="tab-recetas" class="tab-content">
+            {% for receta in recetas %}
+                <div class="content-item">
+                    <h3>{{ receta.titulo }}</h3>
+                    <p>{{ receta.pasos|truncatechars:150 }}</p>
+                </div>
+            {% empty %}
+                <p>Aún no has publicado ninguna receta.</p>
+            {% endfor %}
+        </div>
+
+        <div id="tab-negocios" class="tab-content">
+            {% for negocio in negocios %}
+                <div class="content-item">
+                    <h3>{{ negocio.name }}</h3>
+                    <p>{{ negocio.description|truncatechars:150 }}</p>
+                </div>
+            {% empty %}
+                <p>Aún no has registrado ningún negocio.</p>
+            {% endfor %}
+        </div>
+
+        <div id="tab-comentarios" class="tab-content">
+            {% for comentario in comentarios %}
+                <div class="content-item">
+                    <p>"{{ comentario.texto|truncatechars:150 }}"</p>
+                    <small>En:
+                        <strong>
+                            {% if comentario.negocio %}
+                                {{ comentario.negocio.name }}
+                            {% else %}
+                                (Contenido eliminado)
+                            {% endif %}
+                        </strong>
+                    </small>
+                </div>
+            {% empty %}
+                <p>Aún no has dejado ningún comentario.</p>
+            {% endfor %}
+        </div>
+    </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        // Lógica para la carga y visualización del avatar
+        const avatarImage = document.querySelector('.perfil-avatar-edit-container');
+        const fileInput = document.getElementById('id_avatar');
+        if (avatarImage && fileInput) {
+            avatarImage.addEventListener('click', () => {
+                fileInput.click();
+            });
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        document.querySelector('.perfil-avatar-edit').src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Lógica para las pestañas de contenido
+        const tabs = document.querySelectorAll('.perfil-tabs button');
+        const contents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetTab = tab.dataset.tab;
+
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+
+                tab.classList.add('active');
+                document.getElementById(targetTab).classList.add('active');
+            });
+        });
+    });
+</script>
+
 {% endblock %}

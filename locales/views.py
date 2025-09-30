@@ -194,15 +194,32 @@ def perfil_view(request):
 @login_required
 def editar_perfil(request):
     perfil, _ = PerfilUsuario.objects.get_or_create(usuario=request.user)
+
     if request.method == 'POST':
         form = PerfilUsuarioUpdateForm(request.POST, request.FILES, instance=perfil)
         if form.is_valid():
             form.save()
             messages.success(request, '¡Tu perfil ha sido actualizado exitosamente!')
-            return redirect('perfil_view')
+            return redirect('perfil_view')  # Reemplaza 'perfil_view' si usas otro nombre
     else:
         form = PerfilUsuarioUpdateForm(instance=perfil)
-    return render(request, 'usuarios/editar_perfil.html', {'form': form, 'perfil': perfil})
+
+    # Esta es la lógica para filtrar y obtener el contenido del usuario
+    # Hecho para que se muestre en la misma página que el formulario de edición
+    relatos = Relato.objects.filter(author=request.user)
+    recetas = Receta.objects.filter(autor=request.user)
+    negocios = Negocio.objects.filter(propietario=request.user)
+    comentarios = Comentario.objects.filter(usuario=request.user)
+
+    context = {
+        'form': form,
+        'perfil': perfil,
+        'relatos': relatos,
+        'recetas': recetas,
+        'negocios': negocios,
+        'comentarios': comentarios,
+    }
+    return render(request, 'usuarios/editar_perfil.html', context)
 
 
 @login_required
